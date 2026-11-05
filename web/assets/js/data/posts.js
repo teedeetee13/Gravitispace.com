@@ -1,0 +1,148 @@
+// Bài viết mẫu để bảng tin "Lướt duyên" có nội dung khi chưa có máy chủ.
+// refs: liên kết tới lá bài / cung / con giáp để người đọc tra cứu thêm.
+export const SEED_POSTS = [
+  {
+    id: 'hd-001', topic: 'tarot', type: 'trai-bai', refs: ['major-17'],
+    title: 'Rút được Ngôi Sao sau một tháng tệ nhất năm',
+    body: 'Tháng trước mình mất việc, chia tay, ốm một trận. Tối qua ngồi rút bài cho vui, ra đúng lá Ngôi Sao.\nMình không tin lá bài thay đổi được gì. Nhưng nhìn hình người phụ nữ ngồi đổ nước dưới bầu trời sao, mình thấy được phép nghỉ một chút, được phép tin rằng mọi thứ đang lành lại, dù chậm.',
+    author: 'Một người ở Hà Nội', createdAt: '2026-11-05T21:14:00+07:00', hearts: 214,
+  },
+  {
+    id: 'hd-002', topic: 'tarot', type: 'giai-nghia', refs: ['major-13'],
+    title: 'Lá "Cái Chết" không phải điềm xấu',
+    body: 'Nhiều bạn rút trúng lá XIII là hoảng. Thật ra lá này nói về chuyển hoá: một thứ kết thúc để thứ khác bắt đầu. Như mùa thu rụng lá để cây kịp đâm chồi.\nNếu bạn rút được lá này, hãy hỏi mình: "Điều gì trong đời mình đã hết hạn mà mình vẫn cố giữ?"',
+    author: 'Người đọc bài 6 năm', createdAt: '2026-11-04T09:30:00+07:00', hearts: 389,
+  },
+  {
+    id: 'hd-003', topic: 'chiem-tinh', type: 'chia-se', refs: ['ma-ket'],
+    title: 'Là Ma Kết, mình học cách nghỉ ngơi',
+    body: 'Cả đời mình nghĩ nghỉ ngơi là phần thưởng, phải làm xong hết mới được nghỉ. Nhưng danh sách việc không bao giờ hết.\nNăm nay mình tập đặt lịch nghỉ như đặt lịch họp. Lạ là làm việc lại hiệu quả hơn. Ma Kết nào đang đọc: bạn không cần phải kiếm được quyền được nghỉ.',
+    author: 'Ma Kết, 31 tuổi', createdAt: '2026-11-03T22:02:00+07:00', hearts: 172,
+  },
+  {
+    id: 'hd-004', topic: 'tu-vi', type: 'chia-se', refs: ['suu-trau'],
+    title: 'Tuổi Sửu và cái tật không biết kêu mệt',
+    body: 'Mẹ mình bảo tuổi Sửu số vất vả. Mình không tin số, nhưng công nhận mình hay ôm việc thật.\nGần đây mình thử một điều: mỗi tuần nhờ người khác giúp ít nhất một việc. Lần đầu ngượng lắm. Đến lần thứ ba thì thấy nhẹ cả người. Hoá ra "vất vả" một phần là do mình không chịu để ai đỡ.',
+    author: 'Một người tuổi Tân Sửu', createdAt: '2026-11-02T19:45:00+07:00', hearts: 156,
+  },
+  {
+    id: 'hd-005', topic: 'tarot', type: 'loi-nhan', refs: ['major-09'],
+    title: '',
+    body: 'Gửi bạn đang thấy cô đơn: Ẩn Sĩ trong Tarot đi một mình lên núi, tay cầm ngọn đèn. Ông không cô đơn. Ông đang tìm đường về với chính mình.\nNếu hôm nay bạn một mình, hãy coi đó là một chuyến lên núi.',
+    author: 'Một người lạ', createdAt: '2026-11-05T23:40:00+07:00', hearts: 301,
+  },
+  {
+    id: 'hd-006', topic: 'chiem-tinh', type: 'giai-nghia', refs: [],
+    title: 'Sao Thuỷ nghịch hành không phải cái cớ',
+    body: 'Mỗi lần Sao Thuỷ nghịch hành là mạng xã hội lại đổ lỗi cho nó: cãi nhau, mất đồ, trễ hẹn.\nMình thích nhìn khác hơn: đây là lúc nhắc mình chậm lại, đọc kỹ tin nhắn trước khi gửi, xem lại kế hoạch. Chiêm tinh hay nhất là khi nó nhắc mình sống chậm, chứ không phải khi nó làm mình sợ.',
+    author: 'Bảo Bình mê bản đồ sao', createdAt: '2026-10-30T20:10:00+07:00', hearts: 248,
+  },
+  {
+    id: 'hd-007', topic: 'tu-vi', type: 'giai-nghia', refs: [],
+    title: 'Mệnh nạp âm là gì, giải thích cho người mới',
+    body: 'Mỗi năm âm lịch có một Can và một Chi, ví dụ Bính Ngọ. 60 tổ hợp Can Chi chia thành 30 cặp, mỗi cặp có một "mệnh nạp âm" như Thiên Hà Thủy (nước trên trời) hay Lư Trung Hỏa (lửa trong lò).\nĐó là cách người xưa dùng hình ảnh thiên nhiên để nói về tính cách. Hiểu như một bài thơ thì đẹp hơn nhiều so với hiểu như một bản án.',
+    author: 'Người viết lịch', createdAt: '2026-10-28T08:00:00+07:00', hearts: 197,
+  },
+  {
+    id: 'hd-008', topic: 'tarot', type: 'hoi-dap', refs: ['kiem-03'],
+    title: 'Rút lá Ba Kiếm ba lần liên tiếp, mình nên hiểu sao?',
+    body: 'Mình hỏi về chuyện tình cảm, tuần này rút ba lần đều ra Ba Kiếm (trái tim bị ba thanh kiếm đâm). Có ai từng như vậy chưa?\nMình biết mình đang buồn. Có lẽ lá bài chỉ đang nói to điều mình chưa dám thừa nhận.',
+    author: 'Một người đang buồn', createdAt: '2026-11-01T01:22:00+07:00', hearts: 88,
+  },
+  {
+    id: 'hd-009', topic: 'tarot', type: 'loi-nhan', refs: ['kiem-03'],
+    title: '',
+    body: 'Trả lời bạn rút Ba Kiếm ba lần: lá đó không bảo bạn sẽ đau mãi. Nó bảo nỗi đau là thật và cần được khóc ra.\nKhi bạn sẵn sàng, hãy rút thêm một lá và hỏi: "Mình cần gì để lành lại?" Câu hỏi đổi, lá bài sẽ đổi.',
+    author: 'Người từng rút Ba Kiếm', createdAt: '2026-11-01T08:05:00+07:00', hearts: 142,
+  },
+  {
+    id: 'hd-010', topic: 'chiem-tinh', type: 'chia-se', refs: ['cu-giai'],
+    title: 'Cự Giải xa nhà',
+    body: 'Sống ở Sài Gòn năm thứ tư, mình vẫn nhớ nhà từng bữa cơm. Đọc về Cự Giải, mình hiểu vì sao: với cung Nước do Mặt Trăng cai quản, "nhà" không phải là địa chỉ, mà là cảm giác được thuộc về.\nGiờ mình tự tạo "nhà" trong phòng trọ: một nồi canh chua mỗi Chủ Nhật, một chậu húng quế ở cửa sổ.',
+    author: 'Cự Giải ở Sài Gòn', createdAt: '2026-10-27T18:30:00+07:00', hearts: 233,
+  },
+  {
+    id: 'hd-011', topic: 'tu-vi', type: 'hoi-dap', refs: [],
+    title: 'Năm tuổi có thật sự xui không?',
+    body: 'Năm sau là năm tuổi của mình, cả nhà ai cũng dặn cẩn thận. Mình hơi lo. Mọi người đã trải qua năm tuổi thấy thế nào?',
+    author: 'Một người sắp năm tuổi', createdAt: '2026-10-25T21:00:00+07:00', hearts: 64,
+  },
+  {
+    id: 'hd-012', topic: 'tu-vi', type: 'loi-nhan', refs: [],
+    title: '',
+    body: 'Năm tuổi của mình là năm mình đổi việc, chuyển nhà và gặp người yêu hiện tại. Có biến động thật, nhưng biến động không phải lúc nào cũng xấu.\nMình nghĩ người xưa dặn "cẩn thận" là để mình sống tỉnh táo hơn, chứ không phải để sống trong sợ hãi.',
+    author: 'Người đã qua năm tuổi', createdAt: '2026-10-26T07:40:00+07:00', hearts: 181,
+  },
+  {
+    id: 'hd-013', topic: 'tarot', type: 'giai-nghia', refs: ['coc-04'],
+    title: 'Bốn Cốc: khi bạn chán mọi thứ',
+    body: 'Lá Bốn Cốc vẽ một người ngồi dưới gốc cây, khoanh tay nhìn ba chiếc cốc trước mặt, không để ý một bàn tay đang đưa tới chiếc cốc thứ tư.\nĐây là lá của những ngày thấy gì cũng nhạt. Nó không trách bạn. Nó chỉ nhắc: khi bạn sẵn sàng ngẩng đầu, sẽ có điều mới đang chờ.',
+    author: 'Người đọc bài 6 năm', createdAt: '2026-10-24T10:15:00+07:00', hearts: 120,
+  },
+  {
+    id: 'hd-014', topic: 'chiem-tinh', type: 'loi-nhan', refs: ['song-ngu'],
+    title: '',
+    body: 'Gửi các bạn Song Ngư: không phải nỗi buồn nào bạn cảm thấy cũng là của bạn. Bạn thấm cảm xúc của người khác như miếng bọt biển.\nTối nay hãy tắm nước ấm, tưởng tượng nước cuốn đi những cảm xúc không thuộc về mình.',
+    author: 'Một Song Ngư khác', createdAt: '2026-11-04T22:50:00+07:00', hearts: 276,
+  },
+  {
+    id: 'hd-015', topic: 'tarot', type: 'trai-bai', refs: ['major-12', 'tien-07', 'major-19'],
+    title: 'Trải bài "hai ngả đường" khi phân vân nghỉ việc',
+    body: 'Mình trải ba lá: nếu ở lại ra Người Treo Ngược, nếu nghỉ ra Bảy Tiền, điều trái tim biết ra Mặt Trời.\nMình đọc thế này: ở lại là tiếp tục treo lơ lửng, nghỉ thì cần kiên nhẫn chờ mùa gặt, còn trái tim thì muốn được sống vui. Lá bài không quyết định thay mình, nhưng giúp mình nói ra điều mình đã biết.',
+    author: 'Dân văn phòng 28 tuổi', createdAt: '2026-10-29T12:20:00+07:00', hearts: 205,
+  },
+  {
+    id: 'hd-016', topic: 'chiem-tinh', type: 'giai-nghia', refs: [],
+    title: 'Cung Mặt Trời, Mặt Trăng, Mọc: khác nhau thế nào?',
+    body: 'Cung Mặt Trời (cung bạn hay nói) là bản chất cốt lõi. Cung Mặt Trăng là thế giới cảm xúc bên trong, cách bạn cần được yêu thương. Cung Mọc là ấn tượng đầu tiên người khác thấy ở bạn.\nNếu bạn thấy mình "không giống cung của mình lắm", rất có thể Mặt Trăng hoặc cung Mọc đang lên tiếng.',
+    author: 'Bảo Bình mê bản đồ sao', createdAt: '2026-10-22T19:00:00+07:00', hearts: 340,
+  },
+  {
+    id: 'hd-017', topic: 'tu-vi', type: 'chia-se', refs: ['mao-meo'],
+    title: 'Việt Nam có mèo, Trung Quốc có thỏ',
+    body: 'Một điều mình rất thích: trong 12 con giáp của người Việt, Mão là con Mèo chứ không phải con Thỏ.\nNgười tuổi Mão hay được tả là tinh tế, thích yên bình, biết tìm chỗ nắng ấm mà nằm. Hôm nay mình áp dụng đúng điều đó: tìm một góc nắng và đọc sách.',
+    author: 'Tuổi Quý Mão', createdAt: '2026-10-20T15:35:00+07:00', hearts: 158,
+  },
+  {
+    id: 'hd-018', topic: 'tarot', type: 'loi-nhan', refs: ['major-08'],
+    title: '',
+    body: 'Lá Sức Mạnh không vẽ một chiến binh. Nó vẽ một người phụ nữ nhẹ nhàng khép miệng con sư tử.\nNếu hôm nay bạn đang vật lộn với chính mình, thử dịu dàng xem. Sức mạnh thật sự là sự dịu dàng không bỏ cuộc.',
+    author: 'Một người lạ ở Huế', createdAt: '2026-11-06T07:10:00+07:00', hearts: 95,
+  },
+  {
+    id: 'hd-019', topic: 'chiem-tinh', type: 'hoi-dap', refs: ['bo-cap'],
+    title: 'Bọ Cạp có thật sự khó tha thứ?',
+    body: 'Mình là Bọ Cạp và thấy câu này đúng đến đau. Ai làm mình tổn thương thì mình nhớ rất lâu. Có Bọ Cạp nào đã học được cách buông chưa, chia sẻ với mình với?',
+    author: 'Bọ Cạp tháng 11', createdAt: '2026-11-02T23:15:00+07:00', hearts: 77,
+  },
+  {
+    id: 'hd-020', topic: 'chiem-tinh', type: 'loi-nhan', refs: ['bo-cap'],
+    title: '',
+    body: 'Gửi bạn Bọ Cạp đang hỏi: mình mất ba năm mới hiểu rằng tha thứ không có nghĩa là quay lại, cũng không có nghĩa là quên.\nTha thứ là đặt gánh nặng xuống, vì mình xứng đáng đi nhẹ hơn. Bạn có thể tha thứ và vẫn đóng cửa.',
+    author: 'Bọ Cạp đã đi qua', createdAt: '2026-11-03T06:30:00+07:00', hearts: 263,
+  },
+  {
+    id: 'hd-021', topic: 'tarot', type: 'chia-se', refs: ['major-00'],
+    title: 'Năm 30 tuổi, mình rút được Chàng Khờ',
+    body: 'Mình định học lại đại học ở tuổi 30, ai cũng bảo muộn. Hôm ấy mình rút được Chàng Khờ: một người bước đi vô tư bên mép vực, con chó nhỏ chạy theo.\nMình chọn đọc nó là "cứ đi đi, ngốc một chút cũng được". Giờ mình là sinh viên năm hai, già nhất lớp, và vui nhất lớp.',
+    author: 'Sinh viên U30', createdAt: '2026-10-18T20:00:00+07:00', hearts: 412,
+  },
+  {
+    id: 'hd-022', topic: 'tu-vi', type: 'giai-nghia', refs: [],
+    title: 'Tam hợp, tứ hành xung: đừng dùng để chia rẽ',
+    body: 'Tam hợp (như Thân, Tý, Thìn) và tứ hành xung (như Tý, Ngọ, Mão, Dậu) là cách người xưa xếp 12 con giáp thành nhóm hợp và nhóm "va".\nMình thấy nhiều người dùng nó để cấm cản tình yêu. Mình thích hiểu thế này: "xung" là hai cách nhìn khác nhau, cần nhiều lắng nghe hơn. Không có cặp nào sinh ra để thất bại.',
+    author: 'Người viết lịch', createdAt: '2026-10-15T09:00:00+07:00', hearts: 288,
+  },
+  {
+    id: 'hd-023', topic: 'tarot', type: 'giai-nghia', refs: ['kiem-04'],
+    title: 'Bốn Kiếm: lá bài cho phép bạn nghỉ',
+    body: 'Một hiệp sĩ nằm yên trong nhà nguyện, ba thanh kiếm treo trên tường, một thanh nằm dưới thân. Đây là lá của sự hồi sức.\nNếu bạn rút được lá này, vũ trụ (hoặc chính bạn) đang nói: hôm nay không cần chiến đấu. Ngủ đi.',
+    author: 'Người đọc bài 6 năm', createdAt: '2026-11-05T13:00:00+07:00', hearts: 190,
+  },
+  {
+    id: 'hd-024', topic: 'chiem-tinh', type: 'chia-se', refs: ['xu-nu'],
+    title: 'Xử Nữ và danh sách "đã làm được"',
+    body: 'Mình có thói quen viết danh sách việc cần làm, rồi tự trách vì không làm hết. Một người bạn Song Ngư gợi ý viết thêm danh sách "hôm nay mình đã làm được".\nĐọc lại sau một tuần, mình suýt khóc: hoá ra mình đã làm được nhiều đến vậy.',
+    author: 'Xử Nữ cầu toàn', createdAt: '2026-10-31T21:30:00+07:00', hearts: 221,
+  },
+];

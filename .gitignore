@@ -1,0 +1,11 @@
+# Tài liệu cá nhân, không đưa lên GitHub
+*.pptx
+*.docx
+*.pdf
+
+# Cấu hình riêng của máy
+.claude/
+.vscode/
+.DS_Store
+Thumbs.db
+desktop.ini

@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Hữu Duyên</title>
+  <meta name="description" content="Hữu Duyên — Tarot, chiêm tinh, tử vi theo hướng chữa lành. Lướt xuống, bài viết nào đến với bạn, là duyên." />
+  <meta name="theme-color" content="#f6f1e9" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#14121a" media="(prefers-color-scheme: dark)" />
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <script>
+    // Áp theme đã chọn trước khi vẽ trang để tránh nháy màu
+    try { var t = localStorage.getItem('huuduyen:theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+  </script>
+</head>
+<body>
+  <a class="skip" href="#view" data-skip>Bỏ qua tới nội dung</a>
+
+  <div class="app">
+    <!-- Thanh bên (máy tính) -->
+    <aside class="sidebar" aria-label="Điều hướng chính">
+      <a class="brand" href="#/">
+        <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><circle cx="12.5" cy="16" r="7"/><circle cx="19.5" cy="16" r="7"/></svg>
+        <span>Hữu Duyên</span>
+      </a>
+      <nav class="side-nav">
+        <a href="#/" data-nav="/"><svg viewBox="0 0 24 24"><use href="#i-waves"/></svg>Lướt duyên</a>
+        <a href="#/tim" data-nav="/tim"><svg viewBox="0 0 24 24"><use href="#i-search"/></svg>Tìm kiếm</a>
+        <p class="nav-label">Tra cứu</p>
+        <a href="#/tarot" data-nav="/tarot"><svg viewBox="0 0 24 24"><use href="#i-card"/></svg>Tarot</a>
+        <a href="#/chiem-tinh" data-nav="/chiem-tinh"><svg viewBox="0 0 24 24"><use href="#i-star"/></svg>Chiêm tinh</a>
+        <a href="#/tu-vi" data-nav="/tu-vi"><svg viewBox="0 0 24 24"><use href="#i-yinyang"/></svg>Tử vi</a>
+        <a href="#/ban-menh" data-nav="/ban-menh"><svg viewBox="0 0 24 24"><use href="#i-user"/></svg>Bản mệnh của tôi</a>
+        <p class="nav-label">Của bạn</p>
+        <a href="#/gieo" data-nav="/gieo"><svg viewBox="0 0 24 24"><use href="#i-plus"/></svg>Gieo duyên</a>
+        <a href="#/tu" data-nav="/tu"><svg viewBox="0 0 24 24"><use href="#i-bookmark"/></svg>Tủ của tôi</a>
+        <a href="#/ve" data-nav="/ve"><svg viewBox="0 0 24 24"><use href="#i-info"/></svg>Về Hữu Duyên</a>
+      </nav>
+      <a class="today-widget" href="#/tarot" id="today-widget"></a>
+      <div class="side-foot">
+        <button class="theme-toggle" type="button" data-action="theme" aria-label="Đổi giao diện sáng tối">
+          <svg viewBox="0 0 24 24"><use href="#i-moon"/></svg><span>Sáng / Tối</span>
+        </button>
+        <a href="#/ve#ho-tro" class="help-link">Cần giúp đỡ ngay?</a>
+      </div>
+    </aside>
+
+    <!-- Thanh trên (điện thoại) -->
+    <header class="topbar">
+      <a class="brand" href="#/">
+        <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><circle cx="12.5" cy="16" r="7"/><circle cx="19.5" cy="16" r="7"/></svg>
+        <span>Hữu Duyên</span>
+      </a>
+      <div class="topbar-actions">
+        <a class="icon-btn" href="#/tim" aria-label="Tìm kiếm"><svg viewBox="0 0 24 24"><use href="#i-search"/></svg></a>
+        <button class="icon-btn" type="button" data-action="theme" aria-label="Đổi giao diện sáng tối"><svg viewBox="0 0 24 24"><use href="#i-moon"/></svg></button>
+        <a class="icon-btn" href="#/ve" aria-label="Về Hữu Duyên"><svg viewBox="0 0 24 24"><use href="#i-info"/></svg></a>
+      </div>
+    </header>
+
+    <main id="view" tabindex="-1"></main>
+
+    <!-- Thanh dưới (điện thoại) -->
+    <nav class="tabbar" aria-label="Điều hướng">
+      <a href="#/" data-nav="/"><svg viewBox="0 0 24 24"><use href="#i-waves"/></svg><span>Lướt</span></a>
+      <a href="#/tarot" data-nav="/tarot"><svg viewBox="0 0 24 24"><use href="#i-card"/></svg><span>Tarot</span></a>
+      <a href="#/gieo" data-nav="/gieo" class="tab-seed"><svg viewBox="0 0 24 24"><use href="#i-plus"/></svg><span>Gieo</span></a>
+      <a href="#/ban-menh" data-nav="/ban-menh"><svg viewBox="0 0 24 24"><use href="#i-star"/></svg><span>Bản mệnh</span></a>
+      <a href="#/tu" data-nav="/tu"><svg viewBox="0 0 24 24"><use href="#i-bookmark"/></svg><span>Tủ</span></a>
+    </nav>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <div id="modal-root"></div>
+
+  <!-- Bộ biểu tượng -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="i-waves" viewBox="0 0 24 24"><path d="M3 8c3-3 6 3 9 0s6 3 9 0M3 16c3-3 6 3 9 0s6 3 9 0"/></symbol>
+      <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+      <symbol id="i-card" viewBox="0 0 24 24"><rect x="6" y="3" width="12" height="18" rx="2"/><path d="M12 8.5l1.8 3.5-1.8 3.5-1.8-3.5z"/></symbol>
+      <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M12 8l1.2 2.8L16 12l-2.8 1.2L12 16l-1.2-2.8L8 12l2.8-1.2z"/></symbol>
+      <symbol id="i-yinyang" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3a4.5 4.5 0 0 1 0 9 4.5 4.5 0 0 0 0 9"/><circle cx="12" cy="7.5" r=".6"/><circle cx="12" cy="16.5" r=".6"/></symbol>
+      <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></symbol>
+      <symbol id="i-bookmark" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4-6 4z"/></symbol>
+      <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 7.5 2.6C19.5 15.4 12 20 12 20z"/></symbol>
+      <symbol id="i-share" viewBox="0 0 24 24"><path d="M4 13v6h16v-6M12 3v12M7 8l5-5 5 5"/></symbol>
+      <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+      <symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+      <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></symbol>
+      <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></symbol>
+      <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></symbol>
+      <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+      <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a1 1 0 0 1-1 1A16 16 0 0 1 4 5a1 1 0 0 1 1-1z"/></symbol>
+      <symbol id="i-shuffle" viewBox="0 0 24 24"><path d="M3 7h4l10 10h4M3 17h4l3-3M14 10l3-3h4M18 4l3 3-3 3M18 14l3 3-3 3"/></symbol>
+    </defs>
+  </svg>
+
+  <script type="module" src="assets/js/main.js"></script>
+</body>
+</html>
