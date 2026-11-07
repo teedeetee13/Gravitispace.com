@@ -1,0 +1,14 @@
+{
+  "name": "Hữu Duyên",
+  "short_name": "Hữu Duyên",
+  "description": "Tarot, chiêm tinh, tử vi theo hướng chữa lành.",
+  "lang": "vi",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f6f1e9",
+  "theme_color": "#6b4c9a",
+  "icons": [
+    { "src": "assets/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

@@ -1,0 +1,37 @@
+# Phát hành bản bàn giao: gắn thẻ phiên bản rồi đẩy lên, ví dụ
+#   git tag v2.2.0 && git push origin v2.2.0
+# → kiểm thử → đóng gói → tạo GitHub Release kèm huu-duyen-<phiên bản>.zip và mã SHA-256 để đối chiếu.
+name: Phát hành bản bàn giao
+
+on:
+  push:
+    tags: ['v*.*.*']
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write # để tạo Release
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Thẻ phải khớp phiên bản trong package.json
+        run: |
+          v="$(node -p "require('./package.json').version")"
+          test "v$v" = "$GITHUB_REF_NAME" || { echo "Thẻ $GITHUB_REF_NAME khác package.json v$v"; exit 1; }
+      - run: npm test
+      - run: npm run package
+      - name: Tạo GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" release/*.zip release/*.sha256 \
+            --repo "$GITHUB_REPOSITORY" --title "Hữu Duyên $GITHUB_REF_NAME" --generate-notes --verify-tag

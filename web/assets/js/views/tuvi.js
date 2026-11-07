@@ -1,115 +1,123 @@
-// Tử vi: tra Can Chi + mệnh theo năm sinh âm lịch, 12 con giáp, ngũ hành
+// Tử vi: tra Can Chi + mệnh theo năm sinh âm lịch, 12 con giáp, ngũ hành, lối vào Lá số Tử Vi
 import { $, esc, icon } from '../util.js';
+import { t } from '../i18n.js';
 import { store } from '../store.js';
 import { CHI, HANH, chiById, yearInfo } from '../data/tuvi.js';
+import * as C from '../content.js';
 import { backLink, postCard } from '../ui.js';
 
 const chiTile = (c) => `<a class="chi-tile" href="#/tu-vi/${c.id}" style="--c:${HANH[c.hanh].color}">
-  <span class="chi-name">${esc(c.name)}</span><span>${esc(c.animal)}</span><span class="muted small">Hành ${esc(c.hanh)}</span>
+  <span class="chi-name">${esc(C.ganzhi(c.name))}</span><span>${esc(C.chi(c).animal)}</span><span class="muted small">${t('tuvi.hanhOf', { h: esc(C.hanhName(c.hanh)) })}</span>
 </a>`;
 
 export function yearCard(info) {
-  const h = HANH[info.hanh];
-  return `<div class="year-card" style="--c:${h.color}">
+  const h = C.hanh(info.hanh, HANH[info.hanh]);
+  const na = C.napAm(info.napAm, info.meaning);
+  const chi = C.chi(info.chi);
+  const hn = (x) => esc(C.hanhName(x));
+  return `<div class="year-card" style="--c:${HANH[info.hanh].color}">
     <div class="year-head">
-      <div><p class="eyebrow">Năm ${info.year} âm lịch</p><h3>${esc(info.canChi)}</h3><p>Tuổi ${esc(info.chi.name)} · con ${esc(info.chi.animal)}</p></div>
-      <div class="hanh-badge">${esc(info.hanh)}</div>
+      <div><p class="eyebrow">${t('tuvi.lunarYear', { y: info.year })}</p><h3>${esc(C.ganzhi(info.canChi))}</h3><p>${t('tuvi.ageOf', { name: esc(C.ganzhi(chi.name)), animal: esc(chi.animal) })}</p></div>
+      <div class="hanh-badge">${esc(h.name)}</div>
     </div>
     <dl class="kv">
-      <div><dt>Mệnh nạp âm</dt><dd><strong>${esc(info.napAm)}</strong> · ${esc(info.meaning)}</dd></div>
-      <div><dt>Tính chất hành ${esc(info.hanh)}</dt><dd>${esc(h.trait)}</dd></div>
-      <div><dt>Màu hợp</dt><dd>${esc(h.tone)}, và màu của hành ${esc(h.support)} (hành sinh ra ${esc(info.hanh)})</dd></div>
-      <div><dt>Ngũ hành</dt><dd>${esc(h.support)} sinh ${esc(info.hanh)} · ${esc(info.hanh)} sinh ${esc(h.sinh)} · ${esc(info.hanh)} khắc ${esc(h.khac)}</dd></div>
-      <div><dt>Tam hợp</dt><dd>${info.hop.map((c) => `<a href="#/tu-vi/${c.id}">${esc(c.name)}</a>`).join(', ')}</dd></div>
-      <div><dt>Tứ hành xung</dt><dd>${info.xung.map((c) => `<a href="#/tu-vi/${c.id}">${esc(c.name)}</a>`).join(', ')}</dd></div>
+      <div><dt>${t('tuvi.napAm')}</dt><dd><strong>${esc(na.name)}</strong> · ${esc(na.meaning)}</dd></div>
+      <div><dt>${t('tuvi.hanhNature', { h: esc(h.name) })}</dt><dd>${esc(h.trait)}</dd></div>
+      <div><dt>${t('tuvi.colors')}</dt><dd>${t('tuvi.colorsText', { tone: esc(h.tone), support: hn(HANH[info.hanh].support), h: esc(h.name) })}</dd></div>
+      <div><dt>${t('tuvi.cycle')}</dt><dd>${t('tuvi.cycleText', { s: hn(HANH[info.hanh].support), h: esc(h.name), sinh: hn(HANH[info.hanh].sinh), khac: hn(HANH[info.hanh].khac) })}</dd></div>
+      <div><dt>${t('tuvi.tamHop')}</dt><dd>${info.hop.map((c) => `<a href="#/tu-vi/${c.id}">${esc(C.ganzhi(c.name))}</a>`).join(', ')}</dd></div>
+      <div><dt>${t('tuvi.tuXung')}</dt><dd>${info.xung.map((c) => `<a href="#/tu-vi/${c.id}">${esc(C.ganzhi(c.name))}</a>`).join(', ')}</dd></div>
     </dl>
-    <div class="heal-note"><p class="eyebrow">Lời chữa lành cho tuổi ${esc(info.chi.name)}</p><p>${esc(info.chi.heal)}</p></div>
+    <div class="heal-note"><p class="eyebrow">${t('tuvi.healFor', { name: esc(C.ganzhi(chi.name)) })}</p><p>${esc(chi.heal)}</p></div>
   </div>`;
 }
 
 export function renderTuvi(view) {
   view.innerHTML = `<div class="page">
     <header class="page-head">
-      <p class="eyebrow">Tử vi phương Đông</p>
-      <h1>Can Chi, con giáp và mệnh của bạn.</h1>
-      <p class="lead">Người xưa dùng hình ảnh thiên nhiên để nói về tính cách: vàng trong cát, lửa ngọn đèn, nước khe lớn. Hãy đọc như đọc một bài thơ.</p>
+      <p class="eyebrow">${t('tuvi.eyebrow')}</p>
+      <h1>${t('tuvi.title')}</h1>
+      <p class="lead">${t('tuvi.lead')}</p>
     </header>
 
+    <a class="feature-card" href="#/tu-vi/la-so">
+      <span class="sign-glyph">${icon('yinyang')}</span>
+      <div><p class="eyebrow">${t('tuvi.lasoEyebrow')}</p><h2>${t('laso.title')}</h2><p>${t('tuvi.lasoDesc')}</p></div>${icon('arrow')}
+    </a>
+
     <form class="lookup" data-year-form>
-      <label class="field"><span>Năm sinh âm lịch</span><input type="number" name="y" min="1900" max="2100" required inputmode="numeric" placeholder="1998" /></label>
-      <button class="btn" type="submit">${icon('search')} Xem tuổi và mệnh</button>
-      <p class="muted small field-hint">Nếu bạn sinh vào tháng 1 hoặc đầu tháng 2 dương lịch, trước Tết Nguyên Đán, hãy nhập năm trước đó.</p>
+      <label class="field"><span>${t('tuvi.yearInput')}</span><input type="number" name="y" min="1900" max="2100" required inputmode="numeric" placeholder="1998" /></label>
+      <button class="btn" type="submit">${icon('search')} ${t('tuvi.lookup')}</button>
+      <p class="muted small field-hint">${t('tuvi.tetHint')}</p>
     </form>
     <div id="year-result" aria-live="polite"></div>
 
     <section class="section">
-      <h2 class="section-title">12 con giáp</h2>
+      <h2 class="section-title">${t('tuvi.twelve')}</h2>
       <div class="chi-grid">${CHI.map(chiTile).join('')}</div>
     </section>
 
     <section class="section">
-      <h2 class="section-title">Ngũ hành tương sinh</h2>
+      <h2 class="section-title">${t('tuvi.wuxing')}</h2>
       <div class="cycle">${['Kim', 'Thủy', 'Mộc', 'Hỏa', 'Thổ']
-        .map((k) => `<div class="cycle-item" style="--c:${HANH[k].color}"><strong>${k}</strong><span class="small">${esc(HANH[k].trait)}</span></div>`)
-        .join(`<span class="cycle-arrow" aria-label="sinh">${icon('arrow')}</span>`)}</div>
-      <p class="muted small">Kim sinh Thủy, Thủy sinh Mộc, Mộc sinh Hỏa, Hỏa sinh Thổ, Thổ sinh Kim. Tương khắc: Kim khắc Mộc, Mộc khắc Thổ, Thổ khắc Thủy, Thủy khắc Hỏa, Hỏa khắc Kim.</p>
+        .map((k) => { const h = C.hanh(k, HANH[k]); return `<div class="cycle-item" style="--c:${HANH[k].color}"><strong>${esc(h.name)}</strong><span class="small">${esc(h.trait)}</span></div>`; })
+        .join(`<span class="cycle-arrow" aria-label="${esc(t('tuvi.generates'))}">${icon('arrow')}</span>`)}</div>
+      <p class="muted small">${t('tuvi.wuxingText')}</p>
     </section>
-
-    <div class="note-box">Lá số Tử Vi Đẩu Số đầy đủ (theo giờ, ngày, tháng, năm sinh) sẽ có trong phiên bản sau.</div>
   </div>`;
 
   $('[data-year-form]', view).addEventListener('submit', (e) => {
     e.preventDefault();
     const y = Number(new FormData(e.target).get('y'));
-    $('#year-result', view).innerHTML = y >= 1900 && y <= 2100 ? yearCard(yearInfo(y)) : `<p class="muted">Năm sinh chưa hợp lệ.</p>`;
+    $('#year-result', view).innerHTML = y >= 1900 && y <= 2100 ? yearCard(yearInfo(y)) : `<p class="muted">${t('tuvi.badYear')}</p>`;
   });
 }
 
 export function renderChi(view, id) {
-  const c = chiById[id];
-  if (!c) return false;
+  const raw = chiById[id];
+  if (!raw) return false;
+  const c = C.chi(raw);
   const now = new Date().getFullYear();
-  // Các năm gần đây ứng với con giáp này
   let first = now - 84;
-  while (yearInfo(first).chiIndex !== c.index) first++;
+  while (yearInfo(first).chiIndex !== raw.index) first++;
   const years = [];
   for (let y = first; y <= now + 12; y += 12) years.push(yearInfo(y));
   const related = store.allPosts().filter((p) => p.refs?.includes(id));
-  const prev = CHI[(c.index + 11) % 12];
-  const next = CHI[(c.index + 1) % 12];
+  const prev = CHI[(raw.index + 11) % 12];
+  const next = CHI[(raw.index + 1) % 12];
 
   view.innerHTML = `<div class="page">
-    ${backLink('#/tu-vi', 'Tử vi')}
+    ${backLink('#/tu-vi', t('nav.tuvi'))}
     <div class="detail">
-      <div class="detail-visual"><div class="chi-hero" style="--c:${HANH[c.hanh].color}"><span>${esc(c.name)}</span><small>${esc(c.animal)}</small></div></div>
+      <div class="detail-visual"><div class="chi-hero" style="--c:${HANH[raw.hanh].color}"><span>${esc(raw.name)}</span><small>${esc(c.animal)}</small></div></div>
       <div class="detail-body">
-        <p class="eyebrow">Địa chi thứ ${c.index + 1} · hành ${esc(c.hanh)}</p>
-        <h1>Tuổi ${esc(c.name)}</h1>
+        <p class="eyebrow">${t('tuvi.branchN', { n: raw.index + 1, h: esc(C.hanhName(raw.hanh)) })}</p>
+        <h1>${t('tuvi.ageTitle', { name: esc(raw.name) })}</h1>
         <p class="kw">${esc(c.traits)}</p>
-        <h2 class="h-sm">Điều cần để ý</h2><p>${esc(c.shadow)}</p>
-        <div class="heal-note"><p class="eyebrow">Lời chữa lành</p><p>${esc(c.heal)}</p></div>
-        <div class="row"><a class="btn" href="#/gieo?chu-de=tu-vi&ref=${c.id}">${icon('plus')} Viết về tuổi ${esc(c.name)}</a></div>
+        <h2 class="h-sm">${t('tuvi.notice')}</h2><p>${esc(c.shadow)}</p>
+        <div class="heal-note"><p class="eyebrow">${t('common.healing')}</p><p>${esc(c.heal)}</p></div>
+        <div class="row"><a class="btn" href="#/gieo?chu-de=tu-vi&ref=${raw.id}">${icon('plus')} ${t('tuvi.writeAbout', { name: esc(raw.name) })}</a></div>
       </div>
     </div>
 
     <section class="section">
-      <h2 class="section-title">Các năm tuổi ${esc(c.name)}</h2>
+      <h2 class="section-title">${t('tuvi.yearsOf', { name: esc(raw.name) })}</h2>
       <div class="table-wrap"><table class="table">
-        <thead><tr><th>Năm</th><th>Can Chi</th><th>Mệnh nạp âm</th><th>Hành</th></tr></thead>
+        <thead><tr><th>${t('tuvi.thYear')}</th><th>${t('tuvi.thCanChi')}</th><th>${t('tuvi.napAm')}</th><th>${t('tuvi.thHanh')}</th></tr></thead>
         <tbody>${years
-          .map((y) => `<tr${y.year === now ? ' class="is-now"' : ''}><td>${y.year}</td><td>${esc(y.canChi)}</td><td>${esc(y.napAm)} <span class="muted">· ${esc(y.meaning)}</span></td><td>${esc(y.hanh)}</td></tr>`)
+          .map((y) => { const na = C.napAm(y.napAm, y.meaning); return `<tr${y.year === now ? ' class="is-now"' : ''}><td>${y.year}</td><td>${esc(C.ganzhi(y.canChi))}</td><td>${esc(na.name)} <span class="muted">· ${esc(na.meaning)}</span></td><td>${esc(C.hanhName(y.hanh))}</td></tr>`; })
           .join('')}</tbody>
       </table></div>
     </section>
 
-    <nav class="pager">
-      <a href="#/tu-vi/${prev.id}">${icon('back')} Tuổi ${esc(prev.name)}</a>
-      <a href="#/tu-vi/${next.id}">Tuổi ${esc(next.name)} ${icon('arrow')}</a>
+    <nav class="pager" aria-label="${esc(t('common.pager'))}">
+      <a href="#/tu-vi/${prev.id}">${icon('back')} ${t('tuvi.ageTitle', { name: esc(prev.name) })}</a>
+      <a href="#/tu-vi/${next.id}">${t('tuvi.ageTitle', { name: esc(next.name) })} ${icon('arrow')}</a>
     </nav>
 
     <section class="section">
-      <h2 class="section-title">Bài viết liên quan</h2>
-      ${related.length ? `<div class="post-grid">${related.map(postCard).join('')}</div>` : `<p class="muted">Chưa có bài viết nào về tuổi ${esc(c.name)}.</p>`}
+      <h2 class="section-title">${t('common.relatedPosts')}</h2>
+      ${related.length ? `<div class="post-grid">${related.map(postCard).join('')}</div>` : `<p class="muted">${t('common.beFirst')}</p>`}
     </section>
   </div>`;
   return true;

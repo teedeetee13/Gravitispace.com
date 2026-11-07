@@ -164,4 +164,13 @@ export const SPREADS = [
   { id: 'ba-la', name: 'Quá khứ · Hiện tại · Tương lai', positions: ['Điều đã qua', 'Điều đang là', 'Điều có thể tới'] },
   { id: 'chua-lanh', name: 'Trải bài chữa lành', positions: ['Điều đang làm bạn đau', 'Điều bạn cần buông', 'Điều nuôi dưỡng bạn'] },
   { id: 'lua-chon', name: 'Hai ngả đường', positions: ['Nếu chọn A', 'Nếu chọn B', 'Điều trái tim bạn biết'] },
+  // Trải bài Celtic Cross — kiểu trải kinh điển trong "The Pictorial Key to the Tarot" (A. E. Waite, 1910)
+  {
+    id: 'celtic-cross',
+    name: 'Thập tự Celtic (10 lá)',
+    positions: [
+      'Hiện tại của bạn', 'Điều đang thử thách', 'Nền tảng sâu xa', 'Điều vừa đi qua', 'Điều bạn hướng tới',
+      'Điều sắp đến gần', 'Cách bạn nhìn mình', 'Môi trường quanh bạn', 'Hy vọng và nỗi sợ', 'Hướng năng lượng đang mở ra',
+    ],
+  },
 ];

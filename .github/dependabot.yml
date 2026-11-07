@@ -1,0 +1,10 @@
+# Tự đề xuất cập nhật phiên bản các GitHub Action (vá lỗi bảo mật của chính công cụ CI).
+# Web không có thư viện npm nên không cần theo dõi npm.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: ci

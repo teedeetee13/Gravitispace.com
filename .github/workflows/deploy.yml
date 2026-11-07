@@ -1,31 +1,71 @@
-# Mỗi lần đẩy code lên nhánh main, GitHub tự đăng thư mục web/ lên GitHub Pages (miễn phí).
-name: Đăng website lên GitHub Pages
+# Quy trình CI/CD chính.
+#  - Pull request: kiểm thử + đóng gói thử (không đăng).
+#  - Đẩy lên main: kiểm thử → đóng gói dist/ → đăng GitHub Pages. Bước nào lỗi thì dừng, web đang chạy giữ nguyên.
+# Không có thư viện ngoài nên không cần npm install. Chỉ dùng action chính chủ của GitHub (actions/*).
+name: Kiểm thử, đóng gói và đăng website
 
 on:
   push:
     branches: [main]
+  pull_request:
   workflow_dispatch:
 
+# Quyền tối thiểu mặc định: chỉ đọc mã. Job đăng web xin thêm quyền riêng của nó.
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
-  group: pages
+  group: pages-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  deploy:
+  test:
+    name: Kiểm thử (Node ${{ matrix.node }})
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        node: [20, 22]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm test
+
+  build:
+    name: Đóng gói
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      # Chép web/ → dist/, đóng dấu phiên bản + commit, kiểm tra đường dẫn hỏng, ngân sách dung lượng
+      - run: npm run build
+      - uses: actions/upload-pages-artifact@v3
+        if: github.event_name != 'pull_request'
+        with:
+          path: dist
+
+  deploy:
+    name: Đăng GitHub Pages
+    needs: build
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: web
       - id: deployment
         uses: actions/deploy-pages@v4

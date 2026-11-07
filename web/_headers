@@ -1,0 +1,17 @@
+# Tiêu đề bảo mật HTTP — dùng khi đăng trên Netlify hoặc Cloudflare Pages (đọc tệp này tự động).
+# GitHub Pages KHÔNG hỗ trợ tiêu đề tuỳ chỉnh: ở đó CSP nằm trong thẻ <meta> của index.html,
+# còn chống nhúng khung (clickjacking) do assets/js/boot.js đảm nhận.
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://*.supabase.co; manifest-src 'self'; worker-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; frame-ancestors 'none'; upgrade-insecure-requests
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()
+  Cross-Origin-Opener-Policy: same-origin
+
+/sw.js
+  Cache-Control: no-cache
+
+/index.html
+  Cache-Control: no-cache
