@@ -404,6 +404,8 @@ export default {
   'laso.tieuHanText': '{y} 年小限行經此宮：這一年的能量常匯聚在此宮所談的領域。',
   'laso.sinhKhacHow': '看法：五行局屬{cuc}（取命宮納音），命屬{menh}（取生年納音），再依五行生剋比較。',
   'laso.chuText': '命主（依命宮地支）：{mc}。身主（依生年地支）：{tc}。',
+  'laso.laiNhan': '來因宮',
+  'laso.chuAlt': '部分越南書籍與排盤網站改依生年地支定命主，結果為{s}。',
   'nav.account': '帳號',
   'account.title': '珍惜的東西，走到哪裡都帶著。',
   'account.titleIn': '你的帳號',

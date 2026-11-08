@@ -15,6 +15,8 @@ Theo [Semantic Versioning](https://semver.org/lang/vi/). Phát hành bằng th�
 - `npm run build`, `npm run package`, `npm run verify`, `npm run i18n:missing`.
 - `SECURITY.md`, sổ tay `docs/SO-TAY.md`, `web/_headers`, kiểm thử bảo mật tĩnh (`tests/security.test.mjs`).
 
+- **Lá số Tử Vi:** ô cung theo bố cục phổ biến (chính tinh trên cùng; phụ tinh tốt bên trái, xấu bên phải); hiện đủ vòng Bác Sĩ, Thái Tuế ngay trong ô; thêm 10 sao (Thiên Quan, Thiên Phúc, Thiên Trù, Văn Tinh, Quốc Ấn, Đường Phù, Thiên Giải, Địa Giải, Thiên Không, Đẩu Quân) và Lai nhân cung; đối chiếu khớp toàn bộ với tuvi.vn.
+
 ### Sửa
 - CSDL chỉ nhận bài tiếng Việt/Anh → nhận đủ 8 ngôn ngữ (`posts_lang_check`). **Cần chạy lại `supabase/schema.sql`.**
 - Câu luận giải bản đồ sao tiếng Anh bị lặp "Your your …".

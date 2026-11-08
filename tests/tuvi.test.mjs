@@ -1,7 +1,7 @@
 // Kiểm thử an sao Tử Vi: đối chiếu với các bảng quy tắc trong sách truyền thống.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { buildChart, napAmHanh, MAIN_STARS } from '../web/assets/js/lib/tuvi-chart.js';
+import { buildChart, napAmHanh, MAIN_STARS, TRANG_SINH } from '../web/assets/js/lib/tuvi-chart.js';
 import { STARS, PALACE_INFO, DAI_HAN_THEME } from '../web/assets/js/data/tuvi-stars.js';
 
 const find = (chart, id) => chart.palaces.find((p) => p.stars.some((s) => s.id === id)).chi;
@@ -118,4 +118,31 @@ test('Chạy ổn định cho mọi ngày trong 100 năm (không lỗi, 12 cung,
       assert.equal(c.palaces.flatMap((p) => p.stars).filter((s) => s.kind === 'main').length, 14);
     }
   }
+});
+
+// Đối chiếu trọn một lá số với tuvi.vn (nam, 13/12/2004 18:10 → 2/11 Giáp Thân, giờ Dậu): mọi sao (trừ vòng Tràng Sinh) phải trùng cung
+test('Đối chiếu đủ sao với lá số tham khảo (tuvi.vn, nam 13/12/2004 18:10)', () => {
+  const c = buildChart({ day: 13, month: 12, year: 2004, hour: 18, minute: 10, gender: 'nam', viewYear: 2026 });
+  const expected = {
+    5: 'thien-co dia-giai thien-tru van-tinh thien-duc phuc-duc-tt thien-tho kiep-sat tieu-hao',
+    6: 'tu-vi thien-giai dieu-khach tuong-quan',
+    7: 'thien-viet thien-quan duong-phu hong-loan tau-thu thien-hinh qua-tu truc-phu dau-quan',
+    8: 'pha-quan dia-kiep thai-tue phi-liem thien-thuong',
+    9: 'thien-phuc dao-hoa thieu-duong hy-than luu-ha pha-toai thien-khong',
+    10: 'liem-trinh thien-phu quoc-an thien-khoc tang-mon benh-phu dia-vong thien-su',
+    11: 'thai-am phong-cao thien-y thieu-am bat-toa thien-tai hoa-tinh thien-rieu co-than dai-hao',
+    0: 'tham-lang huu-bat long-tri quan-phu-tt phuc-binh',
+    1: 'thien-dong cu-mon van-xuong van-khuc thien-khoi thien-hy nguyet-duc an-quang thien-quy linh-tinh da-la tu-phu quan-phu',
+    2: 'vu-khuc thien-tuong ta-phu loc-ton thien-ma giai-than phuong-cac bac-si dia-khong thien-hu tue-pha',
+    3: 'thai-duong thien-luong thai-phu long-duc luc-si tam-thai kinh-duong',
+    4: 'that-sat hoa-cai thanh-long bach-ho thien-la',
+  };
+  for (const [chi, ids] of Object.entries(expected)) {
+    const got = c.palaces[chi].stars.filter((s) => !TRANG_SINH.includes(s.id)).map((s) => s.id).sort();
+    assert.deepEqual(got, ids.split(' ').sort(), `cung ${chi}`);
+  }
+  assert.deepEqual([c.menh, c.than, c.cuc, c.laiNhan], [3, 9, 6, 10]); // Mệnh Mão, Thân Dậu, Hỏa lục cục, Lai nhân Tuất
+  assert.equal(c.menhChuNam, 'liem-trinh');
+  assert.deepEqual(c.palaces.filter((p) => p.tuan).map((p) => p.chi), [6, 7]);
+  assert.deepEqual(c.palaces.filter((p) => p.triet).map((p) => p.chi), [8, 9]);
 });

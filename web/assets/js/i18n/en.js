@@ -401,6 +401,8 @@ export default {
   'laso.tieuHanText': 'The minor period of {y} passes through this palace: the year\'s energy tends to gather in this area of life.',
   'laso.sinhKhacHow': 'How it is read: the Bureau element is {cuc} (from the nạp âm of the Self palace), the Life element is {menh} (from the nạp âm of the birth year), then compared through the five-element cycles.',
   'laso.chuText': 'Life lord (from the Self palace branch): {mc}. Body lord (from the birth-year branch): {tc}.',
+  'laso.laiNhan': 'Origin palace (Lai nhân)',
+  'laso.chuAlt': 'Some Vietnamese books and chart sites take the Life lord from the birth-year branch instead, which gives {s}.',
   'nav.account': 'Account',
   'account.title': 'Keep what you treasure, everywhere.',
   'account.titleIn': 'Your account',

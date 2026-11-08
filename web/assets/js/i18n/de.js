@@ -404,6 +404,8 @@ export default {
   'laso.tieuHanText': "Die kleine Periode von {y} läuft durch diesen Palast: Die Energie des Jahres sammelt sich oft in diesem Lebensbereich.",
   'laso.sinhKhacHow': "So wird gelesen: Das Element des Amtes ist {cuc} (aus dem Nạp âm des Selbst-Palastes), das Lebenselement ist {menh} (aus dem Nạp âm des Geburtsjahres); dann werden beide über die Kreisläufe der fünf Elemente verglichen.",
   'laso.chuText': "Herr des Lebens (nach dem Zweig des Selbst-Palastes): {mc}. Herr des Körpers (nach dem Zweig des Geburtsjahres): {tc}.",
+  'laso.laiNhan': "Ursprungspalast (Lai nhân)",
+  'laso.chuAlt': "Manche vietnamesischen Bücher und Horoskop-Seiten bestimmen den Herrn des Lebens nach dem Zweig des Geburtsjahres; dann ist es {s}.",
   'nav.account': "Konto",
   'account.title': "Bewahre, was dir lieb ist – überall.",
   'account.titleIn': "Dein Konto",

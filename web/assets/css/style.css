@@ -525,7 +525,10 @@ button.flip-slot:hover .tcard-face { transform: translateY(-4px); }
 .p-head { display: flex; justify-content: space-between; gap: 4px; font-weight: 700; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.03em; color: var(--accent); }
 .p-chi { color: var(--muted); font-weight: 600; }
 .p-main { display: flex; flex-direction: column; font-family: var(--font-serif); font-weight: 600; font-size: 0.86rem; color: var(--ink); }
-.p-minor { display: flex; flex-wrap: wrap; gap: 0 6px; color: var(--muted); font-size: 0.66rem; }
+.p-minor { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0 6px; align-items: start; color: var(--muted); font-size: 0.66rem; line-height: 1.45; }
+.p-col { display: flex; flex-direction: column; min-width: 0; }
+.p-col > span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.45; }
+.p-col .bright, .p-col .hoa { vertical-align: top; line-height: 1; font-size: 0.56rem; }
 .p-minor .good { color: color-mix(in oklab, #5f9a6a 80%, var(--ink)); }
 .p-minor .hard { color: color-mix(in oklab, var(--danger) 70%, var(--muted)); }
 .p-foot { margin-top: auto; display: flex; gap: 4px; align-items: center; color: var(--muted); font-size: 0.66rem; }
@@ -561,6 +564,7 @@ button.flip-slot:hover .tcard-face { transform: translateY(-4px); }
   .laso-center dd { text-align: left; }
   .laso-center dl { gap: 3px; }
 }
+@media (min-width: 521px) and (max-width: 759px) { .p-minor { font-size: 0.6rem; gap: 0 4px; } }
 @media (min-width: 760px) { .palace { min-height: 150px; font-size: 0.78rem; padding: 8px; } .p-main { font-size: 0.95rem; } .laso-center { font-size: 0.86rem; padding: 16px 20px; } }
 
 .palace-panel { padding: 18px 20px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--line); }

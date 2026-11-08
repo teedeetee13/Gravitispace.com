@@ -23,7 +23,7 @@ Tên gọi: "an" là bình an, nhẹ lòng. "An sao" cũng là bước xếp sao
 | Công nghệ | HTML, CSS, JavaScript thuần (ES Modules). Không framework, không thư viện npm |
 | Lưu dữ liệu | Mặc định lưu trên trình duyệt (`localStorage`). Có thể bật thêm tài khoản Supabase (Postgres, Auth, RLS) |
 | Máy chủ | Bất kỳ máy chủ web tĩnh nào: Netlify, GitHub Pages, Cloudflare Pages… |
-| Kiểm thử | 92 ca bằng `node:test` có sẵn trong Node 20 trở lên |
+| Kiểm thử | 93 ca bằng `node:test` có sẵn trong Node 20 trở lên |
 
 ### Các trang
 
@@ -94,7 +94,7 @@ Số đo lấy từ `npm run build` của bản 2.2.0.
 ### Bước 0. Đóng gói
 
 ```bash
-npm test          # 92 ca phải đạt
+npm test          # 93 ca phải đạt
 npm run build     # tạo thư mục dist/ để đăng web
 ```
 

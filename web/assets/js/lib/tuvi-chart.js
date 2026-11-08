@@ -58,10 +58,17 @@ const HOA_CAI = [4, 10, 1, 7];
 const KIEP_SAT = [5, 11, 2, 8];
 const PHA_TOAI = [5, 1, 9]; // Chi năm % 3: Tý Ngọ Mão Dậu → Tỵ; Thìn Tuất Sửu Mùi → Sửu; Dần Thân Tỵ Hợi → Dậu
 const LUU_HA = [9, 10, 7, 8, 5, 6, 4, 3, 11, 2]; // theo Can năm
+// Theo Can năm (Giáp → Quý)
+const THIEN_QUAN = [7, 4, 5, 2, 3, 9, 11, 9, 10, 6]; // Mùi Thìn Tỵ Dần Mão Dậu Hợi Dậu Tuất Ngọ
+const THIEN_PHUC = [9, 8, 0, 11, 3, 2, 6, 5, 6, 5]; // Dậu Thân Tý Hợi Mão Dần Ngọ Tỵ Ngọ Tỵ
+const THIEN_TRU = [5, 6, 0, 5, 6, 8, 2, 6, 9, 11]; // Tỵ Ngọ Tý Tỵ Ngọ Thân Dần Ngọ Dậu Hợi
+const VAN_TINH = [5, 6, 8, 9, 8, 9, 11, 0, 2, 3]; // Lưu niên Văn tinh: Tỵ Ngọ Thân Dậu Thân Dậu Hợi Tý Dần Mão
 const TRANG_SINH_START = { 'Thủy': 8, 'Thổ': 8, 'Mộc': 11, 'Kim': 5, 'Hỏa': 2 };
 export const TRANG_SINH = ['trang-sinh', 'moc-duc', 'quan-doi', 'lam-quan', 'de-vuong', 'suy', 'benh', 'tu', 'mo', 'tuyet', 'thai', 'duong'];
 export const BAC_SI = ['bac-si', 'luc-si', 'thanh-long', 'tieu-hao', 'tuong-quan', 'tau-thu', 'phi-liem', 'hy-than', 'benh-phu', 'dai-hao', 'phuc-binh', 'quan-phu'];
 export const THAI_TUE = ['thai-tue', 'thieu-duong', 'tang-mon', 'thieu-am', 'quan-phu-tt', 'tu-phu', 'tue-pha', 'long-duc', 'bach-ho', 'phuc-duc-tt', 'dieu-khach', 'truc-phu'];
+// Sao trong vòng Bác Sĩ, Thái Tuế được xếp vào cột "tốt" khi hiển thị (theo cách trình bày phổ biến của lá số Việt)
+export const RING_GOOD = new Set(['bac-si', 'luc-si', 'thanh-long', 'tau-thu', 'hy-than', 'thieu-duong', 'thieu-am', 'long-duc', 'phuc-duc-tt']);
 // Mệnh chủ theo Chi cung Mệnh; Thân chủ theo Chi năm sinh
 const MENH_CHU = ['tham-lang', 'cu-mon', 'loc-ton', 'van-khuc', 'liem-trinh', 'vu-khuc', 'pha-quan', 'vu-khuc', 'liem-trinh', 'van-khuc', 'loc-ton', 'cu-mon'];
 const THAN_CHU = ['hoa-tinh', 'thien-tuong', 'thien-luong', 'thien-dong', 'van-xuong', 'thien-co', 'hoa-tinh', 'thien-tuong', 'thien-luong', 'thien-dong', 'van-xuong', 'thien-co'];
@@ -181,6 +188,17 @@ export function buildChart({ day, month, year, hour, minute = 0, gender, viewYea
   put('thien-su', menh - 5, 'hard'); // tại cung Tật Ách
   put('thien-tai', menh + yChi, 'good');
   put('thien-tho', than + yChi, 'good');
+  // 6b'. Bổ sung: sao theo Can năm, theo Lộc Tồn, theo tháng, Thiên Không, Đẩu Quân
+  put('thien-quan', THIEN_QUAN[yCan], 'good');
+  put('thien-phuc', THIEN_PHUC[yCan], 'good');
+  put('thien-tru', THIEN_TRU[yCan], 'good');
+  put('van-tinh', VAN_TINH[yCan], 'good');
+  put('quoc-an', locTon + 8, 'good');
+  put('duong-phu', locTon - 7, 'good');
+  put('thien-giai', 8 + (lm - 1), 'good'); // khởi tháng Giêng ở Thân, đếm thuận
+  put('dia-giai', 7 + (lm - 1), 'good'); // khởi tháng Giêng ở Mùi, đếm thuận
+  put('thien-khong', yChi + 1, 'hard'); // trước Thái Tuế một cung
+  put('dau-quan', yChi - (lm - 1) + h, 'hard'); // từ Thái Tuế đếm nghịch đến tháng sinh, rồi thuận đến giờ sinh
 
   // 6c. Ba vòng sao: Tràng Sinh (theo Cục), Lộc Tồn – Bác Sĩ, Thái Tuế (theo Chi năm)
   const tsStart = TRANG_SINH_START[cucHanh];
@@ -228,11 +246,18 @@ export function buildChart({ day, month, year, hour, minute = 0, gender, viewYea
     };
   });
 
+  // Lai nhân cung: cung mang Can trùng Can năm sinh (bỏ qua Tý, Sửu vì trùng Can với Dần, Mão)
+  let laiNhan = 2;
+  while (palaceCan(laiNhan % 12) !== yCan) laiNhan++;
+  laiNhan %= 12;
+
   const yearHanh = napAmHanh(yCan, yChi);
   // Âm dương thuận lý: âm dương của năm sinh trùng âm dương của Chi cung Mệnh (Chi chẵn là Dương)
   const thuanLy = yang === (menh % 2 === 0);
   return {
     menhChu: MENH_CHU[menh],
+    menhChuNam: MENH_CHU[yChi], // cách tính theo Chi năm sinh (nhiều trang lá số Việt dùng)
+    laiNhan,
     thanChu: THAN_CHU[yChi],
     thuanLy,
     tieuHan,

@@ -3,7 +3,7 @@ import { $, $$, esc, icon, toast } from '../util.js';
 import { t, tr, getLang } from '../i18n.js';
 import { store } from '../store.js';
 import { CAN, CHI_NAMES } from '../lib/lunar.js';
-import { buildChart, mainStarsOf, GRID, PALACES, TRANG_SINH } from '../lib/tuvi-chart.js';
+import { buildChart, mainStarsOf, GRID, PALACES, TRANG_SINH, RING_GOOD } from '../lib/tuvi-chart.js';
 import { STARS, PALACE_INFO, DAI_HAN_THEME, CUC_NAMES, RELATION_TEXT, RELATION_LABEL, THUAN_LY_TEXT } from '../data/tuvi-stars.js';
 import { yearInfo } from '../data/tuvi.js';
 import { SCHOOLS, DEFAULT_SCHOOL, GRADES, GRADE_TEXT, gradeBand, brightness } from '../data/tuvi-brightness.js';
@@ -27,7 +27,10 @@ const bTag = (id, chi) => {
 
 function cell(p, chart) {
   const main = p.stars.filter((s) => s.kind === 'main');
-  const minor = p.stars.filter((s) => s.kind === 'good' || s.kind === 'hard');
+  // Bố cục phổ biến: chính tinh trên cùng; phụ tinh tốt cột trái, phụ tinh xấu cột phải, xếp từ trên xuống
+  const side = (s) => (s.kind === 'ring' ? (RING_GOOD.has(s.id) ? 'good' : 'hard') : s.kind);
+  const others = p.stars.filter((s) => s.kind !== 'main' && !TRANG_SINH.includes(s.id));
+  const col = (k) => others.filter((s) => side(s) === k).map((s) => `<span class="${k}">${esc(shortName(s.id))}${bTag(s.id, p.chi)}${hoaTag(s)}</span>`).join('');
   const ts = p.stars.find((s) => TRANG_SINH.includes(s.id));
   const flags = [
     p.isThan ? `<span class="flag">${t('laso.than')}</span>` : '',
@@ -40,7 +43,7 @@ function cell(p, chart) {
   return `<button type="button" class="palace ${p.palace === 'menh' ? 'is-menh' : ''} ${p.isCurrent ? 'is-current' : ''}" data-palace="${p.chi}" aria-label="${esc(label)}">
     <span class="p-head"><span class="p-name">${esc(palaceName(p.palace))}</span><span class="p-chi">${esc(C.ganzhi(CHI_NAMES[p.chi]))}</span></span>
     <span class="p-main">${main.map((s) => `<span>${esc(shortName(s.id))}${bTag(s.id, p.chi)}${hoaTag(s)}</span>`).join('') || `<span class="muted">${t('laso.noMainShort')}</span>`}</span>
-    <span class="p-minor">${minor.map((s) => `<span class="${s.kind}">${esc(shortName(s.id))}${bTag(s.id, p.chi)}${hoaTag(s)}</span>`).join('')}</span>
+    <span class="p-minor"><span class="p-col">${col('good')}</span><span class="p-col">${col('hard')}</span></span>
     <span class="p-foot"><span>${p.daiHan.from}</span>${flags}${ts ? `<span class="p-ts">${esc(shortName(ts.id))}</span>` : ''}</span>
   </button>`;
 }
@@ -63,6 +66,7 @@ function center(chart) {
       <div><dt>${t('laso.sinhKhac')}</dt><dd>${esc(tr(RELATION_LABEL[chart.relation]))}</dd></div>
       <div><dt>${t('laso.menhChu')} · ${t('laso.thanChu')}</dt><dd>${esc(shortName(chart.menhChu))} · ${esc(shortName(chart.thanChu))}</dd></div>
       <div><dt>${t('laso.yinyangOrder')}</dt><dd>${chart.thuanLy ? t('laso.thuanLy') : t('laso.nghichLy')}</dd></div>
+      <div><dt>${t('laso.laiNhan')}</dt><dd>${esc(palaceName(chart.palaces[chart.laiNhan].palace))}</dd></div>
     </dl>
   </div>`;
 }
@@ -150,7 +154,7 @@ function interpretation(chart) {
     <div class="reading-card">
       <h3>${chart.thuanLy ? t('laso.thuanLy') : t('laso.nghichLy')}</h3>
       <p>${esc(tr(THUAN_LY_TEXT[chart.thuanLy]))}</p>
-      <p class="muted small">${t('laso.chuText', { mc: esc(starName(chart.menhChu)), tc: esc(starName(chart.thanChu)) })}</p>
+      <p class="muted small">${t('laso.chuText', { mc: esc(starName(chart.menhChu)), tc: esc(starName(chart.thanChu)) })}${chart.menhChuNam !== chart.menhChu ? ` ${t('laso.chuAlt', { s: esc(starName(chart.menhChuNam)) })}` : ''}</p>
     </div>
     <div class="reading-card">
       <h3>${t('laso.tuHoaTitle', { can: esc(C.ganzhi(CAN[chart.canChi.year.can])) })}</h3>

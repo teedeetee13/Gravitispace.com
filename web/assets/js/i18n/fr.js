@@ -404,6 +404,8 @@ export default {
   'laso.tieuHanText': 'La petite période de {y} passe par ce palais : l\'énergie de l\'année tend à se rassembler dans ce domaine de vie.',
   'laso.sinhKhacHow': 'Comment le lire : l\'élément du Bureau est {cuc} (d\'après le nạp âm du palais du Soi), l\'élément de Vie est {menh} (d\'après le nạp âm de l\'année de naissance), puis on les compare selon les cycles des cinq éléments.',
   'laso.chuText': 'Maître de la Vie (d\'après la branche du palais du Soi) : {mc}. Maître du Corps (d\'après la branche de l\'année de naissance) : {tc}.',
+  'laso.laiNhan': 'Palais d\'origine (Lai nhân)',
+  'laso.chuAlt': 'Certains livres et sites vietnamiens prennent le Maître de la Vie d\'après la branche de l\'année de naissance, ce qui donne {s}.',
   'nav.account': 'Compte',
   'account.title': 'Garde ce qui t\'est précieux, partout.',
   'account.titleIn': 'Ton compte',

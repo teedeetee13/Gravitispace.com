@@ -191,6 +191,29 @@ Bảng tin (sáng, tối), Tìm kiếm, Bài viết, Lá số Tử Vi, Bản đ�
 
 ---
 
+## 12. Lá số Tử Vi: bố cục ô cung và đối chiếu kiến thức (08/11/2026)
+
+**Cách kiểm tra:** lập lá số mẫu nam, 13/12/2004, 18:10 (âm lịch 2/11 Giáp Thân, giờ Dậu), rồi đối chiếu **từng sao ở từng cung** với lá số cùng ngày giờ trên tuvi.vn.
+
+| # | Hạng mục | Trạng thái | Làm thế nào | Tệp |
+|---|---|---|---|---|
+| 12.1 | Bố cục ô cung theo lối phổ biến | ✅ | Chính tinh trên cùng; bên dưới chia 2 cột: **phụ tinh tốt bên trái, phụ tinh xấu bên phải**, mỗi sao một dòng, xếp từ trên xuống. Sao của vòng Bác Sĩ và vòng Thái Tuế (trước đây chỉ hiện khi bấm vào cung) nay hiện thẳng trong ô và được xếp cột theo cách trình bày của tuvi.vn. Riêng vòng Tràng Sinh vẫn ở góc dưới. Ký hiệu độ sáng không làm lệch dòng giữa hai cột. Điện thoại (≤ 520px): ô quá hẹp nên vẫn chỉ hiện chính tinh, bấm vào cung để đọc đủ sao | `views/laso.js` (`cell`), `lib/tuvi-chart.js` (`RING_GOOD`), `style.css` |
+| 12.2 | Kiến thức an sao: phần đã có | ✅ Đúng | 14 chính tinh, độ sáng chính tinh, Tứ Hóa, Tuần, Triệt, Cục, Mệnh và Thân, Tràng Sinh, Lộc Tồn, Kình Đà, Xương Khúc, Tả Hữu, Khôi Việt, Không Kiếp, Hỏa Linh, Thiên Mã, các sao theo năm, tháng, ngày, giờ, cùng hai vòng Bác Sĩ và Thái Tuế: **trùng khớp toàn bộ** với tuvi.vn | — |
+| 12.3 | Bổ sung 10 sao còn thiếu | ✅ | **Thiên Quan, Thiên Phúc, Thiên Trù, Văn Tinh** (theo Can năm); **Quốc Ấn** (Lộc Tồn + 8), **Đường Phù** (Lộc Tồn − 7); **Thiên Giải** (tháng Giêng khởi ở Thân), **Địa Giải** (tháng Giêng khởi ở Mùi); **Thiên Không** (trước Thái Tuế 1 cung); **Đẩu Quân** (từ Thái Tuế đếm nghịch đến tháng sinh, rồi thuận đến giờ sinh). Có lời luận giải nhẹ nhàng và đủ 8 ngôn ngữ (tiếng Trung: 天官 天福 天廚 文星 國印 唐符 天解 地解 天空 斗君) | `lib/tuvi-chart.js`, `data/tuvi-stars.js`, `i18n/*-text.js` |
+| 12.4 | Lai nhân cung | ✅ | Cung có Can trùng Can năm sinh (bỏ qua Tý, Sửu vì trùng Can với Dần, Mão). Hiện ở ô giữa. Lá số mẫu ra **Tật Ách**, khớp tuvi.vn | `lib/tuvi-chart.js`, `views/laso.js` |
+| 12.5 | Mệnh chủ có hai cách tính | ✅ Ghi rõ | Web tính Mệnh chủ theo **Chi cung Mệnh** (như sách Trung Hoa). tuvi.vn và một số trang Việt tính theo **Chi năm sinh** (lá số mẫu ra Liêm Trinh, còn web ra Văn Khúc). Phần luận giải nay ghi thêm kết quả theo cách thứ hai khi hai cách cho kết quả khác nhau | `views/laso.js`, `i18n/*.js` (`laso.chuAlt`) |
+| 12.6 | Kiểm thử | ✅ | Thêm 1 ca đối chiếu **đủ mọi sao trên 12 cung** của lá số mẫu với tuvi.vn, cùng Mệnh, Thân, Cục, Lai nhân, Tuần, Triệt. Tổng 93/93 đạt | `tests/tuvi.test.mjs` |
+| 12.7 | Kiểm tra giao diện | ✅ | Chụp 1290px, 640px (tiếng Việt, tiếng Trung) và 390px: không tràn ngang | — |
+
+**⚠️ Cần bạn biết hoặc xác nhận**
+
+1. **Thiên Trù năm Quý:** sách Trung Hoa ghi Hợi, một số bảng Việt ghi Tuất. Web đang dùng **Hợi**. Lá số mẫu là năm Giáp nên chưa kiểm chứng được ô này.
+2. **Mệnh chủ:** muốn mặc định theo Chi năm sinh (giống tuvi.vn) thì báo tôi đổi.
+3. **Độ sáng phụ tinh:** tuvi.vn ghi (H) cho Hỏa Tinh, Linh Tinh, Thiên Hình, Thiên Riêu, Thiên Khốc ở một số cung. Web chỉ ghi độ sáng phụ tinh ở những cung mà sách Thái Thứ Lang nêu rõ, nên các sao này để trống.
+4. **Chưa làm:** sao lưu niên (L.Thái Tuế, L.Lộc Tồn, L.Hóa Lộc… của năm đang xem), số tháng hạn trong từng cung, "Cân lượng" (cân xương đoán số, vốn không thuộc Tử Vi Đẩu Số).
+
+---
+
 ## 11. Phụ lục: chi tiết bản 2.1 và 2.2 (gộp từ NHAT-KY.md cũ)
 
 ### v2.2 · 06/11/2026
