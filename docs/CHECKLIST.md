@@ -123,7 +123,7 @@
 # Chạy web
 python -m http.server 5190 --directory web      # rồi mở http://localhost:5190
 
-# Chạy kiểm thử (cần Node.js ≥ 20, không cần cài gì thêm)
+# Chạy kiểm thử (cần Node.js ≥ 22, không cần cài gì thêm)
 npm test
 ```
 
@@ -211,6 +211,25 @@ Bảng tin (sáng, tối), Tìm kiếm, Bài viết, Lá số Tử Vi, Bản đ�
 2. **Mệnh chủ:** muốn mặc định theo Chi năm sinh (giống tuvi.vn) thì báo tôi đổi.
 3. **Độ sáng phụ tinh:** tuvi.vn ghi (H) cho Hỏa Tinh, Linh Tinh, Thiên Hình, Thiên Riêu, Thiên Khốc ở một số cung. Web chỉ ghi độ sáng phụ tinh ở những cung mà sách Thái Thứ Lang nêu rõ, nên các sao này để trống.
 4. **Chưa làm:** sao lưu niên (L.Thái Tuế, L.Lộc Tồn, L.Hóa Lộc… của năm đang xem), số tháng hạn trong từng cung, "Cân lượng" (cân xương đoán số, vốn không thuộc Tử Vi Đẩu Số).
+
+---
+
+## 13. Lá số Tử Vi: tùy chọn chuyên sâu, màu ngũ hành, Mệnh chủ (09/11/2026)
+
+| # | Hạng mục | Trạng thái | Làm thế nào | Tệp |
+|---|---|---|---|---|
+| 13.1 | Ô **Tùy chọn** (như các trang lá số phổ biến) | ✅ | 8 lựa chọn, nhớ theo người dùng (đồng bộ tài khoản nếu có): **An vòng Tướng tinh**; **Hạn năm** + ô nhập năm (1900–2100); **Lưu Tứ Hóa**; **Lưu Tứ Đức**; **Lưu đại vận**; **Lưu các sao khác**; **Lộc Kỵ nhập**; **Lưu Tuần Triệt**. Các lựa chọn "Lưu…" tự khoá khi tắt Hạn năm | `views/laso.js` (`optionsPanel`), `lib/tuvi-chart.js` (`overlays`) |
+| 13.2 | Vòng Tướng tinh | ✅ | 12 sao (Tướng Tinh, Phan An, Tuế Dịch, Tức Thần, Hoa Cái, Kiếp Sát, Tai Sát, Thiên Sát, Chỉ Bối, Hàm Trì, Nguyệt Sát, Vong Thần). Tướng Tinh khởi tại cung "đế vượng" của tam hợp tuổi (Thân Tý Thìn → Tý, Dần Ngọ Tuất → Ngọ, Tỵ Dậu Sửu → Dậu, Hợi Mão Mùi → Mão), đi thuận. Hoa Cái và Kiếp Sát đã có sẵn trên lá số nên không lặp lại. Có lời luận giải nhẹ nhàng, đủ 8 ngôn ngữ | như trên, `data/tuvi-stars.js`, `i18n/*-text.js` |
+| 13.3 | Sao lưu niên | ✅ | **Lưu Tứ Hóa** theo Can năm xem, gắn vào sao gốc. **Lưu Tứ Đức**: Thiên Đức, Nguyệt Đức, Long Đức, Phúc Đức theo Chi năm xem. **Lưu các sao khác**: Thái Tuế, Tang Môn, Bạch Hổ, Khốc, Hư, Lộc Tồn, Kình, Đà, Mã, Xương, Khúc, Khôi, Việt, Hồng Loan, Đào Hoa, Kiếp Sát. Ghi chữ "L." đứng trước, in nghiêng. Lá số mẫu năm 2026: **khớp tuvi.vn** | `lib/tuvi-chart.js` |
+| 13.4 | Lưu đại vận, Lưu Tuần Triệt, Lộc Kỵ nhập | ✅ | **ĐV.**: tên 12 cung tính lại từ cung đại hạn của năm xem (khớp tuvi.vn). **L.Tuần / L.Triệt** theo Can Chi năm xem. **Lộc Kỵ nhập**: từ Can của từng cung, Hóa Lộc và Hóa Kỵ "bay" vào cung nào (hiện trong ô và trong phần đọc chi tiết) | như trên |
+| 13.5 | Màu sao theo ngũ hành | ✅ | Kim xám, Mộc xanh lá, Thủy đen (chế độ tối: xanh đêm), Hỏa đỏ, Thổ vàng đất, giống quy ước của lá số Việt. Có chú thích màu dưới lá số. Hành của khoảng 90 phụ tinh lấy theo bảng thông dụng, đối chiếu màu trên lá số tuvi.vn. Vòng Tướng tinh không có hành thống nhất giữa các sách nên giữ màu trung tính. Màu đủ tương phản ở cả chế độ sáng và tối | `data/tuvi-stars.js` (`HANH`), `style.css` |
+| 13.6 | Mệnh chủ theo Chi năm sinh | ✅ | Theo yêu cầu của bạn: Mệnh chủ và Thân chủ đều an theo **Chi năm sinh** (giống tuvi.vn và cách sách Việt hay dùng). Phần luận giải vẫn ghi kết quả theo cách của sách Trung Hoa (Chi cung Mệnh) khi hai cách khác nhau | `lib/tuvi-chart.js`, `i18n/*.js` |
+| 13.7 | Thiên Trù năm Quý → **Tuất** | ✅ | Theo nguồn bạn tra | `lib/tuvi-chart.js` |
+| 13.8 | Cân lượng | ⏭️ Bỏ qua | Phép "cân xương đoán số" được gán cho Viên Thiên Cương, nhưng các nhà nghiên cứu ghi nhận nó **không có trong sách cổ chính thống** (chỉ là sách đời sau mượn tên), và không thuộc Tử Vi Đẩu Số. Theo tiêu chí "chỉ thêm khi có nguồn chuẩn", tôi không đưa vào | — |
+| 13.9 | Sửa CI | ✅ | Lần gộp trước, bước kiểm thử trên GitHub lỗi ở **Node 20**: bản này không hiểu mẫu đường dẫn `tests/*.test.mjs`. Node 20 đã hết hạn hỗ trợ (04/2026), nên chuyển sang kiểm thử trên **Node 22 và 24** (`engines: >=22`) | `.github/workflows/deploy.yml`, `package.json` |
+| 13.10 | Kiểm thử, kiểm tra giao diện | ✅ | Thêm 1 ca: sao lưu năm 2026, Lưu Tứ Hóa, đại vận, vòng Tướng tinh, Lưu Tuần Triệt, Lộc Kỵ nhập của lá số mẫu. **94/94 đạt**. Đã chụp 1290px (sáng; tối tiếng Trung) và 390px (tối): không tràn ngang | `tests/tuvi.test.mjs` |
+
+**Chưa làm:** tên cung lưu niên kiểu "LN.Mệnh" của tuvi.vn. Cách an của trang đó (năm 2026 đặt LN.Mệnh ở Dần) không trùng tiểu hạn, cũng không trùng lưu Thái Tuế. Tôi chưa tìm được nguồn ghi rõ quy tắc, nên chưa làm.
 
 ---
 

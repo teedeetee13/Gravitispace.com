@@ -1,7 +1,7 @@
 // Kiểm thử an sao Tử Vi: đối chiếu với các bảng quy tắc trong sách truyền thống.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { buildChart, napAmHanh, MAIN_STARS, TRANG_SINH } from '../web/assets/js/lib/tuvi-chart.js';
+import { buildChart, napAmHanh, MAIN_STARS, TRANG_SINH, overlays } from '../web/assets/js/lib/tuvi-chart.js';
 import { STARS, PALACE_INFO, DAI_HAN_THEME } from '../web/assets/js/data/tuvi-stars.js';
 
 const find = (chart, id) => chart.palaces.find((p) => p.stars.some((s) => s.id === id)).chi;
@@ -83,7 +83,8 @@ test('Ba vòng sao: Tràng Sinh (Thổ cục khởi Thân, âm nam đi nghịch)
 });
 
 test('Mệnh chủ, Thân chủ, âm dương thuận lý, tiểu hạn, lưu Thái Tuế', () => {
-  assert.equal(sample.menhChu, 'van-khuc'); // Mệnh tại Mão
+  assert.equal(sample.menhChu, 'cu-mon'); // năm Hợi (theo Chi năm sinh)
+  assert.equal(sample.menhChuCung, 'van-khuc'); // Mệnh tại Mão (cách sách Trung Hoa)
   assert.equal(sample.thanChu, 'thien-co'); // năm Hợi
   assert.equal(sample.thuanLy, true); // năm Ất (âm), Mệnh tại Mão (âm)
   assert.equal(sample.tieuHan, 8); // Hợi Mão Mùi khởi Sửu, nam thuận, 32 tuổi → Thân
@@ -142,7 +143,27 @@ test('Đối chiếu đủ sao với lá số tham khảo (tuvi.vn, nam 13/12/20
     assert.deepEqual(got, ids.split(' ').sort(), `cung ${chi}`);
   }
   assert.deepEqual([c.menh, c.than, c.cuc, c.laiNhan], [3, 9, 6, 10]); // Mệnh Mão, Thân Dậu, Hỏa lục cục, Lai nhân Tuất
-  assert.equal(c.menhChuNam, 'liem-trinh');
+  assert.equal(c.menhChu, 'liem-trinh'); // giống tuvi.vn
+  assert.equal(c.menhChuCung, 'van-khuc');
   assert.deepEqual(c.palaces.filter((p) => p.tuan).map((p) => p.chi), [6, 7]);
   assert.deepEqual(c.palaces.filter((p) => p.triet).map((p) => p.chi), [8, 9]);
+});
+
+test('Sao lưu năm 2026 (Bính Ngọ), Lưu Tứ Hóa, đại vận: khớp tuvi.vn', () => {
+  const c = buildChart({ day: 13, month: 12, year: 2004, hour: 18, minute: 10, gender: 'nam', viewYear: 2026 });
+  const o = overlays(c, { year: 2026, luuTuHoa: true, luuKhac: true, luuDaiVan: true, luuTuanTriet: true, tuongTinh: true, locKy: true });
+  const at = (id) => o.stars.findIndex((l) => l.some((s) => s.id === id && s.luu));
+  const want = { 'loc-ton': 5, 'kinh-duong': 6, 'da-la': 4, 'thai-tue': 6, 'tang-mon': 8, 'bach-ho': 2, 'thien-khoc': 0, 'thien-hu': 0, 'thien-ma': 8, 'van-xuong': 8, 'van-khuc': 6, 'thien-khoi': 11, 'thien-viet': 9, 'hong-loan': 9, 'dao-hoa': 3, 'kiep-sat': 11, 'hoa-loc': 1, 'hoa-quyen': 5, 'hoa-khoa': 1, 'hoa-ky': 10 };
+  for (const [id, chi] of Object.entries(want)) assert.equal(at(id), chi, id);
+  assert.equal(o.dv[4], 'menh'); // đại vận 16–25 ở Thìn
+  assert.equal(o.dv[5], 'phu-mau');
+  assert.equal(o.dv[2], 'phu-the');
+  // Vòng Tướng tinh (năm Thân): Tướng Tinh ở Tý, Hàm Trì trùng Đào Hoa (Dậu), Vong Thần ở Hợi
+  const tt = (id) => o.stars.findIndex((l) => l.some((s) => s.id === id));
+  assert.deepEqual([tt('tuong-tinh'), tt('ham-tri'), tt('vong-than')], [0, 9, 11]);
+  // Lưu Tuần Triệt năm Bính Ngọ: Triệt Thìn Tỵ, Tuần Dần Mão
+  assert.deepEqual(o.luuTriet, [4, 5]);
+  assert.deepEqual(o.luuTuan, [2, 3]);
+  // Lộc Kỵ nhập: cung Mệnh Đinh Mão → Lộc Thái Âm (Hợi), Kỵ Cự Môn (Sửu)
+  assert.deepEqual([o.locKy[3].loc, o.locKy[3].ky], [11, 1]);
 });

@@ -17,7 +17,10 @@ Theo [Semantic Versioning](https://semver.org/lang/vi/). Phát hành bằng th�
 
 - **Lá số Tử Vi:** ô cung theo bố cục phổ biến (chính tinh trên cùng; phụ tinh tốt bên trái, xấu bên phải); hiện đủ vòng Bác Sĩ, Thái Tuế ngay trong ô; thêm 10 sao (Thiên Quan, Thiên Phúc, Thiên Trù, Văn Tinh, Quốc Ấn, Đường Phù, Thiên Giải, Địa Giải, Thiên Không, Đẩu Quân) và Lai nhân cung; đối chiếu khớp toàn bộ với tuvi.vn.
 
+- **Lá số Tử Vi, tùy chọn chuyên sâu:** an vòng Tướng tinh, hạn năm (chọn năm), Lưu Tứ Hóa, Lưu Tứ Đức, Lưu đại vận, sao lưu niên, Lộc Kỵ nhập, Lưu Tuần Triệt. Màu sao theo ngũ hành. Mệnh chủ an theo Chi năm sinh.
+
 ### Sửa
+- CI: kiểm thử trên Node 22 và 24 (Node 20 hết hạn hỗ trợ, làm hỏng bước kiểm thử).
 - CSDL chỉ nhận bài tiếng Việt/Anh → nhận đủ 8 ngôn ngữ (`posts_lang_check`). **Cần chạy lại `supabase/schema.sql`.**
 - Câu luận giải bản đồ sao tiếng Anh bị lặp "Your your …".
 - Chống nhúng trang vào khung web lạ (clickjacking) trên GitHub Pages.

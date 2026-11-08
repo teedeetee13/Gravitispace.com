@@ -23,7 +23,7 @@ Tên gọi: "an" là bình an, nhẹ lòng. "An sao" cũng là bước xếp sao
 | Công nghệ | HTML, CSS, JavaScript thuần (ES Modules). Không framework, không thư viện npm |
 | Lưu dữ liệu | Mặc định lưu trên trình duyệt (`localStorage`). Có thể bật thêm tài khoản Supabase (Postgres, Auth, RLS) |
 | Máy chủ | Bất kỳ máy chủ web tĩnh nào: Netlify, GitHub Pages, Cloudflare Pages… |
-| Kiểm thử | 93 ca bằng `node:test` có sẵn trong Node 20 trở lên |
+| Kiểm thử | 94 ca bằng `node:test` có sẵn trong Node 22 trở lên |
 
 ### Các trang
 
@@ -94,7 +94,7 @@ Số đo lấy từ `npm run build` của bản 2.2.0.
 ### Bước 0. Đóng gói
 
 ```bash
-npm test          # 93 ca phải đạt
+npm test          # 94 ca phải đạt
 npm run build     # tạo thư mục dist/ để đăng web
 ```
 
@@ -113,9 +113,9 @@ Netlify tự áp dụng `_headers`, nên đây là cách có đủ lớp bảo m
 
 1. Tạo kho trên GitHub và đẩy mã lên nhánh `main`.
 2. Vào *Settings → Pages → Source*, chọn **GitHub Actions**.
-3. Mỗi lần push lên `main`, GitHub tự làm theo thứ tự: kiểm thử (Node 20 và 22), đóng gói, đăng lên `https://<tài-khoản>.github.io/<tên-kho>/`. Có bước nào lỗi thì dừng lại, web đang chạy giữ nguyên.
+3. Mỗi lần push lên `main`, GitHub tự làm theo thứ tự: kiểm thử (Node 22 và 24), đóng gói, đăng lên `https://<tài-khoản>.github.io/<tên-kho>/`. Có bước nào lỗi thì dừng lại, web đang chạy giữ nguyên.
 4. Nên làm thêm một lần:
-   - *Settings → Branches*: bảo vệ `main`, bắt buộc 3 bước kiểm tra `Kiểm thử (Node 20)`, `Kiểm thử (Node 22)`, `Đóng gói` phải đạt.
+   - *Settings → Branches*: bảo vệ `main`, bắt buộc 3 bước kiểm tra `Kiểm thử (Node 22)`, `Kiểm thử (Node 24)`, `Đóng gói` phải đạt.
    - *Settings → Code security*: bật Dependabot alerts, Secret scanning, Private vulnerability reporting.
    - *Settings → Environments → github-pages*: chỉ cho nhánh `main` đăng.
 
