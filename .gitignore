@@ -9,3 +9,7 @@
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Sản phẩm đóng gói (tạo lại bằng npm run build / npm run package)
+dist/
+release/

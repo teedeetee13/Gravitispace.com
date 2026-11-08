@@ -1,8 +1,10 @@
+import { t, fmtDate } from './i18n.js';
+
 export const $ = (sel, root = document) => root.querySelector(sel);
 export const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 
 const ESC = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
-/** Chống chèn mã: luôn dùng hàm này cho mọi nội dung người dùng nhập. */
+/** Chống chèn mã (XSS): luôn dùng hàm này cho mọi nội dung đưa vào HTML. */
 export const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ESC[c]);
 
 /** Bỏ dấu tiếng Việt để tìm kiếm "tarot" khớp "Tarốt", "tu vi" khớp "Tử vi". */
@@ -21,7 +23,7 @@ export function shuffle(arr, rand = Math.random) {
   return a;
 }
 
-/** Số ngẫu nhiên có hạt giống — để "lá bài hôm nay" giống nhau suốt cả ngày. */
+/** Số ngẫu nhiên có hạt giống. */
 export function seeded(seedStr) {
   let h = 1779033703 ^ seedStr.length;
   for (let i = 0; i < seedStr.length; i++) {
@@ -41,12 +43,11 @@ export function todayKey(d = new Date()) {
 
 export function timeAgo(iso) {
   const diff = (Date.now() - new Date(iso).getTime()) / 1000;
-  if (diff < 60) return 'vừa xong';
-  if (diff < 3600) return `${Math.floor(diff / 60)} phút trước`;
-  if (diff < 86400) return `${Math.floor(diff / 3600)} giờ trước`;
-  if (diff < 86400 * 30) return `${Math.floor(diff / 86400)} ngày trước`;
-  const d = new Date(iso);
-  return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
+  if (diff < 60) return t('time.now');
+  if (diff < 3600) return t('time.min', { n: Math.floor(diff / 60) });
+  if (diff < 86400) return t('time.hour', { n: Math.floor(diff / 3600) });
+  if (diff < 86400 * 30) return t('time.day', { n: Math.floor(diff / 86400) });
+  return fmtDate(new Date(iso));
 }
 
 export const icon = (name, cls = '') => `<svg class="ic ${cls}" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-${name}"/></svg>`;
@@ -57,34 +58,51 @@ export function toast(msg) {
   el.textContent = msg;
   el.classList.add('show');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.remove('show'), 2400);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2600);
 }
 
 export function debounce(fn, ms = 180) {
-  let t;
+  let tm;
   return (...args) => {
-    clearTimeout(t);
-    t = setTimeout(() => fn(...args), ms);
+    clearTimeout(tm);
+    tm = setTimeout(() => fn(...args), ms);
   };
 }
 
-/** Mở hộp thoại; trả về hàm đóng. */
-export function openModal(html, { onClose } = {}) {
+const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), textarea, select, [tabindex]:not([tabindex="-1"])';
+
+/** Mở hộp thoại (giữ tiêu điểm bên trong, Esc để đóng); trả về hàm đóng. */
+export function openModal(html, { onClose, label } = {}) {
   const root = $('#modal-root');
   const last = document.activeElement;
-  root.innerHTML = `<div class="modal-backdrop" data-close><div class="modal" role="dialog" aria-modal="true">
-    <button class="icon-btn modal-x" type="button" data-close aria-label="Đóng">${icon('close')}</button>${html}</div></div>`;
+  root.innerHTML = `<div class="modal-backdrop" data-close><div class="modal" role="dialog" aria-modal="true" aria-label="${esc(label || '')}">
+    <button class="icon-btn modal-x" type="button" data-close aria-label="${esc(t('common.close'))}">${icon('close')}</button>${html}</div></div>`;
+  const modal = root.querySelector('.modal');
   const close = () => {
     root.innerHTML = '';
     document.removeEventListener('keydown', onKey);
     last?.focus?.();
     onClose?.();
   };
-  const onKey = (e) => e.key === 'Escape' && close();
+  const onKey = (e) => {
+    if (e.key === 'Escape') return close();
+    if (e.key !== 'Tab') return;
+    const items = $$(FOCUSABLE, modal);
+    if (!items.length) return;
+    const first = items[0];
+    const lastItem = items[items.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      lastItem.focus();
+    } else if (!e.shiftKey && document.activeElement === lastItem) {
+      e.preventDefault();
+      first.focus();
+    }
+  };
   document.addEventListener('keydown', onKey);
   root.querySelector('.modal-backdrop').addEventListener('click', (e) => {
     if (e.target.hasAttribute('data-close') || e.target.closest('.modal-x')) close();
   });
-  root.querySelector('.modal button:not(.modal-x), .modal a, .modal-x')?.focus();
+  (modal.querySelector('.modal button:not(.modal-x), .modal a') || modal.querySelector('.modal-x')).focus();
   return close;
 }

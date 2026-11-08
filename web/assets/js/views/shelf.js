@@ -1,51 +1,96 @@
-// Tủ của tôi: bài đã cất, bài đã gieo, nhật ký lá bài
-import { esc, icon } from '../util.js';
+// Tủ của tôi: bài đã cất, bài đã gieo, nhật ký lá bài, quản lý dữ liệu cá nhân (xuất / nhập / xoá)
+import { $, esc, icon, toast } from '../util.js';
+import { t, fmtDate } from '../i18n.js';
 import { store } from '../store.js';
 import { cardById } from '../data/tarot.js';
+import * as C from '../content.js';
 import { emptyState, postCard, tarotFace } from '../ui.js';
 
-const TABS = [
-  { id: 'da-cat', label: 'Đã cất' },
-  { id: 'da-gieo', label: 'Bài tôi gieo' },
-  { id: 'nhat-ky', label: 'Nhật ký lá bài' },
-];
+const TABS = ['da-cat', 'da-gieo', 'nhat-ky', 'du-lieu'];
 
 function tabContent(tab) {
   if (tab === 'da-gieo') {
     const list = store.myPosts();
     return list.length
       ? `<div class="post-grid">${list.map(postCard).join('')}</div>`
-      : emptyState('Bạn chưa gieo bài nào.', 'Một dòng chữ của bạn có thể đến với ai đó đúng lúc họ cần.', `<a class="btn" href="#/gieo">${icon('plus')} Gieo bài đầu tiên</a>`);
+      : emptyState(t('shelf.noPosts'), t('shelf.noPostsBody'), `<a class="btn" href="#/gieo">${icon('plus')} ${t('shelf.firstPost')}</a>`);
   }
   if (tab === 'nhat-ky') {
     const list = store.allDraws();
     return list.length
       ? `<ul class="journal">${list
           .map(([date, d]) => {
-            const c = cardById[d.cardId];
-            if (!c) return '';
-            const [y, m, day] = date.split('-');
-            return `<li><a href="#/tarot/${c.id}" class="journal-card">${tarotFace(c, { size: 'xs', reversed: d.reversed })}</a>
-              <div><p class="eyebrow">${Number(day)}/${Number(m)}/${y}</p><h3>${esc(c.name)}${d.reversed ? ' <span class="tag">Ngược</span>' : ''}</h3>
+            const raw = cardById[d.cardId];
+            if (!raw) return '';
+            const c = C.card(raw);
+            const [y, m, day] = date.split('-').map(Number);
+            return `<li><a href="#/tarot/${c.id}" class="journal-card" aria-label="${esc(c.name)}">${tarotFace(raw, { size: 'xs', reversed: d.reversed })}</a>
+              <div><p class="eyebrow">${fmtDate(new Date(y, m - 1, day))}</p><h3>${esc(c.name)}${d.reversed ? ` <span class="tag">${t('tarot.reversed')}</span>` : ''}</h3>
               <p class="muted">${esc(c.q)}</p>${d.note ? `<blockquote>${esc(d.note)}</blockquote>` : ''}</div></li>`;
           })
           .join('')}</ul>`
-      : emptyState('Nhật ký còn trống.', 'Mỗi ngày rút một lá, ghi một dòng, rồi nhìn lại sau một tháng.', `<a class="btn" href="#/tarot">${icon('card')} Rút lá bài hôm nay</a>`);
+      : emptyState(t('shelf.noJournal'), t('shelf.noJournalBody'), `<a class="btn" href="#/tarot">${icon('card')} ${t('feed.drawToday')}</a>`);
+  }
+  if (tab === 'du-lieu') {
+    return `<div class="reading-card">
+      <h3>${t('shelf.dataTitle')}</h3>
+      <p>${t('shelf.dataBody')}</p>
+      <div class="row">
+        <button class="btn" type="button" data-export>${icon('down')} ${t('shelf.export')}</button>
+        <label class="btn btn-ghost file-btn">${icon('share')} ${t('shelf.import')}<input type="file" accept="application/json,.json" data-import hidden /></label>
+      </div>
+      <hr />
+      <h3>${t('shelf.clearTitle')}</h3>
+      <p class="muted">${t('shelf.clearBody')}</p>
+      <button class="btn btn-ghost btn-danger" type="button" data-clear>${icon('close')} ${t('shelf.clear')}</button>
+    </div>`;
   }
   const list = store.savedPosts();
   return list.length
     ? `<div class="post-grid">${list.map(postCard).join('')}</div>`
-    : emptyState('Tủ còn trống.', 'Khi lướt gặp bài nào chạm đến bạn, bấm "Cất" để giữ lại đây.', `<a class="btn" href="#/">${icon('waves')} Đi lướt duyên</a>`);
+    : emptyState(t('shelf.empty'), t('shelf.emptyBody'), `<a class="btn" href="#/">${icon('waves')} ${t('shelf.goFeed')}</a>`);
 }
 
 export function renderShelf(view, params) {
-  const tab = TABS.some((t) => t.id === params.get('tab')) ? params.get('tab') : 'da-cat';
+  const tab = TABS.includes(params.get('tab')) ? params.get('tab') : 'da-cat';
   view.innerHTML = `<div class="page">
     <header class="page-head">
-      <p class="eyebrow">Tủ của tôi</p>
-      <h1>Những gì bạn muốn giữ lại.</h1>
+      <p class="eyebrow">${t('nav.shelf')}</p>
+      <h1>${t('shelf.title')}</h1>
     </header>
-    <nav class="tabs" aria-label="Mục trong tủ">${TABS.map((t) => `<a href="#/tu?tab=${t.id}" class="${t.id === tab ? 'on' : ''}" ${t.id === tab ? 'aria-current="page"' : ''}>${t.label}</a>`).join('')}</nav>
+    <nav class="tabs" aria-label="${esc(t('shelf.tabsAria'))}">${TABS.map((id) => `<a href="#/tu?tab=${id}" class="${id === tab ? 'on' : ''}" ${id === tab ? 'aria-current="page"' : ''}>${t(`shelf.tab.${id}`)}</a>`).join('')}</nav>
     ${tabContent(tab)}
   </div>`;
+
+  // Trên điện thoại thanh mục cuộn ngang: đưa mục đang mở vào tầm nhìn
+  const active = $('.tabs .on', view);
+  if (active) active.parentElement.scrollLeft = active.offsetLeft - 16;
+
+  if (tab !== 'du-lieu') return;
+  $('[data-export]', view).addEventListener('click', () => {
+    const blob = new Blob([store.exportData()], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `an-sao-space-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    toast(t('shelf.exported'));
+  });
+  $('[data-import]', view).addEventListener('change', async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      if (file.size > 2_000_000 || !store.importData(await file.text())) throw new Error('invalid');
+      toast(t('shelf.imported'));
+      window.dispatchEvent(new Event('ansao:draw'));
+    } catch {
+      toast(t('shelf.importFail'));
+    }
+  });
+  $('[data-clear]', view).addEventListener('click', () => {
+    if (!confirm(t('shelf.clearConfirm'))) return;
+    store.clearAll();
+    window.dispatchEvent(new Event('ansao:draw'));
+    toast(t('shelf.cleared'));
+  });
 }

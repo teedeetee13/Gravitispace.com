@@ -1,71 +1,86 @@
-// Bản mệnh: nhập ngày sinh một lần, xem cả cung hoàng đạo lẫn tuổi âm lịch
-import { $, esc, icon, todayKey } from '../util.js';
+// Bản mệnh: nhập thông tin sinh một lần → tổng quan Đông + Tây, lá bài hôm nay, lối vào lá số, lộ trình năng lượng
+import { $, esc, icon, todayKey, toast } from '../util.js';
+import { t, tr } from '../i18n.js';
 import { store } from '../store.js';
-import { signFromDate } from '../data/zodiac.js';
+import { signFromDate, SIGNS, glyph } from '../data/zodiac.js';
 import { yearInfo } from '../data/tuvi.js';
 import { cardById } from '../data/tarot.js';
-import { signBadge, tarotFace } from '../ui.js';
+import { solarToLunar } from '../lib/lunar.js';
+import { natalChart } from '../lib/ephemeris.js';
+import { buildChart } from '../lib/tuvi-chart.js';
+import { PALACE_INFO, DAI_HAN_THEME } from '../data/tuvi-stars.js';
+import * as C from '../content.js';
+import { gentleNote, signBadge, tarotFace } from '../ui.js';
 import { yearCard } from './tuvi.js';
+import { birthFormHtml, bindBirthForm, readBirthForm } from './birth.js';
 
 function result(p) {
   const s = signFromDate(p.month, p.day);
-  const lunarYear = p.beforeTet ? p.year - 1 : p.year;
-  const info = yearInfo(lunarYear);
+  const lunar = solarToLunar(p.day, p.month, p.year);
+  const info = yearInfo(lunar.year);
   const draw = store.getDraw(todayKey());
   const card = draw && cardById[draw.cardId];
+  const natal = natalChart({ ...p, lat: p.lat ?? NaN, lon: p.lon ?? NaN, hour: p.timeKnown ? p.hour : 12, minute: p.timeKnown ? p.minute : 0 });
+  const moon = natal.bodies.find((b) => b.id === 'moon');
+  const tuvi = p.timeKnown && p.gender ? buildChart(p) : null;
+
+  const small = (href, badge, eyebrow, title, desc) =>
+    `<a class="result-card" href="${href}">${badge}<div><p class="eyebrow">${eyebrow}</p><h3>${title}</h3><p>${desc}</p></div>${icon('arrow')}</a>`;
+
   return `<div class="profile-grid">
-    <a class="result-card" href="#/chiem-tinh/${s.id}">${signBadge(s)}
-      <div><p class="eyebrow">Cung hoàng đạo</p><h3>${esc(s.name)}</h3><p>${esc(s.keywords)}</p></div>${icon('arrow')}</a>
-    <a class="result-card" href="#/tu-vi/${info.chi.id}"><span class="sign-glyph">${esc(info.chi.name)}</span>
-      <div><p class="eyebrow">Tuổi âm lịch</p><h3>${esc(info.canChi)}</h3><p>Mệnh ${esc(info.napAm)}</p></div>${icon('arrow')}</a>
-    <a class="result-card" href="#/tarot">${card ? `<span class="mini-card">${tarotFace(card, { size: 'xs', reversed: draw.reversed })}</span>` : `<span class="sign-glyph">${icon('card')}</span>`}
-      <div><p class="eyebrow">Lá bài hôm nay</p><h3>${card ? esc(card.name) : 'Chưa rút'}</h3><p>${card ? esc(card.q) : 'Chạm để rút lá bài của ngày hôm nay'}</p></div>${icon('arrow')}</a>
+    ${small(`#/chiem-tinh/${s.id}`, signBadge(s), t('profile.sun'), esc(C.sign(s).name), esc(C.sign(s).keywords))}
+    ${small(`#/chiem-tinh/${SIGNS[moon.sign].id}`, `<span class="sign-glyph">${glyph(SIGNS[moon.sign])}</span>`, t('natal.moon'), esc(C.sign(SIGNS[moon.sign]).name), natal.moonUncertain ? t('natal.moonUncertain') : t('natal.moonDesc'))}
+    ${natal.ascSign
+      ? small('#/chiem-tinh/ban-do-sao', `<span class="sign-glyph">${glyph(SIGNS[natal.ascSign.sign])}</span>`, t('natal.asc'), esc(C.sign(SIGNS[natal.ascSign.sign]).name), t('natal.ascDesc'))
+      : small('#/chiem-tinh/ban-do-sao', `<span class="sign-glyph">?</span>`, t('natal.asc'), t('natal.needTime'), t('natal.needTimeDesc'))}
+    ${small(`#/tu-vi/${info.chi.id}`, `<span class="sign-glyph">${esc(C.ganzhi(info.chi.name))}</span>`, t('profile.lunarAge'), esc(C.ganzhi(info.canChi)), t('profile.lunarDate', { d: lunar.day, m: lunar.month, y: lunar.year, menh: esc(C.napAm(info.napAm, info.meaning).name) }))}
+    ${small('#/tarot', card ? `<span class="mini-card">${tarotFace(card, { size: 'xs', reversed: draw.reversed })}</span>` : `<span class="sign-glyph">${icon('card')}</span>`, t('today.label'), card ? esc(C.card(card).name) : t('today.none'), card ? esc(C.card(card).q) : t('today.cta'))}
+    ${small('#/tu-vi/la-so', `<span class="sign-glyph">${icon('yinyang')}</span>`, t('laso.title'), tuvi ? t('profile.cucMenh', { p: esc(tr(PALACE_INFO.menh.name)), label: esc(C.ganzhi(tuvi.palaces[tuvi.menh].label)) }) : t('profile.lasoNeed'), tuvi ? t('profile.openLaso') : t('profile.lasoNeedDesc'))}
   </div>
+
   <section class="section">
-    <h2 class="section-title">Chi tiết tuổi ${esc(info.chi.name)}</h2>
-    ${yearCard(info)}
+    <h2 class="section-title">${t('profile.roadmap')}</h2>
+    <div class="reading-card">
+      ${tuvi && tuvi.current
+        ? `<h3>${t('profile.daiHanNow', { a: tuvi.current.daiHan.from, b: tuvi.current.daiHan.to, p: esc(tr(PALACE_INFO[tuvi.current.palace].name)) })}</h3><p>${esc(tr(DAI_HAN_THEME[tuvi.current.palace]))}</p>`
+        : `<p class="muted">${t('profile.daiHanNeed')}</p>`}
+      <p><a href="#/tu-vi/la-so">${t('profile.seeDaiHan')}</a> · <a href="#/chiem-tinh/ban-do-sao">${t('profile.seeTransits')}</a></p>
+    </div>
+    ${gentleNote()}
   </section>
-  <div class="note-box">Sắp có: cung Mặt Trăng, cung Mọc (cần giờ và nơi sinh) và lá số Tử Vi Đẩu Số đầy đủ.</div>`;
+
+  <section class="section">
+    <h2 class="section-title">${t('profile.ageDetail', { name: esc(C.ganzhi(info.chi.name)) })}</h2>
+    ${yearCard(info)}
+  </section>`;
 }
 
 export function renderProfile(view) {
   const p = store.getProfile();
   view.innerHTML = `<div class="page">
     <header class="page-head">
-      <p class="eyebrow">Bản mệnh của tôi</p>
-      <h1>Nhập ngày sinh một lần, xem cả Đông lẫn Tây.</h1>
-      <p class="lead">Ngày sinh chỉ được lưu trên máy của bạn, không gửi đi đâu cả.</p>
+      <p class="eyebrow">${t('nav.profile')}</p>
+      <h1>${t('profile.title')}</h1>
+      <p class="lead">${t('profile.lead')}</p>
     </header>
-    <form class="lookup" data-profile-form>
-      <label class="field"><span>Ngày</span><input type="number" name="d" min="1" max="31" required inputmode="numeric" value="${p?.day ?? ''}" /></label>
-      <label class="field"><span>Tháng</span><input type="number" name="m" min="1" max="12" required inputmode="numeric" value="${p?.month ?? ''}" /></label>
-      <label class="field"><span>Năm (dương lịch)</span><input type="number" name="y" min="1900" max="2100" required inputmode="numeric" value="${p?.year ?? ''}" /></label>
-      <label class="check"><input type="checkbox" name="tet" ${p?.beforeTet ? 'checked' : ''} /> Tôi sinh trước Tết Nguyên Đán năm đó</label>
-      <button class="btn" type="submit">${icon('star')} Xem bản mệnh</button>
-    </form>
+    <details class="form-toggle" ${p ? '' : 'open'}>
+      <summary>${p ? t('profile.editInfo') : t('profile.enterInfo')}</summary>
+      ${birthFormHtml(p, { submitLabel: t('profile.submit') })}
+    </details>
     <div id="profile-result" aria-live="polite">${p ? result(p) : ''}</div>
   </div>`;
 
-  const form = $('[data-profile-form]', view);
-  const tet = form.elements.tet;
-  const syncTet = () => {
-    const m = Number(form.elements.m.value);
-    tet.closest('.check').hidden = m > 2;
-    if (m > 2) tet.checked = false;
-  };
-  form.elements.m.addEventListener('input', syncTet);
-  syncTet();
-
+  const form = $('[data-birth-form]', view);
+  bindBirthForm(form);
   form.addEventListener('submit', (e) => {
     e.preventDefault();
-    const f = new FormData(form);
-    const prof = { day: Number(f.get('d')), month: Number(f.get('m')), year: Number(f.get('y')), beforeTet: !!f.get('tet') };
-    const valid = new Date(prof.year, prof.month - 1, prof.day).getDate() === prof.day;
-    if (!valid) {
-      $('#profile-result', view).innerHTML = `<p class="muted">Ngày sinh chưa hợp lệ, bạn kiểm tra lại nhé.</p>`;
-      return;
-    }
-    store.setProfile(prof);
-    $('#profile-result', view).innerHTML = result(prof);
+    const r = readBirthForm(form);
+    $('[data-error]', form).textContent = r.error || '';
+    if (r.error) return;
+    store.setProfile(r.profile);
+    $('#profile-result', view).innerHTML = result(store.getProfile());
+    $('.form-toggle', view).open = false;
+    toast(t('birth.saved'));
+    $('#profile-result', view).scrollIntoView({ behavior: 'smooth' });
   });
 }

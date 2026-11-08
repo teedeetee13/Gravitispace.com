@@ -1,29 +1,33 @@
-// Tìm kiếm hợp nhất: bài viết, lá bài, cung hoàng đạo, con giáp — một ô tìm cho tất cả
+// Tìm kiếm hợp nhất: bài viết, lá bài, cung hoàng đạo, con giáp — một ô tìm cho tất cả (theo ngôn ngữ đang chọn)
 import { $, $$, debounce, esc, icon, norm } from '../util.js';
+import { t } from '../i18n.js';
 import { store } from '../store.js';
 import { TOPICS, topicById, CRISIS_PHRASES } from '../data/taxonomy.js';
 import { DECK } from '../data/tarot.js';
 import { SIGNS, dateRange } from '../data/zodiac.js';
 import { CHI } from '../data/tuvi.js';
+import * as C from '../content.js';
 import { postCard, signBadge, tarotFace } from '../ui.js';
 import { hotlineBox } from './about.js';
 
-const SUGGEST = ['Ngôi Sao', 'chữa lành', 'Bọ Cạp', 'nạp âm', 'năm tuổi', 'cô đơn', 'Ba Kiếm', 'Ma Kết', 'tuổi Mão'];
 
 function results(q, topic) {
-  const nq = norm(q.trim());
-  const words = nq.split(/\s+/).filter(Boolean);
+  const words = norm(q.trim()).split(/\s+/).filter(Boolean);
   const hit = (text) => words.every((w) => norm(text).includes(w));
 
-  const posts = store.allPosts().filter((p) => (!topic || p.topic === topic) && (!words.length || hit(`${p.title} ${p.body} ${p.author}`)));
+  const posts = store
+    .allPosts()
+    .map((p) => [p, C.post(p)])
+    .filter(([, p]) => (!topic || p.topic === topic) && (!words.length || hit(`${p.title} ${p.body} ${p.author}`)))
+    .map(([raw]) => raw);
   if (!words.length) return { posts, cards: [], signs: [], chis: [] };
 
-  const want = (t) => !topic || topic === t;
+  const want = (tp) => !topic || topic === tp;
   return {
     posts,
-    cards: want('tarot') ? DECK.filter((c) => hit(`${c.name} ${c.en} ${c.up} ${c.rev}`)) : [],
-    signs: want('chiem-tinh') ? SIGNS.filter((s) => hit(`${s.name} ${s.en} ${s.keywords} ${s.element} ${s.ruler}`)) : [],
-    chis: want('tu-vi') ? CHI.filter((c) => hit(`tuổi ${c.name} ${c.animal} ${c.traits} ${c.hanh}`)) : [],
+    cards: want('tarot') ? DECK.filter((raw) => { const c = C.card(raw); return hit(`${c.name} ${raw.name} ${raw.en} ${c.up} ${c.rev}`); }) : [],
+    signs: want('chiem-tinh') ? SIGNS.filter((raw) => { const s = C.sign(raw); return hit(`${raw.name} ${raw.en} ${s.keywords} ${s.element} ${s.ruler}`); }) : [],
+    chis: want('tu-vi') ? CHI.filter((raw) => { const c = C.chi(raw); return hit(`${t('ref.chi')} ${raw.name} ${raw.animal} ${c.animal} ${c.traits} ${raw.hanh}`); }) : [],
   };
 }
 
@@ -32,31 +36,31 @@ function renderResults(q, topic) {
   const total = r.posts.length + r.cards.length + r.signs.length + r.chis.length;
   const crisis = CRISIS_PHRASES.some((p) => q.toLowerCase().includes(p));
   const parts = [];
-  if (crisis) parts.push(hotlineBox('Nếu bạn đang nghĩ đến việc làm hại bản thân, xin hãy gọi ngay cho một trong các số dưới đây. Bạn không phải một mình đi qua chuyện này.'));
-  if (q.trim()) parts.push(`<p class="muted">${total} kết quả cho "${esc(q)}"</p>`);
+  if (crisis) parts.push(hotlineBox(t('search.crisis')));
+  if (q.trim()) parts.push(`<p class="muted">${t('search.count', { n: total, q: esc(q) })}</p>`);
 
   if (r.cards.length)
-    parts.push(`<h2 class="section-title">Lá bài Tarot</h2><div class="lib-grid">${r.cards
+    parts.push(`<h2 class="section-title">${t('search.cards')}</h2><div class="lib-grid">${r.cards
       .slice(0, 12)
-      .map((c) => `<a class="lib-item" href="#/tarot/${c.id}">${tarotFace(c, { size: 'sm' })}<span>${esc(c.name)}</span></a>`)
+      .map((c) => `<a class="lib-item" href="#/tarot/${c.id}">${tarotFace(c, { size: 'sm' })}<span>${esc(C.card(c).name)}</span></a>`)
       .join('')}</div>`);
   if (r.signs.length)
-    parts.push(`<h2 class="section-title">Cung hoàng đạo</h2><div class="sign-grid">${r.signs
-      .map((s) => `<a class="sign-tile" href="#/chiem-tinh/${s.id}">${signBadge(s)}<span class="sign-name">${esc(s.name)}</span><span class="muted small">${dateRange(s)}</span></a>`)
+    parts.push(`<h2 class="section-title">${t('search.signs')}</h2><div class="sign-grid">${r.signs
+      .map((s) => `<a class="sign-tile" href="#/chiem-tinh/${s.id}">${signBadge(s)}<span class="sign-name">${esc(C.sign(s).name)}</span><span class="muted small">${dateRange(s)}</span></a>`)
       .join('')}</div>`);
   if (r.chis.length)
-    parts.push(`<h2 class="section-title">Con giáp</h2><div class="chi-grid">${r.chis
-      .map((c) => `<a class="chi-tile" href="#/tu-vi/${c.id}"><span class="chi-name">${esc(c.name)}</span><span>${esc(c.animal)}</span></a>`)
+    parts.push(`<h2 class="section-title">${t('search.chis')}</h2><div class="chi-grid">${r.chis
+      .map((c) => `<a class="chi-tile" href="#/tu-vi/${c.id}"><span class="chi-name">${esc(C.ganzhi(c.name))}</span><span>${esc(C.chi(c).animal)}</span></a>`)
       .join('')}</div>`);
 
-  parts.push(`<h2 class="section-title">${q.trim() ? 'Bài viết' : 'Bài viết mới nhất'}</h2>`);
+  parts.push(`<h2 class="section-title">${q.trim() ? t('search.posts') : t('search.latest')}</h2>`);
   parts.push(
     r.posts.length
       ? `<div class="post-grid">${r.posts
           .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))
           .map(postCard)
           .join('')}</div>`
-      : `<p class="muted">Chưa có bài viết nào khớp. <a href="#/gieo">Bạn viết bài đầu tiên nhé?</a></p>`
+      : `<p class="muted">${t('search.noPosts')} <a href="#/gieo">${t('search.writeFirst')}</a></p>`
   );
   return parts.join('');
 }
@@ -66,17 +70,17 @@ export function renderSearch(view, params) {
   let topic = topicById[params.get('chu-de')] ? params.get('chu-de') : '';
   view.innerHTML = `<div class="page">
     <header class="page-head">
-      <p class="eyebrow">Tìm kiếm</p>
-      <h1>Bạn đang tìm điều gì?</h1>
+      <p class="eyebrow">${t('nav.search')}</p>
+      <h1>${t('search.title')}</h1>
     </header>
     <form class="search-bar" role="search" data-search-form>
-      <label class="search-input lg">${icon('search')}<input type="search" name="q" value="${esc(q)}" placeholder="Tên lá bài, cung, con giáp, hay một cảm xúc…" aria-label="Từ khoá" autocomplete="off" /></label>
+      <label class="search-input lg">${icon('search')}<input type="search" name="q" value="${esc(q)}" placeholder="${esc(t('search.placeholder'))}" aria-label="${esc(t('search.keyword'))}" autocomplete="off" /></label>
     </form>
     <div class="chips" data-topics>
-      ${[{ id: '', label: 'Tất cả' }, ...TOPICS].map((t) => `<button type="button" class="chip ${t.id === topic ? 'on' : ''}" data-topic="${t.id}">${esc(t.label)}</button>`).join('')}
+      ${[{ id: '', label: t('common.all') }, ...TOPICS.map((tp) => ({ ...tp, label: C.topicLabel(tp) }))].map((tp) => `<button type="button" class="chip ${tp.id === topic ? 'on' : ''}" data-topic="${tp.id}" aria-pressed="${tp.id === topic}">${esc(tp.label)}</button>`).join('')}
     </div>
-    <div class="chips suggest"><span class="muted small">Gợi ý:</span>${SUGGEST.map((s) => `<button type="button" class="chip chip-ghost" data-suggest="${esc(s)}">${esc(s)}</button>`).join('')}</div>
-    <div id="search-results">${renderResults(q, topic)}</div>
+    <div class="chips suggest"><span class="muted small">${t('search.suggest')}</span>${t('search.suggestList').split('|').map((s) => `<button type="button" class="chip chip-ghost" data-suggest="${esc(s)}">${esc(s)}</button>`).join('')}</div>
+    <div id="search-results" aria-live="polite">${renderResults(q, topic)}</div>
   </div>`;
 
   const input = $('input[name=q]', view);
@@ -95,10 +99,13 @@ export function renderSearch(view, params) {
     update();
   });
   view.addEventListener('click', (e) => {
-    const t = e.target.closest('[data-topic]');
-    if (t) {
-      topic = t.dataset.topic;
-      $$('[data-topic]', view).forEach((b) => b.classList.toggle('on', b === t));
+    const tb = e.target.closest('[data-topic]');
+    if (tb) {
+      topic = tb.dataset.topic;
+      $$('[data-topic]', view).forEach((b) => {
+        b.classList.toggle('on', b === tb);
+        b.setAttribute('aria-pressed', b === tb);
+      });
       update();
     }
     const s = e.target.closest('[data-suggest]');
@@ -107,5 +114,5 @@ export function renderSearch(view, params) {
       update();
     }
   });
-  if (!q) input.focus();
+  if (!q && matchMedia('(min-width: 960px)').matches) input.focus();
 }
