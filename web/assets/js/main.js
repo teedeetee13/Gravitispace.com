@@ -263,9 +263,15 @@ async function boot() {
   await render();
   if (redirectType === 'error') toast(t('account.linkExpired'));
   else if (redirectType && redirectType !== 'recovery') toast(t('account.welcome'));
-  // Service worker: cho phép mở lại trang khi mất mạng (chỉ chạy qua https hoặc localhost)
+  // Service worker: cho phép mở lại trang khi mất mạng (chỉ bản đăng thật qua https).
+  // Khi chạy thử trên máy thì gỡ service worker cũ + xoá bộ nhớ đệm của nó, để luôn thấy code mới nhất
+  // và không "đè" lên các web khác từng chạy ở cùng địa chỉ localhost.
+  const isLocal = ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
   if ('serviceWorker' in navigator && location.protocol !== 'file:') {
-    navigator.serviceWorker.register('./sw.js').catch(() => {});
+    if (isLocal) {
+      navigator.serviceWorker.getRegistrations().then((rs) => rs.forEach((r) => r.unregister())).catch(() => {});
+      if ('caches' in window) caches.keys().then((ks) => ks.forEach((k) => caches.delete(k))).catch(() => {});
+    } else navigator.serviceWorker.register('./sw.js').catch(() => {});
   }
 }
 boot();

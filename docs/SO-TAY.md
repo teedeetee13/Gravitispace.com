@@ -153,7 +153,7 @@ Mua tên miền, ví dụ `ansao.space` hay `ansaospace.com`. Trỏ tên miền 
 
 | Việc | Lệnh |
 |---|---|
-| Chạy thử trên máy | `npm start`, rồi mở http://localhost:5190 |
+| Chạy thử trên máy | `npm start`, rồi mở http://localhost:5190. Máy chủ nhỏ viết bằng Node (`tools/serve.mjs`), không cần Python: luôn gửi tệp mới nhất (`Cache-Control: no-store`), chỉ phục vụ thư mục `web/`, chỉ nghe trên máy này. Đổi cổng: `PORT=5191 npm start` |
 | Kiểm thử | `npm test` |
 | Kiểm thử và đóng gói | `npm run verify` |
 | Tạo bản bàn giao | `npm run package` |
@@ -180,7 +180,7 @@ Mua tên miền, ví dụ `ansao.space` hay `ansaospace.com`. Trỏ tên miền 
 
 | Hiện tượng | Nguyên nhân | Cách xử lý |
 |---|---|---|
-| Mở `localhost:<cổng>` thấy web cũ hoặc web khác, dù đã đổi máy chủ | Service worker gắn với địa chỉ `localhost:<cổng>` và trả về bản đã lưu | F12 → *Application* → *Service workers* → **Unregister**, rồi *Storage* → **Clear site data** |
+| Mở `localhost:5190` thấy bản cũ, hoặc vừa sửa code mà không thấy thay đổi | Từ bản này **không còn xảy ra**: khi chạy trên máy, app tự gỡ service worker cũ và xoá bộ nhớ đệm của nó, còn `npm start` không cho trình duyệt lưu tệp. Nếu vẫn thấy bản cũ (thường do máy chủ cũ bằng Python), nhấn Ctrl+Shift+R một lần | — |
 | Đăng xong vẫn thấy bản cũ | Trình duyệt còn giữ bản trước | Tải lại một lần. Service worker tự nhận bản mới vì tên bộ nhớ đệm đổi theo commit |
 | CI đỏ ở bước *Kiểm thử* | Thiếu bản dịch, sai biến `{x}`, lỡ dán khoá bí mật… | Đọc dòng `not ok` trong nhật ký, sửa rồi đẩy lại |
 | Mở trực tiếp `index.html` thì trang trắng | Trình duyệt chặn ES module khi mở từ `file://` | Chạy `npm start` hoặc dùng bất kỳ máy chủ tĩnh nào |

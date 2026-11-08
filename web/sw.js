@@ -1,7 +1,7 @@
 // Service worker: cho phép mở lại An Sao Space khi mất mạng.
 // Chiến lược "mạng trước, bộ nhớ đệm sau" cho tệp cùng nguồn: luôn lấy bản mới nhất khi có mạng,
 // chỉ dùng bản đã lưu khi offline → không bao giờ kẹt ở phiên bản cũ.
-const CACHE = 'ansao-v5'; // npm run build tự thay bằng ansao-<phiên bản>-<commit>
+const CACHE = 'ansao-v6'; // npm run build tự thay bằng ansao-<phiên bản>-<commit>
 const CORE = ['./', './index.html', './assets/css/style.css', './assets/js/main.js', './assets/js/boot.js', './assets/favicon.svg', './manifest.webmanifest'];
 
 self.addEventListener('install', (e) => {
@@ -23,7 +23,8 @@ self.addEventListener('fetch', (e) => {
   if (!sameOrigin && !isFont) return;
 
   e.respondWith(
-    fetch(req)
+    // "no-cache": luôn hỏi lại máy chủ (rẻ, chỉ nhận 304 nếu tệp không đổi) → không bao giờ trộn tệp cũ với tệp mới
+    fetch(sameOrigin ? new Request(req, { cache: 'no-cache' }) : req)
       .then((res) => {
         if (res.ok || res.type === 'opaque') {
           const copy = res.clone();
