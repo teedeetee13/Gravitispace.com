@@ -529,8 +529,6 @@ button.flip-slot:hover .tcard-face { transform: translateY(-4px); }
 .p-col { display: flex; flex-direction: column; min-width: 0; }
 .p-col > span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.45; }
 .p-col .bright, .p-col .hoa { vertical-align: top; line-height: 1; font-size: 0.56rem; }
-.p-minor .good { color: color-mix(in oklab, #5f9a6a 80%, var(--ink)); }
-.p-minor .hard { color: color-mix(in oklab, var(--danger) 70%, var(--muted)); }
 .p-foot { margin-top: auto; display: flex; gap: 4px; align-items: center; color: var(--muted); font-size: 0.66rem; }
 .flag { padding: 0 4px; border-radius: 4px; background: var(--surface-2); font-weight: 600; }
 .flag-th { background: color-mix(in oklab, var(--accent) 18%, var(--surface)); color: var(--accent); }
@@ -716,3 +714,26 @@ button.flip-slot:hover .tcard-face { transform: translateY(-4px); }
   .slide-art::after { display: none; }
   .slide.has-art .slide-inner { padding-top: 4px; }
 }
+
+/* Màu sao theo ngũ hành (Kim xám, Mộc xanh lá, Thủy đen/xanh đêm, Hỏa đỏ, Thổ vàng đất) */
+:root { --h-kim: #676d77; --h-moc: #2f7443; --h-thuy: #1f2b3d; --h-hoa: #b8352a; --h-tho: #96590b; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) { --h-kim: #c5cad2; --h-moc: #7fcd8f; --h-thuy: #93b7ee; --h-hoa: #ff8b7b; --h-tho: #e9b65c; }
+}
+:root[data-theme='dark'] { --h-kim: #c5cad2; --h-moc: #7fcd8f; --h-thuy: #93b7ee; --h-hoa: #ff8b7b; --h-tho: #e9b65c; }
+.h-kim { color: var(--h-kim); } .h-moc { color: var(--h-moc); } .h-thuy { color: var(--h-thuy); } .h-hoa { color: var(--h-hoa); } .h-tho { color: var(--h-tho); }
+.p-col .is-luu { font-style: italic; }
+.p-extra { display: flex; flex-wrap: wrap; gap: 2px 8px; font-size: 0.62rem; color: var(--muted); }
+.p-dv { font-weight: 600; color: var(--accent); }
+.p-lk { display: inline-flex; gap: 6px; }
+.flag-luu { background: color-mix(in oklab, var(--h-hoa) 14%, var(--surface)); color: var(--h-hoa); }
+.hanh-legend { display: flex; flex-wrap: wrap; gap: 4px 14px; margin: -8px 0 14px; }
+.hanh-legend i { font-style: normal; }
+.laso-opts { margin: 10px 0 14px; padding: 10px 14px 6px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+.laso-opts legend { padding: 0 6px; font-weight: 600; }
+.opt-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 6px 16px; }
+.opt { display: flex; align-items: center; gap: 8px; min-height: 32px; font-size: 0.9rem; cursor: pointer; }
+.opt input[type='checkbox'] { width: 18px; height: 18px; accent-color: var(--accent); flex: none; }
+.opt-year input[type='number'] { width: 5.5em; padding: 4px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg, var(--surface)); color: var(--ink); font: inherit; }
+.opt input:disabled + *, .opt:has(input:disabled) { opacity: 0.55; }
+@media (max-width: 520px) { .p-extra { display: none; } .opt-grid { grid-template-columns: 1fr 1fr; } .opt { font-size: 0.82rem; } .opt-year { grid-column: 1 / -1; } }

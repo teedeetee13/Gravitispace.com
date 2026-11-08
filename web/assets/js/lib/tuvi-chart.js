@@ -61,15 +61,20 @@ const LUU_HA = [9, 10, 7, 8, 5, 6, 4, 3, 11, 2]; // theo Can năm
 // Theo Can năm (Giáp → Quý)
 const THIEN_QUAN = [7, 4, 5, 2, 3, 9, 11, 9, 10, 6]; // Mùi Thìn Tỵ Dần Mão Dậu Hợi Dậu Tuất Ngọ
 const THIEN_PHUC = [9, 8, 0, 11, 3, 2, 6, 5, 6, 5]; // Dậu Thân Tý Hợi Mão Dần Ngọ Tỵ Ngọ Tỵ
-const THIEN_TRU = [5, 6, 0, 5, 6, 8, 2, 6, 9, 11]; // Tỵ Ngọ Tý Tỵ Ngọ Thân Dần Ngọ Dậu Hợi
+const THIEN_TRU = [5, 6, 0, 5, 6, 8, 2, 6, 9, 10]; // Tỵ Ngọ Tý Tỵ Ngọ Thân Dần Ngọ Dậu Tuất (năm Quý: Tuất, theo bảng Việt)
 const VAN_TINH = [5, 6, 8, 9, 8, 9, 11, 0, 2, 3]; // Lưu niên Văn tinh: Tỵ Ngọ Thân Dậu Thân Dậu Hợi Tý Dần Mão
+const LUU_KHUC = [9, 8, 6, 5, 6, 5, 3, 2, 0, 11]; // Lưu Văn Khúc theo Can năm xem: Dậu Thân Ngọ Tỵ Ngọ Tỵ Mão Dần Tý Hợi
+// Vòng Tướng tinh: khởi Tướng Tinh tại cung "đế vượng" của tam hợp Chi năm (Thân Tý Thìn → Tý, Dần Ngọ Tuất → Ngọ, Tỵ Dậu Sửu → Dậu, Hợi Mão Mùi → Mão), đi thuận
+export const TUONG_TINH = ['tuong-tinh', 'phan-an', 'tue-dich', 'tuc-than', 'hoa-cai', 'kiep-sat', 'tai-sat', 'thien-sat', 'chi-boi', 'ham-tri', 'nguyet-sat', 'vong-than'];
+const TUONG_TINH_START = [0, 6, 9, 3]; // theo nhóm tam hợp
+const TUONG_TINH_GOOD = new Set(['tuong-tinh', 'phan-an', 'tue-dich']);
 const TRANG_SINH_START = { 'Thủy': 8, 'Thổ': 8, 'Mộc': 11, 'Kim': 5, 'Hỏa': 2 };
 export const TRANG_SINH = ['trang-sinh', 'moc-duc', 'quan-doi', 'lam-quan', 'de-vuong', 'suy', 'benh', 'tu', 'mo', 'tuyet', 'thai', 'duong'];
 export const BAC_SI = ['bac-si', 'luc-si', 'thanh-long', 'tieu-hao', 'tuong-quan', 'tau-thu', 'phi-liem', 'hy-than', 'benh-phu', 'dai-hao', 'phuc-binh', 'quan-phu'];
 export const THAI_TUE = ['thai-tue', 'thieu-duong', 'tang-mon', 'thieu-am', 'quan-phu-tt', 'tu-phu', 'tue-pha', 'long-duc', 'bach-ho', 'phuc-duc-tt', 'dieu-khach', 'truc-phu'];
 // Sao trong vòng Bác Sĩ, Thái Tuế được xếp vào cột "tốt" khi hiển thị (theo cách trình bày phổ biến của lá số Việt)
 export const RING_GOOD = new Set(['bac-si', 'luc-si', 'thanh-long', 'tau-thu', 'hy-than', 'thieu-duong', 'thieu-am', 'long-duc', 'phuc-duc-tt']);
-// Mệnh chủ theo Chi cung Mệnh; Thân chủ theo Chi năm sinh
+// Mệnh chủ, Thân chủ theo Chi năm sinh (cách sách Việt thường dùng); sách Trung Hoa lấy Mệnh chủ theo Chi cung Mệnh
 const MENH_CHU = ['tham-lang', 'cu-mon', 'loc-ton', 'van-khuc', 'liem-trinh', 'vu-khuc', 'pha-quan', 'vu-khuc', 'liem-trinh', 'van-khuc', 'loc-ton', 'cu-mon'];
 const THAN_CHU = ['hoa-tinh', 'thien-tuong', 'thien-luong', 'thien-dong', 'van-xuong', 'thien-co', 'hoa-tinh', 'thien-tuong', 'thien-luong', 'thien-dong', 'van-xuong', 'thien-co'];
 const TIEU_HAN_START = [10, 4, 7, 1]; // theo nhóm tam hợp g: Thân Tý Thìn → Tuất, Dần Ngọ Tuất → Thìn, Tỵ Dậu Sửu → Mùi, Hợi Mão Mùi → Sửu
@@ -255,8 +260,8 @@ export function buildChart({ day, month, year, hour, minute = 0, gender, viewYea
   // Âm dương thuận lý: âm dương của năm sinh trùng âm dương của Chi cung Mệnh (Chi chẵn là Dương)
   const thuanLy = yang === (menh % 2 === 0);
   return {
-    menhChu: MENH_CHU[menh],
-    menhChuNam: MENH_CHU[yChi], // cách tính theo Chi năm sinh (nhiều trang lá số Việt dùng)
+    menhChu: MENH_CHU[yChi],
+    menhChuCung: MENH_CHU[menh], // cách của sách Trung Hoa: theo Chi cung Mệnh
     laiNhan,
     thanChu: THAN_CHU[yChi],
     thuanLy,
@@ -278,6 +283,83 @@ export function buildChart({ day, month, year, hour, minute = 0, gender, viewYea
     age,
     current: palaces.find((p) => p.isCurrent) || null,
   };
+}
+
+/**
+ * Các lớp hiển thị theo tùy chọn (giống ô "Tùy chọn" của các trang lá số phổ biến).
+ * o: { year, tuongTinh, luuTuHoa, luuTuDuc, luuKhac, luuTuanTriet, luuDaiVan, locKy }
+ * year = năm xem hạn (bỏ trống thì không tính các lớp lưu niên).
+ * Trả về: stars[chi] = [{ id, side: 'good'|'hard', luu?, on? }], dv[chi] = tên cung theo đại vận,
+ *         luuTuan, luuTriet = các cung bị Tuần/Triệt của năm xem, locKy[chi] = cung nhận Hóa Lộc / Hóa Kỵ từ Can cung này.
+ */
+export function overlays(chart, o = {}) {
+  const stars = Array.from({ length: 12 }, () => []);
+  const add = (id, pos, side, extra = {}) => stars[mod(pos, 12)].push({ id, side, ...extra });
+  const where = (id) => chart.palaces.find((p) => p.stars.some((s) => s.id === id))?.chi;
+  const res = { stars, dv: null, luuTuan: [], luuTriet: [], locKy: null };
+
+  if (o.tuongTinh) {
+    // Hoa Cái, Kiếp Sát của vòng này đã có sẵn trên lá số nên không thêm lần nữa
+    const start = TUONG_TINH_START[tamHopGroup(chart.canChi.year.chi)];
+    TUONG_TINH.forEach((id, i) => id !== 'hoa-cai' && id !== 'kiep-sat' && add(id, start + i, TUONG_TINH_GOOD.has(id) ? 'good' : 'hard'));
+  }
+
+  const Y = o.year;
+  if (Y) {
+    const lc = mod(Y - 4, 10); // Can năm xem
+    const lz = mod(Y - 4, 12); // Chi năm xem
+    const lg = tamHopGroup(lz);
+    const L = (id, pos, side, extra) => add(id, pos, side, { luu: true, ...extra });
+    if (o.luuTuHoa) {
+      TU_HOA[lc].forEach((sid, i) => {
+        const at = where(sid);
+        if (at != null) L(HOA[i], at, HOA[i] === 'hoa-ky' ? 'hard' : 'good', { on: sid });
+      });
+    }
+    if (o.luuTuDuc) {
+      L('thien-duc', lz + 9, 'good');
+      L('nguyet-duc', lz + 5, 'good');
+      L('long-duc', lz + 7, 'good');
+      L('phuc-duc-tt', lz + 9, 'good');
+    }
+    if (o.luuKhac) {
+      L('thai-tue', lz, 'hard');
+      L('tang-mon', lz + 2, 'hard');
+      L('bach-ho', lz + 8, 'hard');
+      L('thien-khoc', 6 - lz, 'hard');
+      L('thien-hu', 6 + lz, 'hard');
+      const lt = LOC_TON[lc];
+      L('loc-ton', lt, 'good');
+      L('kinh-duong', lt + 1, 'hard');
+      L('da-la', lt - 1, 'hard');
+      L('thien-ma', THIEN_MA[lg], 'good');
+      L('van-xuong', VAN_TINH[lc], 'good');
+      L('van-khuc', LUU_KHUC[lc], 'good');
+      L('thien-khoi', KHOI_VIET[lc][0], 'good');
+      L('thien-viet', KHOI_VIET[lc][1], 'good');
+      L('hong-loan', 3 - lz, 'good');
+      L('dao-hoa', DAO_HOA[lg], 'good');
+      L('kiep-sat', KIEP_SAT[lg], 'hard');
+    }
+    if (o.luuTuanTriet) {
+      res.luuTriet = TRIET[lc % 5];
+      const ts = mod(lz - lc + 10, 12);
+      res.luuTuan = [ts, mod(ts + 1, 12)];
+    }
+    if (o.luuDaiVan) {
+      const age = Y - chart.lunar.year + 1;
+      const cur = chart.palaces.find((p) => age >= p.daiHan.from && age <= p.daiHan.to);
+      if (cur) res.dv = chart.palaces.map((p) => PALACES[mod(cur.chi - p.chi, 12)]);
+    }
+  }
+
+  if (o.locKy) {
+    res.locKy = chart.palaces.map((p) => {
+      const [loc, , , ky] = TU_HOA[p.can];
+      return { can: p.can, locStar: loc, kyStar: ky, loc: where(loc), ky: where(ky) };
+    });
+  }
+  return res;
 }
 
 const SINH = { 'Kim': 'Thủy', 'Thủy': 'Mộc', 'Mộc': 'Hỏa', 'Hỏa': 'Thổ', 'Thổ': 'Kim' };

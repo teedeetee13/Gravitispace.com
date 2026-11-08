@@ -3,7 +3,7 @@ import { $, $$, esc, icon, toast } from '../util.js';
 import { t, tr, getLang } from '../i18n.js';
 import { store } from '../store.js';
 import { CAN, CHI_NAMES } from '../lib/lunar.js';
-import { buildChart, mainStarsOf, GRID, PALACES, TRANG_SINH, RING_GOOD } from '../lib/tuvi-chart.js';
+import { buildChart, mainStarsOf, GRID, PALACES, TRANG_SINH, RING_GOOD, overlays } from '../lib/tuvi-chart.js';
 import { STARS, PALACE_INFO, DAI_HAN_THEME, CUC_NAMES, RELATION_TEXT, RELATION_LABEL, THUAN_LY_TEXT } from '../data/tuvi-stars.js';
 import { yearInfo } from '../data/tuvi.js';
 import { SCHOOLS, DEFAULT_SCHOOL, GRADES, GRADE_TEXT, gradeBand, brightness } from '../data/tuvi-brightness.js';
@@ -25,25 +25,53 @@ const bTag = (id, chi) => {
   return g ? `<span class="bright b-${gradeBand(g)}" title="${esc(tr(GRADES[g]))}">${esc(getLang() === 'zh' ? tr(GRADES[g]) : g)}</span>` : '';
 };
 
+// ---------- Tùy chọn hiển thị (lưu theo người dùng) ----------
+const THIS_YEAR = new Date().getFullYear();
+const LUU_OPTS = ['luuTuHoa', 'luuTuDuc', 'luuDaiVan', 'luuKhac', 'luuTuanTriet'];
+const OPT_KEYS = ['tuongTinh', ...LUU_OPTS, 'locKy'];
+function readOpts() {
+  const o = store.getPref('tuviOpts') || {};
+  const y = Math.trunc(Number(o.year));
+  return { hanNam: o.hanNam !== false, year: y >= 1900 && y <= 2100 ? y : THIS_YEAR, ...Object.fromEntries(OPT_KEYS.map((k) => [k, o[k] === true])) };
+}
+let OPTS = readOpts();
+let OV = { stars: Array.from({ length: 12 }, () => []), dv: null, luuTuan: [], luuTriet: [], locKy: null };
+// Tiền tố sao lưu / đại vận (tiếng Trung dùng chữ Hán)
+const luuP = () => (getLang() === 'zh' ? '流' : 'L.');
+const dvP = () => (getLang() === 'zh' ? '大限' : 'ĐV.');
+// Màu theo ngũ hành
+const HANH_CLASS = { 'Kim': 'h-kim', 'Mộc': 'h-moc', 'Thủy': 'h-thuy', 'Hỏa': 'h-hoa', 'Thổ': 'h-tho' };
+const hc = (id) => HANH_CLASS[STARS[id]?.hanh] || '';
+const pName = (chi, chart) => (chi == null ? '–' : esc(palaceName(chart.palaces[chi].palace)));
+
 function cell(p, chart) {
   const main = p.stars.filter((s) => s.kind === 'main');
   // Bố cục phổ biến: chính tinh trên cùng; phụ tinh tốt cột trái, phụ tinh xấu cột phải, xếp từ trên xuống
-  const side = (s) => (s.kind === 'ring' ? (RING_GOOD.has(s.id) ? 'good' : 'hard') : s.kind);
-  const others = p.stars.filter((s) => s.kind !== 'main' && !TRANG_SINH.includes(s.id));
-  const col = (k) => others.filter((s) => side(s) === k).map((s) => `<span class="${k}">${esc(shortName(s.id))}${bTag(s.id, p.chi)}${hoaTag(s)}</span>`).join('');
+  const side = (s) => s.side || (s.kind === 'ring' ? (RING_GOOD.has(s.id) ? 'good' : 'hard') : s.kind);
+  const others = [...p.stars.filter((s) => s.kind !== 'main' && !TRANG_SINH.includes(s.id)), ...OV.stars[p.chi]];
+  const starLabel = (s) => (s.luu ? `${luuP()}${esc(shortName(s.id))}` : `${esc(shortName(s.id))}${bTag(s.id, p.chi)}${hoaTag(s)}`);
+  const col = (k) => others.filter((s) => side(s) === k).map((s) => `<span class="${hc(s.id)}${s.luu ? ' is-luu' : ''}">${starLabel(s)}</span>`).join('');
+  const lk = OV.locKy?.[p.chi];
+  const extra = [
+    OV.dv ? `<span class="p-dv">${dvP()}${esc(palaceName(OV.dv[p.chi]))}</span>` : '',
+    lk ? `<span class="p-lk"><span class="h-moc">${esc(tr(STARS['hoa-loc'].short))}→${pName(lk.loc, chart)}</span><span class="h-thuy">${esc(tr(STARS['hoa-ky'].short))}→${pName(lk.ky, chart)}</span></span>` : '',
+  ].join('');
   const ts = p.stars.find((s) => TRANG_SINH.includes(s.id));
   const flags = [
     p.isThan ? `<span class="flag">${t('laso.than')}</span>` : '',
     p.tuan ? `<span class="flag">${t('laso.tuan')}</span>` : '',
     p.triet ? `<span class="flag">${t('laso.triet')}</span>` : '',
-    p.isTieuHan ? `<span class="flag flag-th" title="${esc(t('laso.tieuHan'))}">${t('laso.tieuHanShort')}</span>` : '',
-    p.isLuuThaiTue ? `<span class="flag flag-tt" title="${esc(t('laso.luuThaiTue'))}">${t('laso.luuThaiTueShort')}</span>` : '',
+    OPTS.hanNam && p.isTieuHan ? `<span class="flag flag-th" title="${esc(t('laso.tieuHan'))}">${t('laso.tieuHanShort')}</span>` : '',
+    OPTS.hanNam && p.isLuuThaiTue ? `<span class="flag flag-tt" title="${esc(t('laso.luuThaiTue'))}">${t('laso.luuThaiTueShort')}</span>` : '',
+    OV.luuTuan.includes(p.chi) ? `<span class="flag flag-luu">${luuP()}${t('laso.tuan')}</span>` : '',
+    OV.luuTriet.includes(p.chi) ? `<span class="flag flag-luu">${luuP()}${t('laso.triet')}</span>` : '',
   ].join('');
   const label = `${palaceName(p.palace)} · ${C.ganzhi(p.label)}. ${main.map((s) => shortName(s.id)).join(', ') || t('laso.noMain')}`;
   return `<button type="button" class="palace ${p.palace === 'menh' ? 'is-menh' : ''} ${p.isCurrent ? 'is-current' : ''}" data-palace="${p.chi}" aria-label="${esc(label)}">
     <span class="p-head"><span class="p-name">${esc(palaceName(p.palace))}</span><span class="p-chi">${esc(C.ganzhi(CHI_NAMES[p.chi]))}</span></span>
-    <span class="p-main">${main.map((s) => `<span>${esc(shortName(s.id))}${bTag(s.id, p.chi)}${hoaTag(s)}</span>`).join('') || `<span class="muted">${t('laso.noMainShort')}</span>`}</span>
+    <span class="p-main">${main.map((s) => `<span class="${hc(s.id)}">${esc(shortName(s.id))}${bTag(s.id, p.chi)}${hoaTag(s)}</span>`).join('') || `<span class="muted">${t('laso.noMainShort')}</span>`}</span>
     <span class="p-minor"><span class="p-col">${col('good')}</span><span class="p-col">${col('hard')}</span></span>
+    ${extra ? `<span class="p-extra">${extra}</span>` : ''}
     <span class="p-foot"><span>${p.daiHan.from}</span>${flags}${ts ? `<span class="p-ts">${esc(shortName(ts.id))}</span>` : ''}</span>
   </button>`;
 }
@@ -79,7 +107,25 @@ function chartGrid(chart) {
       else if (r === 1 && c === 1) html += center(chart);
     })
   );
-  return `<div class="laso-grid">${html}</div>`;
+  const legend = ['Kim', 'Mộc', 'Thủy', 'Hỏa', 'Thổ'].map((h) => `<span class="${HANH_CLASS[h]}"><i aria-hidden="true">■</i> ${esc(C.hanhName(h))}</span>`).join('');
+  return `<div class="laso-grid">${html}</div>
+  <p class="hanh-legend small"><span class="muted">${t('laso.hanhLegend')}:</span>${legend}</p>`;
+}
+
+/** Ô tùy chọn: vòng Tướng tinh, hạn năm, các lớp sao lưu, Lộc Kỵ nhập */
+function optionsPanel() {
+  const o = OPTS;
+  const cb = (k) => `<label class="opt"><input type="checkbox" data-opt="${k}" ${o[k] ? 'checked' : ''} ${LUU_OPTS.includes(k) && !o.hanNam ? 'disabled' : ''} /> ${t(`laso.opt.${k}`)}</label>`;
+  return `<fieldset class="laso-opts">
+    <legend>${t('laso.opts')}</legend>
+    <div class="opt-grid">
+      ${cb('tuongTinh')}
+      <label class="opt opt-year"><input type="checkbox" data-opt="hanNam" ${o.hanNam ? 'checked' : ''} /> ${t('laso.opt.hanNam')}
+        <input type="number" inputmode="numeric" min="1900" max="2100" step="1" value="${o.year}" data-opt-year ${o.hanNam ? '' : 'disabled'} aria-label="${esc(t('laso.opt.hanNam'))}" /></label>
+      ${cb('luuTuHoa')}${cb('luuTuDuc')}${cb('luuDaiVan')}${cb('luuKhac')}${cb('locKy')}${cb('luuTuanTriet')}
+    </div>
+    <p class="muted small">${t('laso.optsNote')}</p>
+  </fieldset>`;
 }
 
 function starBlock(id, chart) {
@@ -111,9 +157,11 @@ function palaceDetail(chart, chi) {
   const p = chart.palaces[chi];
   const info = PALACE_INFO[p.palace];
   const { stars, borrowed } = mainStarsOf(chart, chi);
-  const minor = p.stars.filter((s) => s.kind === 'good' || s.kind === 'hard');
+  const minor = [...p.stars.filter((s) => s.kind === 'good' || s.kind === 'hard'), ...OV.stars[chi].filter((s) => !s.luu).map((s) => ({ ...s, kind: s.side }))];
   const rings = p.stars.filter((s) => s.kind === 'ring');
   const hoas = p.stars.filter((s) => s.hoa);
+  const luu = OV.stars[chi].filter((s) => s.luu);
+  const lk = OV.locKy?.[chi];
   return `<div class="palace-detail">
     <p class="eyebrow">${esc(C.ganzhi(p.label))} · ${t('laso.daiHanAge', { a: p.daiHan.from, b: p.daiHan.to })}</p>
     <h3>${t('laso.palace')} ${esc(palaceName(p.palace))}${p.isThan ? ` <span class="tag">${t('laso.thanCu')}</span>` : ''}</h3>
@@ -123,7 +171,9 @@ function palaceDetail(chart, chi) {
     ${minor.length ? `<h4 class="h-sm">${t('laso.minorStars')}</h4><ul class="minor-list">${minor.map((s) => `<li class="${s.kind}"><strong>${esc(starName(s.id))}</strong>: ${esc(tr(STARS[s.id].note))}</li>`).join('')}</ul>` : ''}
     ${hoas.length ? `<h4 class="h-sm">${t('laso.tuHoa')}</h4><ul class="minor-list">${hoas.map((s) => `<li><strong>${esc(tr(STARS[s.hoa].name))}</strong> (${esc(shortName(s.id))}): ${esc(tr(STARS[s.hoa].note))}</li>`).join('')}</ul>` : ''}
     ${rings.length ? `<h4 class="h-sm">${t('laso.rings')}</h4><ul class="minor-list">${rings.map((s) => `<li><strong>${esc(starName(s.id))}</strong>: ${esc(tr(STARS[s.id].note))}</li>`).join('')}</ul>` : ''}
-    ${p.isTieuHan ? `<p class="note-inline">${t('laso.tieuHanText', { y: chart.input.viewYear ?? new Date().getFullYear() })}</p>` : ''}
+    ${luu.length ? `<p class="small"><strong>${t('laso.luuList', { y: OPTS.year })}:</strong> ${luu.map((s) => `<span class="${hc(s.id)}">${luuP()}${esc(shortName(s.id))}</span>`).join(', ')}</p>` : ''}
+    ${lk ? `<p class="small">${t('laso.locKyText', { can: esc(C.ganzhi(CAN[lk.can])), loc: pName(lk.loc, chart), ky: pName(lk.ky, chart) })}</p>` : ''}
+    ${OPTS.hanNam && p.isTieuHan ? `<p class="note-inline">${t('laso.tieuHanText', { y: OPTS.year })}</p>` : ''}
     ${p.tuan || p.triet ? `<p class="muted small">${t('laso.tuanTriet')}</p>` : ''}
   </div>`;
 }
@@ -154,7 +204,7 @@ function interpretation(chart) {
     <div class="reading-card">
       <h3>${chart.thuanLy ? t('laso.thuanLy') : t('laso.nghichLy')}</h3>
       <p>${esc(tr(THUAN_LY_TEXT[chart.thuanLy]))}</p>
-      <p class="muted small">${t('laso.chuText', { mc: esc(starName(chart.menhChu)), tc: esc(starName(chart.thanChu)) })}${chart.menhChuNam !== chart.menhChu ? ` ${t('laso.chuAlt', { s: esc(starName(chart.menhChuNam)) })}` : ''}</p>
+      <p class="muted small">${t('laso.chuText', { mc: esc(starName(chart.menhChu)), tc: esc(starName(chart.thanChu)) })}${chart.menhChuCung !== chart.menhChu ? ` ${t('laso.chuAlt', { s: esc(starName(chart.menhChuCung)) })}` : ''}</p>
     </div>
     <div class="reading-card">
       <h3>${t('laso.tuHoaTitle', { can: esc(C.ganzhi(CAN[chart.canChi.year.can])) })}</h3>
@@ -186,7 +236,9 @@ function roadmap(chart) {
 }
 
 function renderResult(view, profile) {
-  const chart = buildChart({ ...profile, gender: profile.gender });
+  OPTS = readOpts();
+  const chart = buildChart({ ...profile, gender: profile.gender, viewYear: OPTS.hanNam ? OPTS.year : THIS_YEAR });
+  OV = overlays(chart, { ...OPTS, year: OPTS.hanNam ? OPTS.year : null });
   const out = $('#laso-result', view);
   out.innerHTML = `
     <div class="row laso-actions">
@@ -195,6 +247,7 @@ function renderResult(view, profile) {
       <button class="btn btn-ghost" type="button" data-edit>${icon('user')} ${t('laso.edit')}</button>
     </div>
     ${schoolPicker()}
+    ${optionsPanel()}
     <p class="muted small">${t('laso.tapHint')}</p>
     ${chartGrid(chart)}
     <div id="palace-panel" class="palace-panel" aria-live="polite">${palaceDetail(chart, chart.menh)}</div>
@@ -202,8 +255,17 @@ function renderResult(view, profile) {
     ${roadmap(chart)}
     <details class="method"><summary>${t('laso.methodTitle')}</summary><p>${t('laso.method')}</p></details>`;
   out.onchange = (e) => {
-    if (!e.target.matches('[data-school]')) return;
-    store.setPref('tuviSchool', e.target.value);
+    if (e.target.matches('[data-opt], [data-opt-year]')) {
+      const o = readOpts();
+      if (e.target.dataset.opt) o[e.target.dataset.opt] = e.target.checked;
+      else {
+        const y = Math.trunc(Number(e.target.value));
+        if (!(y >= 1900 && y <= 2100)) return;
+        o.year = y;
+      }
+      store.setPref('tuviOpts', o);
+    } else if (e.target.matches('[data-school]')) store.setPref('tuviSchool', e.target.value);
+    else return;
     const y = window.scrollY;
     renderResult(view, profile);
     window.scrollTo(0, y);
