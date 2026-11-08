@@ -5,7 +5,7 @@ Tranh gốc bộ **Rider–Waite–Smith**, bản in đầu tiên năm **1909** 
 - Giấy phép: **Public domain (phạm vi công cộng)** theo ghi nhận của Wikimedia Commons cho cả 78 tệp. Tác phẩm xuất bản năm 1909; hoạ sĩ mất năm 1951 nên đã hết thời hạn bảo hộ ở Việt Nam (50 năm sau khi tác giả mất) và ở Mỹ, châu Âu.
 - Nguồn: Wikimedia Commons, thể loại [Rider-Waite tarot deck (Roses & Lilies)](https://commons.wikimedia.org/wiki/Category:Rider-Waite_tarot_deck_(Roses_%26_Lilies)).
 - Xử lý: tải bản thu nhỏ 500px, thu lại còn 300px, JPEG chất lượng 78. Không chỉnh sửa nội dung tranh.
-- Lưu ý: các bản tô màu lại về sau (ví dụ của U.S. Games Systems, 1971) có thể còn bản quyền riêng; Hữu Duyên **chỉ dùng bản quét 1909**.
+- Lưu ý: các bản tô màu lại về sau (ví dụ của U.S. Games Systems, 1971) có thể còn bản quyền riêng; An Sao Space **chỉ dùng bản quét 1909**.
 
 | Tệp | Nguồn gốc | Giấy phép |
 |---|---|---|

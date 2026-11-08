@@ -1,4 +1,4 @@
-// Lướt duyên — bảng tin cuộn từng trang, thứ tự ngẫu nhiên ("hữu duyên")
+// Lướt duyên — bảng tin cuộn từng trang, thứ tự ngẫu nhiên ("gặp là duyên")
 import { esc, icon, paragraphs, shuffle, todayKey } from '../util.js';
 import { t } from '../i18n.js';
 import { store } from '../store.js';

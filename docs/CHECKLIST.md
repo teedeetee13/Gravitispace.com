@@ -1,4 +1,4 @@
-# Hữu Duyên v2.0 — Checklist hoàn thiện để duyệt
+# An Sao Space — Checklist hoàn thiện để duyệt
 
 > Tài liệu này ghi rõ từng hạng mục đã làm: **làm gì, làm bằng cách nào, công nghệ gì, nằm ở tệp nào, và bạn tự kiểm tra lại ra sao**.
 > Ký hiệu: ✅ đã xong và đã kiểm chứng · ⚠️ đã xong nhưng cần bạn quyết định / xác nhận · ⏳ để dành cho giai đoạn web động.
@@ -29,9 +29,9 @@
 | 1.12 | **Lời khuyên chỉ ở mức tâm thế** | ✅ | Mọi lời luận giải viết dạng "khuynh hướng / năng lượng / lời mời chiêm nghiệm". Cuối mỗi trang luận giải có ghi chú: *"Đây là tấm gương để soi mình, không phải lời phán định…"*. Có **kiểm thử tự động** quét từ ngữ đe doạ trong dữ liệu. | `ui.js` → `gentleNote()`, `tests/i18n.test.mjs` |
 | 1.13 | **Minh bạch phương pháp** | ✅ | Mỗi trang lá số/bản đồ sao có mục "Cách tính và các quy ước"; trang Về có mục "Phương pháp và nguồn dữ liệu". | `views/laso.js`, `views/natal.js`, `views/about.js` |
 
-**Quy ước có nhiều trường phái (đã chọn và ghi rõ trên trang):** sinh sau 23 giờ tính sang ngày hôm sau; tháng nhuận an như tháng chính; tuổi tính theo tuổi mụ. **v2.1 đã thêm:** ~40 phụ tinh, ba vòng Tràng Sinh / Bác Sĩ / Thái Tuế, sinh khắc Mệnh–Cục, Mệnh chủ, Thân chủ, thuận/nghịch lý, tiểu hạn, lưu Thái Tuế (chi tiết trong [NHAT-KY.md](NHAT-KY.md)). **Chưa làm:** độ sáng sao (miếu/vượng/đắc/hãm).
+**Quy ước có nhiều trường phái (đã chọn và ghi rõ trên trang):** sinh sau 23 giờ tính sang ngày hôm sau; tháng nhuận an như tháng chính; tuổi tính theo tuổi mụ. **v2.1 đã thêm:** ~40 phụ tinh, ba vòng Tràng Sinh / Bác Sĩ / Thái Tuế, sinh khắc Mệnh–Cục, Mệnh chủ, Thân chủ, thuận/nghịch lý, tiểu hạn, lưu Thái Tuế (chi tiết ở mục 11). **Chưa làm:** độ sáng sao (miếu/vượng/đắc/hãm).
 
-> **Tài khoản và cơ sở dữ liệu (v2.1):** xem [NHAT-KY.md](NHAT-KY.md) mục 1 và hướng dẫn bật [SUPABASE.md](SUPABASE.md).
+> **Tài khoản và cơ sở dữ liệu (v2.1):** xem mục 11 bên dưới và hướng dẫn bật ở [SO-TAY.md](SO-TAY.md) mục 4, cách C.
 
 **Cách tự kiểm tra:** vào *Bản mệnh* → nhập ngày giờ sinh của bạn → đối chiếu lá số với một phần mềm/thầy quen thuộc (ô Mệnh, Thân, Cục, vị trí 14 chính tinh, Tứ Hóa). Ví dụ đã đối chiếu trong kiểm thử: nam, 15/8/1995 9h → âm lịch 20/7 Ất Hợi, giờ Tỵ, Mệnh tại Mão (Thiên Tướng), Thân tại Sửu, Thổ ngũ cục, Tử Vi–Thất Sát tại Tỵ.
 
@@ -115,13 +115,13 @@
 | Vị trí hành tinh | [Paul Schlyter, *How to compute planetary positions*](https://stjarnhimlen.se/comp/ppcomp.html) | Đọc được; hệ số trong mã khớp nguyên văn |
 | Tarot và trải bài Celtic Cross | [A. E. Waite, *The Pictorial Key to the Tarot* (Wikisource)](https://en.wikisource.org/wiki/The_Pictorial_Key_to_the_Tarot), mục §7 "An Ancient Celtic Method of Divination" | Đọc được |
 | Quy tắc an sao Tử Vi | Sách *Tử Vi Đẩu Số Tân Biên*, Vân Đằng Thái Thứ Lang (in giấy, không có bản chính thức trên mạng) | ⚠️ Chưa có đường dẫn trực tuyến để bạn đối chiếu |
-| Lời luận giải (sao, cung, hành tinh, đại hạn) | Hữu Duyên tự biên soạn từ tính chất gốc của từng sao/hành tinh | ⚠️ Không phải trích nguyên văn từ sách |
+| Lời luận giải (sao, cung, hành tinh, đại hạn) | An Sao Space tự biên soạn từ tính chất gốc của từng sao/hành tinh | ⚠️ Không phải trích nguyên văn từ sách |
 
 ## 8. Cách chạy và kiểm tra lại
 
 ```bash
 # Chạy web
-python -m http.server 5173 --directory web      # rồi mở http://localhost:5173
+python -m http.server 5190 --directory web      # rồi mở http://localhost:5190
 
 # Chạy kiểm thử (cần Node.js ≥ 20, không cần cài gì thêm)
 npm test
@@ -146,7 +146,7 @@ Tiêu chí: (1) cộng đồng quan tâm huyền học/chiêm tinh/tử vi lớn
 | **हिन्दी** | Ấn Độ (thị trường chiêm tinh rất lớn) | राशि, लग्न, भाव, चर/स्थिर/द्विस्वभाव, युति/प्रतियुति/त्रिकोण/चतुष्कोण/षडांश, वक्री | **Quan trọng:** người Ấn quen hệ Vedic **निरयण** (sidereal) — trang ghi rõ đây là hệ **सायन** (tropical) nên cung Mặt Trời có thể sớm hơn khoảng một cung, cả hai hệ đều đúng theo nguyên tắc riêng. Tele-MANAS 14416 |
 | **ไทย** | Thái Lan | ลัคนา, เรือน, จร/สถิร/อุภัย, กุม/เล็ง/ตรีโกณ/จตุโกณ/โยค, พักร์; con giáp kèm tên năm Thái (ชวด ฉลู ขาล…) | Giống Ấn Độ: ghi rõ **สายนะ** khác **นิรายนะ** của โหราศาสตร์ไทย. Số 1323 |
 
-Đã cân nhắc nhưng **chưa thêm**: Bồ Đào Nha (Brazil), Nhật, Hàn — có tiềm năng tốt; thêm sau theo quy trình ở BAN-GIAO.md mục 6.
+Đã cân nhắc nhưng **chưa thêm**: Bồ Đào Nha (Brazil), Nhật, Hàn — có tiềm năng tốt; thêm sau theo quy trình ở SO-TAY.md mục 5.
 
 ### 9.2 Hạng mục
 
@@ -162,7 +162,7 @@ Tiêu chí: (1) cộng đồng quan tâm huyền học/chiêm tinh/tử vi lớn
 | 9.8 | Người sinh ngoài Việt Nam | ✅ | Gợi ý múi giờ theo kinh độ (làm tròn nửa giờ) khi toạ độ ngoài lãnh thổ Việt Nam; ghi chú giờ mùa hè | `data/places.js`, `views/birth.js`, `tests/places.test.mjs` |
 | 9.9 | Bảo mật | ✅ | Xem [SECURITY.md](../SECURITY.md): CSP + `upgrade-insecure-requests`, `_headers` (HSTS, nosniff, frame-ancestors, Permissions-Policy, COOP), chống clickjacking trên GitHub Pages, RLS + ràng buộc `refs`/`lang`, quét khoá bí mật, CodeQL, Dependabot | `SECURITY.md`, `web/_headers`, `boot.js`, `supabase/schema.sql`, `tests/security.test.mjs` |
 | 9.10 | CI/CD | ✅ | Test Node 20 + 22 → build `dist/` (đóng dấu phiên bản + commit vào `config.js` và tên cache service worker, kiểm tra import hỏng, ngân sách dung lượng) → đăng Pages. Thẻ `vX.Y.Z` → GitHub Release kèm zip + SHA-256. Chỉ action chính chủ, quyền tối thiểu, `persist-credentials: false` | `.github/workflows/*`, `.github/dependabot.yml`, `tools/build.mjs`, `tools/package.mjs` |
-| 9.11 | Bàn giao | ✅ | Hồ sơ bàn giao (kiến trúc, lệnh, CI/CD, cấu hình, tài khoản cần chuyển, vận hành, thêm ngôn ngữ, giới hạn), nhật ký phiên bản | `docs/BAN-GIAO.md`, `CHANGELOG.md` |
+| 9.11 | Bàn giao | ✅ | Hồ sơ bàn giao (kiến trúc, lệnh, CI/CD, cấu hình, tài khoản cần chuyển, vận hành, thêm ngôn ngữ, giới hạn), nhật ký phiên bản | `docs/SO-TAY.md` (trước là `BAN-GIAO.md`), `CHANGELOG.md` |
 | 9.12 | Lỗi phát hiện và đã sửa | ✅ | CSDL từ chối bài không phải vi/en; câu tiếng Anh "Your your…"; gợi ý múi giờ luôn là UTC+7 cho mọi toạ độ | — |
 
 ### 9.3 Kiểm tra trên điện thoại (390×844) và máy tính (1366×860)
@@ -174,5 +174,75 @@ Bảng tin (sáng, tối), Tìm kiếm, Bài viết, Lá số Tử Vi, Bản đ�
 1. **Duyệt bản ngữ.** Bản dịch dùng đúng thuật ngữ chuẩn và đã qua kiểm thử tự động, nhưng để không ai "có cớ chê", nên nhờ **một người bản ngữ có hiểu bộ môn** đọc một lượt mỗi ngôn ngữ trước khi quảng bá ở nước đó (ưu tiên: zh vì người Đài/Hồng rất rành Tử Vi; hi và th vì khác biệt sidereal). Chỗ cần đọc: `web/assets/js/i18n/<mã>*.js`.
 2. **Số đường dây hỗ trợ** các nước (mục 9.1) — xác nhận lại trước khi ra mắt ở nước đó.
 3. **Chạy lại `supabase/schema.sql`** nếu CSDL đã được tạo từ bản 2.1 (để nhận bài ở ngôn ngữ mới).
-4. **Thiết lập GitHub một lần** (Pages = GitHub Actions, bảo vệ nhánh, bật Secret scanning…) — danh sách ở BAN-GIAO.md mục 3.
+4. **Thiết lập GitHub một lần** (Pages = GitHub Actions, bảo vệ nhánh, bật Secret scanning…) — danh sách ở SO-TAY.md mục 4, cách B.
 5. **Chưa commit / push** — như các lần trước, chờ bạn duyệt.
+
+---
+
+## 10. Đổi tên và gộp tài liệu (08/11/2026)
+
+| # | Hạng mục | Trạng thái | Làm thế nào | Tệp |
+|---|---|---|---|---|
+| 10.1 | Đổi tên **Hữu Duyên → An Sao Space** | ✅ | Thay ở tiêu đề, logo, manifest (tên ngắn trên màn hình chính: "An Sao"), Open Graph, 8 bản dịch. Trang *Về* ở cả 8 ngôn ngữ có thêm câu giải nghĩa tên: "an" là bình an; "an sao" (安星) là bước xếp sao trong Tử Vi. Biểu tượng mới: trăng lưỡi liềm và ngôi sao, thay hai vòng tròn; vẽ lại `favicon.svg` và ảnh chia sẻ `og-image.png` (1200×630) | `index.html`, `manifest.webmanifest`, `i18n/*.js`, `style.css`, `assets/favicon.svg`, `assets/og-image.png` |
+| 10.2 | Định danh nội bộ | ✅ | Khoá lưu trữ `huuduyen:` đổi thành `ansao:`, tên bộ nhớ đệm `ansao-…`, tên gói `an-sao-space`. Tệp sao lưu kiểu cũ (`huu-duyen`) vẫn nạp được | `config.js`, `boot.js`, `store.js`, `sw.js`, `tools/*`, `package.json` |
+| 10.3 | Cổng chạy thử 5173 → **5190** | ✅ | Tránh trùng với các dự án khác (Vite mặc định dùng 5173) | `package.json`, `.claude/launch.json` |
+| 10.4 | Gộp tài liệu | ✅ | Gộp 4 tệp (`BAN-GIAO.md`, `SUPABASE.md`, `NHAT-KY.md`, `web/README.md`) vào một **sổ tay** `docs/SO-TAY.md` gồm 7 mục: tổng quan, tối ưu (có số đo), bảo mật, triển khai (Netlify, GitHub Pages, Supabase, tên miền, nộp bài), vận hành (lệnh, việc thường gặp, định kỳ, sự cố), bàn giao, giới hạn. `README.md` và `SECURITY.md` rút gọn. Chi tiết của NHAT-KY chuyển xuống mục 11 bên dưới | `docs/SO-TAY.md`, `README.md`, `SECURITY.md` |
+| 10.5 | Kiểm tra | ✅ | 92/92 kiểm thử đạt. Chụp khổ 390px (sáng, tối) và 1366px: tên vừa một dòng trên thanh tiêu đề, không tràn ngang | — |
+
+---
+
+## 11. Phụ lục: chi tiết bản 2.1 và 2.2 (gộp từ NHAT-KY.md cũ)
+
+### v2.2 · 06/11/2026
+
+| Việc | Làm thế nào | Nguồn / tệp |
+|---|---|---|
+| **Độ sáng sao Tử Vi theo trường phái** | Ô chọn trường phái ngay trên lá số, lưu theo người dùng (đồng bộ tài khoản). Ký hiệu M/V/Đ/B/H cạnh tên sao, phần luận giải có lời giải thích nhẹ nhàng cho từng mức. | `data/tuvi-brightness.js` |
+| · Thái Thứ Lang (**mặc định**) | Chép đúng 14 chính tinh × 12 cung từ bản in *Tử Vi Đẩu Số Tân Biên*, Sài Gòn 1956 (mục 3.1–3.14), đã đếm đủ 12 cung mỗi sao; phụ tinh chỉ ghi những cung sách nêu. | [bản quét PDF](https://tuvithuchanh.com/wp-content/uploads/2022/11/Tu-vi-dau-so.pdf) |
+| · Tử Vi Đẩu Số Toàn Thư | Thiên Mệnh cung, thang 7 mức; dùng đúng giá trị của sách ở 14 ô các bản hiện đại chép khác; 3 ô sách không ghi để trống. | [ziweihome.com](https://ziweihome.com/zh-hans/xingyao/miaowang) |
+| **Góc chiếu (aspects)** | 5 góc Ptolemy, biên độ 8/8/7/7/5° (+2° với Mặt Trời, Mặt Trăng), bỏ cặp hành tinh ngoài. Luận theo lối "hành tinh + góc chiếu + hành tinh" (như Astrolog), **lời văn An Sao Space tự viết**. Vẽ đường góc chiếu trong vòng hoàng đạo (xanh: hài hoà, đỏ: thử thách). Không rõ giờ sinh thì bỏ góc chiếu của Mặt Trăng. | `lib/ephemeris.js` → `findAspects`, `data/astro-texts.js`, `views/natal.js` |
+| **Hình 78 lá Tarot** | Tranh gốc Rider–Waite–Smith in năm 1909 (Pamela Colman Smith), **Public domain** (đã kiểm từng tệp qua API Wikimedia Commons). Thu về 300px, tổng 3,9 MB, tải lười; ảnh lỗi thì hiện hình vẽ SVG cũ. | `web/assets/tarot/`, `CREDITS.md` |
+| Kiểm thử | 56/56 đạt (thêm: bảng độ sáng đủ ô và khớp nguyên văn, góc chiếu, đủ 78 ảnh JPEG < 120 KB có ghi nguồn). Chụp kiểm tra khổ 390px: Tarot, bản đồ sao, góc chiếu, lá số. | `tests/brightness-aspects.test.mjs` |
+
+### v2.1 · 06/11/2026
+
+#### 1. Tài khoản + cơ sở dữ liệu (Supabase)
+
+| Việc | Kết quả |
+|---|---|
+| Chọn nền tảng | **Supabase** (PostgreSQL + Auth). Lý do: dữ liệu quan hệ hợp với cộng đồng bài viết + kiểm duyệt; bảo mật bằng RLS ngay trong cơ sở dữ liệu; mã nguồn mở, tự cài máy chủ riêng được, không bị khoá vào một nhà cung cấp; gọi được bằng REST thuần nên **không cần cài SDK** (Firebase cũng gọi REST được nhưng Firestore REST rườm rà, SDK nặng). |
+| Đăng ký / đăng nhập / quên mật khẩu / đặt mật khẩu mới / đăng xuất / xoá tài khoản | Trang mới `#/tai-khoan`. Gọi Supabase Auth qua `fetch` (`cloud.js`). |
+| Mở lại khi mất mạng **nhờ phiên tài khoản** | Phiên (access + refresh token) lưu trên máy (`auth.js`). Mất mạng → mở web vẫn đang đăng nhập, thấy dữ liệu của tài khoản (bản đồng bộ gần nhất), sửa được; có mạng lại → tự làm mới token và đồng bộ. |
+| Đồng bộ nhiều thiết bị | Bảng `user_state`. Chỉ máy sửa → đẩy lên; chỉ máy chủ đổi → kéo về; cả hai cùng sửa → gộp không mất dữ liệu (`mergeStates`). |
+| Khách đăng nhập lần đầu | Dữ liệu đang có trên máy được chuyển vào tài khoản, không mất gì. |
+| Đăng xuất | Xoá bản sao dữ liệu tài khoản khỏi máy (riêng tư trên máy dùng chung). |
+| Bài viết cộng đồng | Bảng `posts`: gửi ở trạng thái *chờ duyệt*, quản trị viên đổi sang *approved* thì mọi người mới thấy. |
+| Bảo mật | RLS: mỗi người chỉ đọc/sửa dữ liệu của mình; chỉ gửi được bài *pending*; không ai tự duyệt bài. CSP chỉ cho kết nối tới `*.supabase.co`. |
+| Tệp | `web/assets/js/{config,cloud,auth,store}.js`, `views/account.js`, `supabase/schema.sql`, hướng dẫn `docs/SO-TAY.md mục 4, cách C` |
+| **Việc bạn cần làm** | Tạo dự án Supabase, chạy `schema.sql`, dán 2 khoá vào `config.js` (≈10 phút, xem `docs/SO-TAY.md mục 4, cách C`). Chưa dán khoá thì web vẫn chạy đủ ở chế độ khách. |
+
+#### 2. Lá số Tử Vi: bổ sung sao và các mục còn thiếu
+
+| Nhóm | Đã thêm |
+|---|---|
+| Theo năm | Long Trì, Phượng Các, Giải Thần, Thiên Khốc, Thiên Hư, Hồng Loan, Thiên Hỷ, Thiên Đức, Nguyệt Đức, Cô Thần, Quả Tú, Đào Hoa, Hoa Cái, Kiếp Sát, Phá Toái, Lưu Hà |
+| Theo tháng / ngày / giờ | Thiên Hình, Thiên Riêu, Thiên Y · Tam Thai, Bát Tọa, Ân Quang, Thiên Quý · Thai Phụ, Phong Cáo |
+| Cố định / theo cung | Thiên La, Địa Võng, Thiên Thương, Thiên Sứ, Thiên Tài, Thiên Thọ |
+| Ba vòng sao | Tràng Sinh (12), Bác Sĩ (12), Thái Tuế (12) |
+| Thông tin lá số | **Sinh khắc Mệnh – Cục** ghi ngay ô giữa + giải thích cách xét; Mệnh chủ, Thân chủ; âm dương thuận/nghịch lý; **tiểu hạn** năm nay; **lưu Thái Tuế** năm nay |
+| Chưa làm (ghi rõ trên trang) | Độ sáng sao (miếu/vượng/đắc/hãm) — các sách chép bảng này không thống nhất, cần bạn chọn sách chuẩn |
+
+#### 3. Kiểm thử
+
+| Bộ | Số ca | Nội dung mới |
+|---|---|---|
+| `tests/tuvi.test.mjs` | 16 | vị trí sao năm/ngày, 3 vòng sao, Mệnh chủ, Thân chủ, thuận lý, tiểu hạn, lưu Thái Tuế |
+| `tests/cloud.test.mjs` | 10 | đăng ký, offline, 2 máy, gộp xung đột, gửi bài chờ duyệt, làm mới token, RLS, đăng xuất, lỗi |
+| Tổng `npm test` | **49/49 đạt** | Supabase giả lập trong bộ nhớ: `tests/fake-supabase.mjs` |
+
+**Thử thật trên trình duyệt (khổ 390×844):**
+
+1. Khách nhập bản mệnh → đăng ký: mật khẩu ngắn bị nhắc nhẹ, đăng ký xong dữ liệu khách lên tài khoản.
+2. Tắt mạng → tải lại trang → vẫn đăng nhập, vẫn thấy bản mệnh, rút lá bài được, trạng thái "Đang offline".
+3. Bật mạng → lá bài rút lúc offline đã lên máy chủ, trạng thái "Đã đồng bộ".
+4. Lá số mới không tràn ngang trên điện thoại; khổ máy tính hiện đủ phụ tinh.

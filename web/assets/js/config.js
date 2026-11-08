@@ -1,7 +1,7 @@
 // Cấu hình chung.
 export const CONFIG = {
   APP_VERSION: '2.2.0',
-  STORAGE_PREFIX: 'huuduyen:',
+  STORAGE_PREFIX: 'ansao:',
   DEFAULT_LANG: 'vi',
   // Danh mục ngôn ngữ: xem i18n/langs.js
 

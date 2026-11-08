@@ -145,7 +145,7 @@ export function renderTarot(view) {
     if (tg.closest('[data-daily-draw]')) {
       const card = DECK[Math.floor(Math.random() * DECK.length)];
       store.setDraw(todayKey(), { cardId: card.id, reversed: Math.random() < REVERSED_CHANCE });
-      window.dispatchEvent(new Event('huuduyen:draw')); // cập nhật ô "Lá bài hôm nay" ở thanh bên
+      window.dispatchEvent(new Event('ansao:draw')); // cập nhật ô "Lá bài hôm nay" ở thanh bên
       const sec = $('#daily-section', view);
       sec.innerHTML = dailyBlock();
       $('.flip-slot', sec).classList.add('just-flipped');

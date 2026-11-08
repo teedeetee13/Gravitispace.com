@@ -1,6 +1,6 @@
 // Ý nghĩa sao và cung trong Tử Vi Đẩu Số, viết theo giọng "chiêm nghiệm, chữa lành":
 // nói về khuynh hướng năng lượng và tâm thế, không phán định số phận, không bảo người đọc phải làm gì.
-// Tính chất gốc của sao theo sách truyền thống (Thái Thứ Lang, Nguyễn Phát Lộc); lời văn do Hữu Duyên biên soạn.
+// Tính chất gốc của sao theo sách truyền thống (Thái Thứ Lang, Nguyễn Phát Lộc); lời văn do An Sao Space biên soạn.
 // Mỗi chuỗi có hai bản { vi, en }.
 
 export const STARS = {

@@ -49,7 +49,7 @@ writeFileSync(cfgPath, readFileSync(cfgPath, 'utf8').replace(/APP_VERSION: '[^']
 const swPath = join(OUT, 'sw.js');
 const sw = readFileSync(swPath, 'utf8');
 if (!/const CACHE = '[^']+';/.test(sw)) throw new Error('sw.js: không tìm thấy hằng CACHE');
-writeFileSync(swPath, sw.replace(/const CACHE = '[^']+';/, `const CACHE = 'huuduyen-${pkg.version}-${sha}';`));
+writeFileSync(swPath, sw.replace(/const CACHE = '[^']+';/, `const CACHE = 'ansao-${pkg.version}-${sha}';`));
 
 // 3. Kiểm tra đường dẫn
 const problems = [];
@@ -84,7 +84,7 @@ const groups = {
   'Tổng': size(() => true),
 };
 const BUDGET = { 'Khung + CSS': 140 * 1024, 'Mã JS (trừ gói ngôn ngữ)': 520 * 1024 };
-console.log(`Hữu Duyên ${pkg.version} (${sha}) → dist/  ${all.length} tệp`);
+console.log(`An Sao Space ${pkg.version} (${sha}) → dist/  ${all.length} tệp`);
 let over = false;
 for (const [k, v] of Object.entries(groups)) {
   const b = BUDGET[k];

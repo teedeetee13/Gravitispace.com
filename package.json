@@ -1,11 +1,11 @@
 {
-  "name": "huu-duyen",
+  "name": "an-sao-space",
   "version": "2.2.0",
   "private": true,
   "type": "module",
-  "description": "Hữu Duyên — Tarot, chiêm tinh, tử vi theo hướng chữa lành. Web tĩnh, không phụ thuộc thư viện ngoài.",
+  "description": "An Sao Space — Tarot, chiêm tinh, tử vi theo hướng chữa lành. Web tĩnh, không phụ thuộc thư viện ngoài.",
   "scripts": {
-    "start": "python -m http.server 5173 --directory web",
+    "start": "python -m http.server 5190 --directory web",
     "test": "node --test \"tests/*.test.mjs\"",
     "build": "node tools/build.mjs",
     "package": "node tools/build.mjs && node tools/package.mjs",

@@ -10,10 +10,10 @@
     }
   }
   try {
-    var theme = localStorage.getItem('huuduyen:theme');
+    var theme = localStorage.getItem('ansao:theme');
     if (theme) document.documentElement.dataset.theme = theme;
     var html = { vi: 'vi', en: 'en', es: 'es', fr: 'fr', de: 'de', zh: 'zh-Hant', hi: 'hi', th: 'th' };
-    var lang = localStorage.getItem('huuduyen:lang');
+    var lang = localStorage.getItem('ansao:lang');
     if (html[lang]) document.documentElement.lang = html[lang];
   } catch (e) {}
 })();

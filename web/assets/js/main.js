@@ -79,7 +79,7 @@ async function render() {
     root.innerHTML = `<div class="page narrow">${emptyState(t('notFound.title'), t('notFound.body'), `<a class="btn" href="#/">${t('notFound.home')}</a>`)}</div>`;
     title = t('notFound.short');
   }
-  document.title = title ? `${title} · Hữu Duyên` : 'Hữu Duyên';
+  document.title = title ? `${title} · An Sao Space` : 'An Sao Space';
   view.removeAttribute('aria-busy');
 
   // Đánh dấu mục điều hướng đang mở
@@ -156,7 +156,7 @@ document.addEventListener('click', async (e) => {
     const dark = root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
     root.dataset.theme = dark ? 'light' : 'dark';
     try {
-      localStorage.setItem('huuduyen:theme', root.dataset.theme);
+      localStorage.setItem('ansao:theme', root.dataset.theme);
     } catch {}
     return;
   }
@@ -193,7 +193,7 @@ document.addEventListener('click', async (e) => {
     const url = `${location.origin}${location.pathname}#/bai/${id}`;
     const text = post.title || post.body.slice(0, 80);
     try {
-      if (navigator.share) await navigator.share({ title: 'Hữu Duyên', text, url });
+      if (navigator.share) await navigator.share({ title: 'An Sao Space', text, url });
       else {
         await navigator.clipboard.writeText(url);
         toast(t('post.copied'));
@@ -225,7 +225,7 @@ window.addEventListener('unhandledrejection', (e) => {
 });
 
 window.addEventListener('hashchange', render);
-window.addEventListener('huuduyen:draw', renderTodayWidget);
+window.addEventListener('ansao:draw', renderTodayWidget);
 
 /** Chấm trạng thái tài khoản trên nút Tài khoản (xanh: đã đồng bộ, vàng: đang chờ/offline). */
 function renderAccountBadge() {
@@ -239,7 +239,7 @@ function renderAccountBadge() {
 }
 
 // Đăng nhập / đăng xuất: vẽ lại trang hiện tại theo dữ liệu của tài khoản mới
-window.addEventListener('huuduyen:auth', () => {
+window.addEventListener('ansao:auth', () => {
   renderAccountBadge();
   renderTodayWidget();
   if (location.hash.startsWith('#/tai-khoan') && location.hash !== '#/tai-khoan') location.hash = '#/tai-khoan';

@@ -301,11 +301,11 @@ export const store = {
 
   // ---------- Quyền sở hữu dữ liệu ----------
   /** Tải dữ liệu của tôi về máy (mang sang máy khác, lưu trữ riêng). */
-  exportData: () => JSON.stringify({ app: 'huu-duyen', exportedAt: new Date().toISOString(), data: payload() }, null, 2),
+  exportData: () => JSON.stringify({ app: 'an-sao-space', exportedAt: new Date().toISOString(), data: payload() }, null, 2),
   /** Nạp lại dữ liệu đã xuất. Trả về true nếu hợp lệ. */
   importData(json) {
     const parsed = JSON.parse(json);
-    if (parsed?.app !== 'huu-duyen' || typeof parsed.data !== 'object' || !parsed.data) return false;
+    if (!['an-sao-space', 'huu-duyen'].includes(parsed?.app) || typeof parsed.data !== 'object' || !parsed.data) return false;
     const d = parsed.data;
     if (!Array.isArray(d.myPosts) || !Array.isArray(d.saved) || !Array.isArray(d.touched) || typeof d.draws !== 'object') return false;
     const keep = { lastSyncedAt: state.lastSyncedAt };

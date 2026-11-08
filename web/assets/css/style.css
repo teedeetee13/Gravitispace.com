@@ -1,5 +1,5 @@
 /* =========================================================
-   Hữu Duyên — giao diện
+   An Sao Space — giao diện
    Màu: giấy ấm (sáng) / trời đêm (tối), điểm nhấn tím và vàng
    ========================================================= */
 
@@ -98,8 +98,10 @@ p { margin: 0 0 0.8em; }
 .app { min-height: 100dvh; }
 .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font-family: var(--font-serif); font-size: 1.2rem; font-weight: 600; }
 .brand-mark { width: 28px; height: 28px; fill: none; stroke-width: 2.4; }
-.brand-mark circle:first-child { stroke: #5f8a6a; }
-.brand-mark circle:last-child { stroke: var(--gold); }
+.brand-mark .bm-moon { stroke: #5f8a6a; }
+.brand-mark .bm-star { fill: var(--gold); stroke: none; }
+.brand-name { white-space: nowrap; }
+.brand-name small { font-family: var(--font-ui); font-size: .58em; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; opacity: .7; margin-left: 2px; }
 
 .topbar {
   position: sticky; top: 0; z-index: 20;

@@ -3,7 +3,7 @@
 // 西洋占星（回歸黃道、上升點、天頂、整宮制、托勒密相位）；
 // 紫微斗數依越南派（太次郎《紫微斗數新編》），與台港常見盤法的差異已在「排盤方法」中註明。
 export default {
-  'meta.description': 'Hữu Duyên（有緣）— 塔羅、西洋占星與越南紫微斗數，以療癒的角度閱讀。往下滑：來到你面前的，都是有緣。',
+  'meta.description': 'An Sao Space（安星）— 塔羅、西洋占星與越南紫微斗數，以療癒的角度閱讀。往下滑：來到你面前的，都是有緣。',
   'skip': '跳至主要內容',
 
   'nav.main': '主選單',
@@ -369,7 +369,7 @@ export default {
   'shelf.cleared': '已清除。溫柔地重新開始。',
 
   'about.title': '一座文字的圖書館——你遇見的，都是有緣。',
-  'about.lead': 'Hữu Duyên 是越南語的「有緣」。這裡是人們留下關於塔羅、占星、紫微與自身生活文字的地方。你不需要刻意尋找，只要往下滑——在對的時候來到你面前的，都是有緣。',
+  'about.lead': 'An Sao Space 是人們留下關於塔羅、占星、紫微與自身生活文字的地方。你不需要刻意尋找，只要往下滑——在對的時候來到你面前的，都是有緣。名字來自越南語：「an」是安、心安之意；「an sao」即紫微斗數的「安星」。',
   'about.soberTitle': '清醒的玄學',
   'about.sober1': '在這裡，牌卡、星辰與生肖都是<strong>照見自己的鏡子</strong>，而不是對命運的判決。我們從不以「犯太歲」「流年不利」嚇人，不賣符咒化解，也不叫任何人分手或辭職。',
   'about.sober2': '一張牌最美的時候，是它向你提出了對的問題。答案永遠屬於你。',
@@ -408,7 +408,7 @@ export default {
   'account.title': '珍惜的東西，走到哪裡都帶著。',
   'account.titleIn': '你的帳號',
   'account.lead': '登入後，你的出生資料、命盤、抽牌日記與收藏文章會跟著你到每一台裝置。不登入也能使用所有功能，資料只是留在這台裝置上。',
-  'account.notConfigured': '帳號功能尚未啟用：網站管理者需要在 web/assets/js/config.js 填入 SUPABASE_URL 與 SUPABASE_ANON_KEY（見 docs/SUPABASE.md）。在此之前，所有功能照常運作，資料留在這台裝置上。',
+  'account.notConfigured': '帳號功能尚未啟用：網站管理者需要在 web/assets/js/config.js 填入 SUPABASE_URL 與 SUPABASE_ANON_KEY（見 docs/SO-TAY.md）。在此之前，所有功能照常運作，資料留在這台裝置上。',
   'account.tab.dang-nhap': '登入',
   'account.tab.dang-ky': '註冊',
   'account.email': '電子郵件',

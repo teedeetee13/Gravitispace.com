@@ -128,14 +128,14 @@ export function renderAccount(view, params) {
         await store.afterSignIn();
         toast(t('account.welcome'));
         location.hash = '#/tai-khoan';
-        window.dispatchEvent(new Event('huuduyen:auth'));
+        window.dispatchEvent(new Event('ansao:auth'));
       } else if (form.dataset.auth === 'signup') {
         const r = await auth.signUp(email, password);
         if (r === 'signed-in') {
           await store.afterSignIn();
           toast(t('account.welcome'));
           location.hash = '#/tai-khoan';
-          window.dispatchEvent(new Event('huuduyen:auth'));
+          window.dispatchEvent(new Event('ansao:auth'));
         } else form.outerHTML = `<div class="note-box">${t('account.checkEmail', { email: esc(email) })}</div>`;
       } else if (form.dataset.auth === 'recover') {
         await auth.recover(email);
@@ -164,7 +164,7 @@ export function renderAccount(view, params) {
     if (e.target.closest('[data-signout]')) {
       await store.signOut();
       toast(t('account.signedOut'));
-      window.dispatchEvent(new Event('huuduyen:auth'));
+      window.dispatchEvent(new Event('ansao:auth'));
       location.hash = '#/tai-khoan';
     }
     if (e.target.closest('[data-delete]')) {
@@ -173,7 +173,7 @@ export function renderAccount(view, params) {
         await auth.deleteAccount();
         await store.signOut();
         toast(t('account.deleted'));
-        window.dispatchEvent(new Event('huuduyen:auth'));
+        window.dispatchEvent(new Event('ansao:auth'));
         location.hash = '#/';
       } catch (ex) {
         toast(errorText(ex));

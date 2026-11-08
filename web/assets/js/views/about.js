@@ -1,4 +1,4 @@
-// Về Hữu Duyên + phương pháp & nguồn dữ liệu + hộp đường dây hỗ trợ dùng chung
+// Về An Sao Space + phương pháp & nguồn dữ liệu + hộp đường dây hỗ trợ dùng chung
 import { esc, icon } from '../util.js';
 import { t } from '../i18n.js';
 import { HOTLINES } from '../data/taxonomy.js';

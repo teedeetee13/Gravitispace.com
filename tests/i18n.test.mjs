@@ -29,7 +29,7 @@ const THIRD = FOREIGN.filter((c) => c !== 'en');
 // Chữ viết bắt buộc của từng ngôn ngữ
 const SCRIPT = { zh: /[一-鿿]/, hi: /[ऀ-ॿ]/, th: /[฀-๿]/ };
 // Những chuỗi được phép giống tiếng Anh (tên riêng, thuật ngữ quốc tế)
-const SAME_OK = /^(Tarot|Hữu Duyên.*|Email|OK|Supabase.*|Find A Helpline|Thái Thứ Lang .*)$/;
+const SAME_OK = /^(Tarot|An Sao Space.*|Email|OK|Supabase.*|Find A Helpline|Thái Thứ Lang .*)$/;
 
 function walk(dir) {
   return readdirSync(dir).flatMap((f) => {

@@ -15,14 +15,14 @@ const { store, migrate, normalizeProfile } = await import('../web/assets/js/stor
 beforeEach(() => mem.clear());
 
 test('Di chuyển dữ liệu v1 (có beforeTet) sang v2', async () => {
-  mem.set('huuduyen:v1', JSON.stringify({ saved: ['hd-001'], touched: [], myPosts: [], draws: {}, profile: { day: 5, month: 2, year: 1990, beforeTet: true } }));
+  mem.set('ansao:v1', JSON.stringify({ saved: ['hd-001'], touched: [], myPosts: [], draws: {}, profile: { day: 5, month: 2, year: 1990, beforeTet: true } }));
   await store.init();
   assert.equal(store.isSaved('hd-001'), true);
   assert.deepEqual(
     { d: store.getProfile().day, m: store.getProfile().month, y: store.getProfile().year, tk: store.getProfile().timeKnown },
     { d: 5, m: 2, y: 1990, tk: false }
   );
-  assert.ok(mem.has('huuduyen:v2'));
+  assert.ok(mem.has('ansao:v2'));
 });
 
 test('normalizeProfile loại bỏ dữ liệu sai', () => {

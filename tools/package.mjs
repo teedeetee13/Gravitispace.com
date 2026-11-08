@@ -1,4 +1,4 @@
-// Nén dist/ thành tệp bàn giao huu-duyen-<phiên bản>.zip (+ .sha256) trong thư mục release/.
+// Nén dist/ thành tệp bàn giao an-sao-space-<phiên bản>.zip (+ .sha256) trong thư mục release/.
 //   npm run package        (tự chạy build trước)
 // Dùng lệnh nén có sẵn của hệ điều hành — không thêm thư viện:
 //   Linux/macOS: zip · Windows 10+: tar.exe (bsdtar, hỗ trợ định dạng zip)
@@ -17,7 +17,7 @@ if (!existsSync(join(DIST, 'build-info.json'))) {
   process.exit(1);
 }
 mkdirSync(REL, { recursive: true });
-const name = `huu-duyen-${pkg.version}.zip`;
+const name = `an-sao-space-${pkg.version}.zip`;
 const zip = join(REL, name);
 rmSync(zip, { force: true });
 // Windows: gọi đích danh bsdtar của hệ thống (trong Git Bash, "tar" là GNU tar — không nén được zip)

@@ -45,7 +45,7 @@ test('Khách dùng offline, rồi đăng ký: dữ liệu trên máy được ch
   assert.equal(row.data.profile.year, 1995);
   assert.deepEqual(row.data.saved, ['hd-001']);
   assert.equal(store.syncState().status, 'synced');
-  assert.equal(current.has('huuduyen:v2'), false, 'vùng dữ liệu khách đã được dọn');
+  assert.equal(current.has('ansao:v2'), false, 'vùng dữ liệu khách đã được dọn');
 });
 
 test('Mất mạng: vẫn đăng nhập, vẫn đọc/ghi được; có mạng lại thì tự đẩy lên', async () => {
@@ -109,9 +109,9 @@ test('Gieo bài khi đăng nhập → gửi lên ở trạng thái chờ duyệt
 test('Token hết hạn thì tự làm mới', async () => {
   current = devices.A;
   await store.init();
-  const s = JSON.parse(current.get('huuduyen:session'));
+  const s = JSON.parse(current.get('ansao:session'));
   s.expiresAt = Math.floor(Date.now() / 1000) - 10;
-  current.set('huuduyen:session', JSON.stringify(s));
+  current.set('ansao:session', JSON.stringify(s));
   auth.load();
   const tok = await auth.token();
   assert.notEqual(tok, s.accessToken);
@@ -132,7 +132,7 @@ test('Đăng xuất: xoá bản sao dữ liệu tài khoản khỏi máy, quay v
   const id = auth.user().id;
   await store.signOut();
   assert.equal(auth.user(), null);
-  assert.equal(current.has(`huuduyen:v2:u:${id}`), false);
+  assert.equal(current.has(`ansao:v2:u:${id}`), false);
   assert.equal(store.getProfile(), null);
 });
 

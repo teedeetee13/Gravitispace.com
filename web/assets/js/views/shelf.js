@@ -71,7 +71,7 @@ export function renderShelf(view, params) {
     const blob = new Blob([store.exportData()], { type: 'application/json' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = `huu-duyen-${new Date().toISOString().slice(0, 10)}.json`;
+    a.download = `an-sao-space-${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
     setTimeout(() => URL.revokeObjectURL(a.href), 1000);
     toast(t('shelf.exported'));
@@ -82,7 +82,7 @@ export function renderShelf(view, params) {
     try {
       if (file.size > 2_000_000 || !store.importData(await file.text())) throw new Error('invalid');
       toast(t('shelf.imported'));
-      window.dispatchEvent(new Event('huuduyen:draw'));
+      window.dispatchEvent(new Event('ansao:draw'));
     } catch {
       toast(t('shelf.importFail'));
     }
@@ -90,7 +90,7 @@ export function renderShelf(view, params) {
   $('[data-clear]', view).addEventListener('click', () => {
     if (!confirm(t('shelf.clearConfirm'))) return;
     store.clearAll();
-    window.dispatchEvent(new Event('huuduyen:draw'));
+    window.dispatchEvent(new Event('ansao:draw'));
     toast(t('shelf.cleared'));
   });
 }

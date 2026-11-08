@@ -1,18 +1,17 @@
-# Hữu Duyên
+# An Sao Space
 
-Kho chữ chữa lành về Tarot, Chiêm tinh và Tử vi, có lập lá số Tử Vi Đẩu Số, bản đồ sao và rút bài mỗi ngày. 8 ngôn ngữ: Việt, Anh, Tây Ban Nha, Pháp, Đức, Trung phồn thể, Hindi, Thái. Lướt xuống, bài viết nào đến với bạn, là duyên.
-
-- Mã nguồn website: [`web/`](web/) (xem [web/README.md](web/README.md))
-- **Checklist hoàn thiện để duyệt:** [docs/CHECKLIST.md](docs/CHECKLIST.md)
-- **Hồ sơ bàn giao:** [docs/BAN-GIAO.md](docs/BAN-GIAO.md) · Bảo mật: [SECURITY.md](SECURITY.md) · Phiên bản: [CHANGELOG.md](CHANGELOG.md)
-- Kiểm thử tự động: [`tests/`](tests/) — chạy bằng `npm test` (Node.js ≥ 20, không cần cài thư viện)
-- Mỗi lần đẩy code lên `main`: kiểm thử (Node 20 + 22) → đóng gói `dist/` → tự đăng GitHub Pages ([`deploy.yml`](.github/workflows/deploy.yml)); đẩy thẻ `vX.Y.Z` → GitHub Release kèm gói bàn giao ([`release.yml`](.github/workflows/release.yml)); quét bảo mật CodeQL ([`codeql.yml`](.github/workflows/codeql.yml))
-
-Chạy thử trên máy:
+Web chữa lành về Tarot, chiêm tinh và Tử Vi: lướt bài viết, rút bài mỗi ngày, lập lá số Tử Vi Đẩu Số và bản đồ sao. Có 8 ngôn ngữ (Việt, Anh, Tây Ban Nha, Pháp, Đức, Trung phồn thể, Hindi, Thái). Viết bằng HTML, CSS, JavaScript thuần, không dùng thư viện ngoài.
 
 ```bash
-npm start            # = python -m http.server 5173 --directory web
-npm test             # 92 kiểm thử
-npm run build        # đóng gói dist/
-npm run package      # release/huu-duyen-<phiên bản>.zip + SHA-256
+npm start          # chạy thử: http://localhost:5190
+npm test           # 92 kiểm thử (Node.js ≥ 20)
+npm run build      # đóng gói dist/ để đăng web
+npm run package    # bản bàn giao: release/an-sao-space-<phiên bản>.zip + SHA-256
 ```
+
+| Tài liệu | Nội dung |
+|---|---|
+| **[docs/SO-TAY.md](docs/SO-TAY.md)** | Sổ tay chính: tổng quan, tối ưu, bảo mật, **triển khai** (Netlify, GitHub Pages, Supabase), **vận hành**, bàn giao |
+| [docs/CHECKLIST.md](docs/CHECKLIST.md) | Hồ sơ duyệt từng hạng mục: cách làm, công nghệ, nguồn tham khảo |
+| [SECURITY.md](SECURITY.md) | Cách báo lỗ hổng bảo mật |
+| [CHANGELOG.md](CHANGELOG.md) | Các phiên bản |

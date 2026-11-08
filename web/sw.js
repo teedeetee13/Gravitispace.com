@@ -1,7 +1,7 @@
-// Service worker: cho phép mở lại Hữu Duyên khi mất mạng.
+// Service worker: cho phép mở lại An Sao Space khi mất mạng.
 // Chiến lược "mạng trước, bộ nhớ đệm sau" cho tệp cùng nguồn: luôn lấy bản mới nhất khi có mạng,
 // chỉ dùng bản đã lưu khi offline → không bao giờ kẹt ở phiên bản cũ.
-const CACHE = 'huuduyen-v4'; // npm run build tự thay bằng huuduyen-<phiên bản>-<commit>
+const CACHE = 'ansao-v5'; // npm run build tự thay bằng ansao-<phiên bản>-<commit>
 const CORE = ['./', './index.html', './assets/css/style.css', './assets/js/main.js', './assets/js/boot.js', './assets/favicon.svg', './manifest.webmanifest'];
 
 self.addEventListener('install', (e) => {
