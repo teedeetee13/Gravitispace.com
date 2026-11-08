@@ -27,7 +27,7 @@ jobs:
       matrix:
         node: [22, 24] # Node 20 đã hết hạn hỗ trợ (04/2026) và không hiểu mẫu đường dẫn tests/*.test.mjs
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
       - uses: actions/setup-node@v4
@@ -41,7 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
       - uses: actions/setup-node@v4
