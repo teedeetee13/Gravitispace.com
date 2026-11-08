@@ -98,7 +98,7 @@ npm test          # 92 ca phải đạt
 npm run build     # tạo thư mục dist/ để đăng web
 ```
 
-Không có Supabase thì web vẫn chạy đủ mọi tính năng. Dữ liệu lưu trên máy người xem, và mục *Tài khoản* báo "chưa bật". Để nộp chấm thi, cách này là đủ: giám khảo mở link là dùng được ngay.
+Không có Supabase thì web vẫn chạy đủ mọi tính năng. Dữ liệu lưu trên máy người xem, và mục *Tài khoản* báo "chưa bật". Ai mở link cũng dùng được ngay, không cần đăng ký.
 
 ### Cách A: Netlify (khoảng 5 phút, không cần GitHub)
 
@@ -140,11 +140,10 @@ Mua tên miền, ví dụ `ansao.space` hay `ansaospace.com`. Trỏ tên miền 
 - [ ] Chia sẻ link qua Zalo hoặc Messenger: hiện ảnh xem trước và tiêu đề "An Sao Space".
 - [ ] Nếu đăng bằng Netlify: kiểm tra tiêu đề bảo mật tại https://securityheaders.com.
 
-### Nộp cho giám khảo hoặc giảng viên
+### Chia sẻ web
 
-- Gửi **link** kèm **mã QR** để quét bằng điện thoại. Trên điện thoại có thể chọn "Thêm vào màn hình chính" để dùng như một app.
-- Nếu cần nộp mã nguồn: `npm run package` tạo ra `release/an-sao-space-<phiên bản>.zip` và tệp `.sha256`. Gửi kèm sổ tay này.
-- Gợi ý lộ trình demo khoảng 3 phút: lướt bảng tin, rút lá bài hôm nay, nhập ngày sinh để xem lá số Tử Vi và bản đồ sao, đổi sang tiếng Trung để thấy chữ Hán gốc, bật chế độ tối.
+- Gửi **link**, hoặc **mã QR** để quét bằng điện thoại. Trên điện thoại có thể chọn "Thêm vào màn hình chính" để dùng như một app.
+- Cần gửi mã nguồn cho người khác: `npm run package` tạo ra `release/an-sao-space-<phiên bản>.zip` và tệp `.sha256`.
 
 ---
 
