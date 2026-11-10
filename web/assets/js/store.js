@@ -299,6 +299,18 @@ export const store = {
     setSync('local');
   },
 
+  /** Xoá tài khoản trên máy chủ, rồi xoá luôn bản sao của tài khoản đó trên máy này. */
+  async deleteAccount() {
+    const user = auth.user();
+    clearTimeout(pushTimer);
+    await auth.deleteAccount();
+    try {
+      if (user) localStorage.removeItem(keyFor(user));
+    } catch {}
+    state = readLocal(GUEST_KEY);
+    setSync('local');
+  },
+
   // ---------- Quyền sở hữu dữ liệu ----------
   /** Tải dữ liệu của tôi về máy (mang sang máy khác, lưu trữ riêng). */
   exportData: () => JSON.stringify({ app: 'an-sao-space', exportedAt: new Date().toISOString(), data: payload() }, null, 2),

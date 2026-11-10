@@ -4,7 +4,7 @@ Web chữa lành về Tarot, chiêm tinh và Tử Vi: lướt bài viết, rút 
 
 ```bash
 npm start          # chạy thử: http://localhost:5190
-npm test           # 94 kiểm thử (Node.js ≥ 22)
+npm test           # 98 kiểm thử (Node.js ≥ 22)
 npm run build      # đóng gói dist/ để đăng web
 npm run package    # bản bàn giao: release/an-sao-space-<phiên bản>.zip + SHA-256
 ```

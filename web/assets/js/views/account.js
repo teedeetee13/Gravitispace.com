@@ -170,8 +170,7 @@ export function renderAccount(view, params) {
     if (e.target.closest('[data-delete]')) {
       if (!confirm(t('account.deleteConfirm'))) return;
       try {
-        await auth.deleteAccount();
-        await store.signOut();
+        await store.deleteAccount();
         toast(t('account.deleted'));
         window.dispatchEvent(new Event('ansao:auth'));
         location.hash = '#/';

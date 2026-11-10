@@ -142,6 +142,55 @@ test('Sai mật khẩu và email đã tồn tại báo lỗi thân thiện', asy
   if (errorText) assert.ok(errorText({ code: 'invalid_credentials' }).length > 5);
 });
 
+const tokenOf = async (email, password) =>
+  JSON.parse(await (await fake.fetch('https://fake.supabase.co/auth/v1/token?grant_type=password', { method: 'POST', headers: { apikey: 'x' }, body: JSON.stringify({ email, password }) })).text()).access_token;
+const openLink = async (hash) => {
+  globalThis.location = { hash, pathname: '/' };
+  globalThis.history = { replaceState() {} };
+  try {
+    return await auth.consumeRedirect();
+  } finally {
+    delete globalThis.location;
+    delete globalThis.history;
+  }
+};
+
+test('Link chứa token mà trình duyệt này không yêu cầu thì bị từ chối, dữ liệu khách không bị gửi đi', async () => {
+  current = new Map();
+  await store.init();
+  store.setProfile(PROFILE);
+  const token = await tokenOf('lan@example.com', 'matkhau123');
+  assert.equal(await openLink(`#access_token=${token}&refresh_token=x&type=signup`), 'error');
+  assert.equal(auth.user(), null, 'không bị đăng nhập vào tài khoản lạ');
+  assert.equal(store.getProfile().year, 1995, 'dữ liệu khách vẫn ở nguyên trên máy');
+});
+
+test('Link đặt lại mật khẩu do chính trình duyệt này yêu cầu thì dùng được đúng một lần', async () => {
+  current = new Map();
+  await store.init();
+  await auth.recover('lan@example.com');
+  const token = await tokenOf('lan@example.com', 'matkhau123');
+  assert.equal(await openLink(`#access_token=${token}&refresh_token=x&type=recovery`), 'recovery');
+  assert.equal(auth.user()?.email, 'lan@example.com');
+  await auth.signOut();
+  assert.equal(await openLink(`#access_token=${token}&refresh_token=x&type=recovery`), 'error', 'không dùng lại được');
+});
+
+test('Xoá tài khoản: xoá trên máy chủ và xoá cả bản sao trên máy này', async () => {
+  current = new Map();
+  await store.init();
+  await auth.signUp('xoa@example.com', 'matkhau123');
+  await store.afterSignIn();
+  store.setProfile(PROFILE);
+  const id = auth.user().id;
+  assert.equal(current.has(`ansao:v2:u:${id}`), true);
+  await store.deleteAccount();
+  assert.equal(auth.user(), null);
+  assert.equal(fake.db.users.has('xoa@example.com'), false);
+  assert.equal(current.has(`ansao:v2:u:${id}`), false, 'không còn ngày giờ sinh trên máy');
+  assert.equal(store.getProfile(), null);
+});
+
 test('mergeStates hợp danh sách và ưu tiên hồ sơ mới hơn', () => {
   const a = { saved: ['x'], touched: [], myPosts: [], draws: { d1: { cardId: 'a' } }, profile: { day: 1, month: 1, year: 2000 }, updatedAt: '2026-01-01' };
   const b = { saved: ['y'], touched: ['t'], myPosts: [], draws: { d2: { cardId: 'b' } }, profile: { day: 2, month: 2, year: 2002 }, updatedAt: '2026-02-01' };

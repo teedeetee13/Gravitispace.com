@@ -234,6 +234,24 @@ Bảng tin (sáng, tối), Tìm kiếm, Bài viết, Lá số Tử Vi, Bản đ�
 
 ---
 
+## 14. Rà soát bảo mật và phát hành 2.2.1 (10/11/2026)
+
+| # | Hạng mục | Trạng thái | Làm thế nào | Tệp |
+|---|---|---|---|---|
+| 14.1 | Chống giả liên kết đăng nhập | ✅ | Đánh dấu trên máy khi người dùng yêu cầu email; token trên URL chỉ được nhận khi có dấu đó, dùng một lần, trong 24 giờ | `auth.js`, `tests/cloud.test.mjs` |
+| 14.2 | Xoá tài khoản xoá cả bản sao trên máy | ✅ | Hàm `store.deleteAccount()` nhớ tài khoản trước khi xoá phiên. Lỗi cũ: phiên bị xoá trước nên không biết vùng nào cần dọn | `store.js`, `views/account.js`, `tests/cloud.test.mjs` |
+| 14.3 | Ẩn `user_id` khỏi người đọc | ✅ | Cấp quyền đọc theo từng cột trong Postgres | `supabase/schema.sql`, `tests/security.test.mjs` |
+| 14.4 | Giới hạn gửi bài | ✅ | Trigger trước khi thêm: 10 bài mỗi giờ, 20 bài chờ duyệt mỗi người; máy chủ đặt `created_at` | `supabase/schema.sql` |
+| 14.5 | Thử lược đồ trên Postgres thật | ✅ | PGlite cài ngoài dự án, giả lập vai trò `anon`/`authenticated`. 24 phép thử đạt: quyền đọc/ghi chéo, tự duyệt bài, giả tim, giả ngày, xoá tài khoản, chạy lại lược đồ. Không phải dự án Supabase thật | Script ngoài dự án |
+| 14.6 | Rà mã và cấu hình | ✅ | Không có bí mật trong toàn bộ lịch sử git. Service worker không lưu phản hồi Supabase. Các trường bài viết đều qua `esc()`. `.git`, `package.json`, `schema.sql` không lộ trên web | — |
+| 14.7 | Chống DDoS | ⚠️ | Web tĩnh qua CDN, chưa có tường lửa riêng và chưa thử tải. Phân tích ở [SO-TAY.md](SO-TAY.md) mục 3 | — |
+| 14.8 | CAPTCHA đăng ký | ⏳ | Chưa làm, cần tải mã bên thứ ba nên phải được duyệt | — |
+| 14.9 | Bảo vệ nhánh `main` | ⚠️ | Đang tắt. Bật theo [SO-TAY.md](SO-TAY.md) mục 4, cách B | GitHub Settings |
+
+**Cách tự kiểm tra:** chạy `npm test` (98 ca). Rút bài xuôi/ngược không đổi trong bản này: mỗi lá có 1/3 khả năng ngược (`views/tarot.js`).
+
+---
+
 ## 11. Phụ lục: chi tiết bản 2.1 và 2.2 (gộp từ NHAT-KY.md cũ)
 
 ### v2.2 · 06/11/2026

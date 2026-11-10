@@ -88,6 +88,15 @@ test('CSDL: mọi bảng bật Row Level Security; ngôn ngữ bài viết khớ
   for (const m of sql.matchAll(/security definer([\s\S]*?)as \$\$/g)) assert.match(m[1], /set search_path = ''/);
 });
 
+test('CSDL: người đọc không lấy được user_id của bài viết; có giới hạn gửi bài', () => {
+  const sql = readFileSync(join(ROOT, 'supabase', 'schema.sql'), 'utf8');
+  assert.match(sql, /revoke select on public\.posts from anon, authenticated;/);
+  const cols = sql.match(/grant select \(([^)]+)\) on public\.posts to anon, authenticated;/)?.[1].split(',').map((c) => c.trim());
+  assert.ok(cols?.length, 'thiếu danh sách cột được đọc');
+  assert.ok(!cols.includes('user_id'), 'user_id không được công khai');
+  assert.match(sql, /create trigger posts_before_insert before insert on public\.posts/);
+});
+
 test('Tệp _headers khai báo đủ tiêu đề bảo mật cho máy chủ hỗ trợ', () => {
   const p = join(WEB, '_headers');
   assert.ok(existsSync(p));

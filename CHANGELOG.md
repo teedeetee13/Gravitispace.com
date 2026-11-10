@@ -2,6 +2,19 @@
 
 Theo [Semantic Versioning](https://semver.org/lang/vi/). Phát hành bằng thẻ `vX.Y.Z` (xem docs/SO-TAY.md mục 5).
 
+## 2.2.1 — 10/11/2026
+
+Bản phát hành chính thức đầu tiên, sau đợt rà soát bảo mật. Các lỗi dưới đây nằm ở phần tài khoản, chỉ có tác dụng khi bật Supabase. **Ai đã bật Supabase cần chạy lại `supabase/schema.sql`.**
+
+### Bảo mật
+- Chống giả liên kết đăng nhập: chỉ nhận token trên URL nếu chính trình duyệt đó vừa yêu cầu email xác nhận hoặc đặt lại mật khẩu. Trước đây, một link chứa token của kẻ xấu có thể đưa ngày giờ sinh của nạn nhân sang tài khoản kẻ đó.
+- Xoá tài khoản giờ xoá luôn bản sao dữ liệu trên máy. Trước đây bản sao vẫn còn lại.
+- CSDL: người đọc không còn lấy được `user_id` của bài viết, nên không ghép được các bài của cùng một bút danh.
+- CSDL: mỗi người tối đa 10 bài mỗi giờ và 20 bài đang chờ duyệt; thời điểm đăng do máy chủ đặt.
+
+### Thêm
+- `npm start` dùng máy chủ Node không lưu đệm; chạy trên máy thì tự gỡ service worker cũ.
+
 ## 2.2.0 — 07/11/2026
 
 ### Thêm
