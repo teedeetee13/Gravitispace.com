@@ -75,6 +75,43 @@ create policy "posts: tác giả xoá bài của mình" on public.posts
   for delete to authenticated using ((select auth.uid()) = user_id);
 -- Không có policy UPDATE: chỉ quản trị viên (Dashboard / service_role) mới đổi được status.
 
+-- Ẩn user_id khỏi người đọc: bài đăng dưới bút danh, nếu đọc được user_id thì ghép được mọi bài của cùng một người.
+revoke select on public.posts from anon, authenticated;
+grant select (id, topic, type, title, body, author, refs, lang, status, hearts, created_at) on public.posts to anon, authenticated;
+
+-- Chống gửi bài ồ ạt làm đầy CSDL: tối đa 10 bài mỗi giờ và 20 bài đang chờ duyệt cho mỗi người.
+-- Thời điểm đăng do máy chủ đặt, người gửi không tự đổi được. Cần security definer vì user_id đã bị ẩn ở trên.
+create index if not exists posts_user_created_idx on public.posts (user_id, created_at desc);
+
+create or replace function public.posts_before_insert()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  last_hour integer;
+  waiting integer;
+begin
+  new.created_at := now();
+  select count(*) filter (where created_at > now() - interval '1 hour'),
+         count(*) filter (where status = 'pending')
+    into last_hour, waiting
+    from public.posts
+   where user_id = new.user_id;
+  if last_hour >= 10 or waiting >= 20 then
+    raise exception 'post_rate_limited' using errcode = 'P0001';
+  end if;
+  return new;
+end;
+$$;
+
+revoke all on function public.posts_before_insert() from public, anon, authenticated;
+
+drop trigger if exists posts_before_insert on public.posts;
+create trigger posts_before_insert before insert on public.posts
+  for each row execute function public.posts_before_insert();
+
 -- 3) Cho phép người dùng tự xoá tài khoản của mình (dữ liệu liên quan xoá theo nhờ ON DELETE CASCADE)
 create or replace function public.delete_my_account()
 returns void

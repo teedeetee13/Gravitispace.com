@@ -13,4 +13,4 @@ Trong báo cáo, xin mô tả lỗi là gì, cách tái hiện và ảnh hưởn
 
 ## Các lớp bảo vệ
 
-Xem [docs/SO-TAY.md, mục 3](docs/SO-TAY.md#3-bảo-mật). Mục đó liệt kê 11 lớp bảo vệ và phần kiểm thử tự động cho từng lớp.
+Xem [docs/SO-TAY.md, mục 3](docs/SO-TAY.md#3-bảo-mật). Mục đó liệt kê 13 lớp bảo vệ, phần kiểm thử tự động cho từng lớp, và giới hạn hiện tại về chống tấn công từ chối dịch vụ.

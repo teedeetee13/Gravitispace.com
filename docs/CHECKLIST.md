@@ -228,8 +228,27 @@ Bảng tin (sáng, tối), Tìm kiếm, Bài viết, Lá số Tử Vi, Bản đ�
 | 13.8 | Cân lượng | ⏭️ Bỏ qua | Phép "cân xương đoán số" được gán cho Viên Thiên Cương, nhưng các nhà nghiên cứu ghi nhận nó **không có trong sách cổ chính thống** (chỉ là sách đời sau mượn tên), và không thuộc Tử Vi Đẩu Số. Theo tiêu chí "chỉ thêm khi có nguồn chuẩn", tôi không đưa vào | — |
 | 13.9 | Sửa CI | ✅ | Lần gộp trước, bước kiểm thử trên GitHub lỗi ở **Node 20**: bản này không hiểu mẫu đường dẫn `tests/*.test.mjs`. Node 20 đã hết hạn hỗ trợ (04/2026), nên chuyển sang kiểm thử trên **Node 22 và 24** (`engines: >=22`) | `.github/workflows/deploy.yml`, `package.json` |
 | 13.10 | Kiểm thử, kiểm tra giao diện | ✅ | Thêm 1 ca: sao lưu năm 2026, Lưu Tứ Hóa, đại vận, vòng Tướng tinh, Lưu Tuần Triệt, Lộc Kỵ nhập của lá số mẫu. **94/94 đạt**. Đã chụp 1290px (sáng; tối tiếng Trung) và 390px (tối): không tràn ngang | `tests/tuvi.test.mjs` |
+| 13.11 | Bản chạy thử trên máy bị cũ hoặc lỗi | ✅ | **Nguyên nhân:** máy chủ `python -m http.server` không gửi tiêu đề chống lưu đệm, nên trình duyệt dùng lại một số tệp JS cũ trộn với tệp mới (không thấy màu ngũ hành, có lỗi); service worker còn giữ bản cũ khi máy chủ tắt. **Cách sửa:** (1) `npm start` chuyển sang máy chủ Node tự viết `tools/serve.mjs` (không thư viện): gửi `Cache-Control: no-store`, chỉ phục vụ `web/`, chặn `../`, chỉ nghe 127.0.0.1; (2) trên localhost app không đăng ký service worker, và gỡ service worker cũ cùng bộ nhớ đệm của nó; (3) service worker của bản thật luôn hỏi lại máy chủ (`cache: 'no-cache'`, chỉ tốn một phản hồi 304 khi tệp không đổi), nên không bao giờ trộn tệp cũ với tệp mới | `tools/serve.mjs`, `main.js`, `sw.js`, `package.json` |
 
 **Chưa làm:** tên cung lưu niên kiểu "LN.Mệnh" của tuvi.vn. Cách an của trang đó (năm 2026 đặt LN.Mệnh ở Dần) không trùng tiểu hạn, cũng không trùng lưu Thái Tuế. Tôi chưa tìm được nguồn ghi rõ quy tắc, nên chưa làm.
+
+---
+
+## 14. Rà soát bảo mật và phát hành 2.2.1 (10/11/2026)
+
+| # | Hạng mục | Trạng thái | Làm thế nào | Tệp |
+|---|---|---|---|---|
+| 14.1 | Chống giả liên kết đăng nhập | ✅ | Đánh dấu trên máy khi người dùng yêu cầu email; token trên URL chỉ được nhận khi có dấu đó, dùng một lần, trong 24 giờ | `auth.js`, `tests/cloud.test.mjs` |
+| 14.2 | Xoá tài khoản xoá cả bản sao trên máy | ✅ | Hàm `store.deleteAccount()` nhớ tài khoản trước khi xoá phiên. Lỗi cũ: phiên bị xoá trước nên không biết vùng nào cần dọn | `store.js`, `views/account.js`, `tests/cloud.test.mjs` |
+| 14.3 | Ẩn `user_id` khỏi người đọc | ✅ | Cấp quyền đọc theo từng cột trong Postgres | `supabase/schema.sql`, `tests/security.test.mjs` |
+| 14.4 | Giới hạn gửi bài | ✅ | Trigger trước khi thêm: 10 bài mỗi giờ, 20 bài chờ duyệt mỗi người; máy chủ đặt `created_at` | `supabase/schema.sql` |
+| 14.5 | Thử lược đồ trên Postgres thật | ✅ | PGlite cài ngoài dự án, giả lập vai trò `anon`/`authenticated`. 24 phép thử đạt: quyền đọc/ghi chéo, tự duyệt bài, giả tim, giả ngày, xoá tài khoản, chạy lại lược đồ. Không phải dự án Supabase thật | Script ngoài dự án |
+| 14.6 | Rà mã và cấu hình | ✅ | Không có bí mật trong toàn bộ lịch sử git. Service worker không lưu phản hồi Supabase. Các trường bài viết đều qua `esc()`. `.git`, `package.json`, `schema.sql` không lộ trên web | — |
+| 14.7 | Chống DDoS | ⚠️ | Web tĩnh qua CDN, chưa có tường lửa riêng và chưa thử tải. Phân tích ở [SO-TAY.md](SO-TAY.md) mục 3 | — |
+| 14.8 | CAPTCHA đăng ký | ⏳ | Chưa làm, cần tải mã bên thứ ba nên phải được duyệt | — |
+| 14.9 | Bảo vệ nhánh `main` | ⚠️ | Đang tắt. Bật theo [SO-TAY.md](SO-TAY.md) mục 4, cách B | GitHub Settings |
+
+**Cách tự kiểm tra:** chạy `npm test` (98 ca). Rút bài xuôi/ngược không đổi trong bản này: mỗi lá có 1/3 khả năng ngược (`views/tarot.js`).
 
 ---
 

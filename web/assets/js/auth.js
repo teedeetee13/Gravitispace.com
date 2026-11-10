@@ -5,10 +5,29 @@ import { CONFIG, cloudEnabled } from './config.js';
 import { cloud, CloudError } from './cloud.js';
 
 const KEY = CONFIG.STORAGE_PREFIX + 'session';
+const EMAIL_FLOW_KEY = CONFIG.STORAGE_PREFIX + 'email-flow';
+const EMAIL_FLOW_TTL = 24 * 3600;
 const listeners = new Set();
 let session = null;
 
 const now = () => Math.floor(Date.now() / 1000);
+
+// Chống giả liên kết đăng nhập: chỉ nhận token trên URL nếu chính trình duyệt này vừa yêu cầu email xác nhận / đặt lại mật khẩu.
+// Không có bước này, kẻ xấu gửi một link chứa token tài khoản của họ là nạn nhân bị đăng nhập vào đó, và ngày giờ sinh sẽ bị đồng bộ sang.
+function markEmailFlow() {
+  try {
+    localStorage.setItem(EMAIL_FLOW_KEY, String(now()));
+  } catch {}
+}
+function takeEmailFlow() {
+  try {
+    const at = Number(localStorage.getItem(EMAIL_FLOW_KEY));
+    localStorage.removeItem(EMAIL_FLOW_KEY);
+    return at > 0 && now() - at < EMAIL_FLOW_TTL;
+  } catch {
+    return false;
+  }
+}
 
 function save(s) {
   session = s;
@@ -74,9 +93,13 @@ export const auth = {
       save(s);
       return 'signed-in';
     }
+    markEmailFlow();
     return 'confirm-email';
   },
-  recover: (email) => cloud.recover(email),
+  async recover(email) {
+    await cloud.recover(email);
+    markEmailFlow();
+  },
   async updatePassword(password) {
     await cloud.updatePassword(await auth.token(), password);
   },
@@ -101,6 +124,7 @@ export const auth = {
     const p = new URLSearchParams(h);
     history.replaceState(null, '', `${location.pathname}#/tai-khoan`);
     if (p.get('error_description')) return 'error';
+    if (!takeEmailFlow()) return 'error';
     const base = { access_token: p.get('access_token'), refresh_token: p.get('refresh_token'), expires_in: Number(p.get('expires_in')) || 3600 };
     let user = {};
     try {

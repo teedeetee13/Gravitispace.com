@@ -23,7 +23,7 @@ Tên gọi: "an" là bình an, nhẹ lòng. "An sao" cũng là bước xếp sao
 | Công nghệ | HTML, CSS, JavaScript thuần (ES Modules). Không framework, không thư viện npm |
 | Lưu dữ liệu | Mặc định lưu trên trình duyệt (`localStorage`). Có thể bật thêm tài khoản Supabase (Postgres, Auth, RLS) |
 | Máy chủ | Bất kỳ máy chủ web tĩnh nào: Netlify, GitHub Pages, Cloudflare Pages… |
-| Kiểm thử | 94 ca bằng `node:test` có sẵn trong Node 22 trở lên |
+| Kiểm thử | 98 ca bằng `node:test` có sẵn trong Node 22 trở lên |
 
 ### Các trang
 
@@ -56,11 +56,11 @@ web/
 
 ## 2. Tối ưu
 
-Số đo lấy từ `npm run build` của bản 2.2.0.
+Số đo lấy từ `npm run build` của bản 2.2.1.
 
 | Hạng mục | Cách làm | Kết quả |
 |---|---|---|
-| Tải lần đầu nhỏ | Khung trang và CSS không qua thư viện. Mã của từng trang chỉ tải khi người dùng mở trang đó | Khung + CSS **57 KB**, toàn bộ JS **294 KB** (chưa nén) |
+| Tải lần đầu nhỏ | Khung trang và CSS không qua thư viện. Mã của từng trang chỉ tải khi người dùng mở trang đó | Khung + CSS **60 KB**, toàn bộ JS **316 KB** (chưa nén) |
 | Ngôn ngữ | Mỗi ngôn ngữ gồm 3 tệp, chỉ tải khi được chọn | Người đọc tiếng Việt không tải thêm byte nào; mỗi ngôn ngữ khác khoảng 100–200 KB |
 | Hình ảnh | Ảnh bìa vẽ bằng SVG ngay trên máy. 78 lá Tarot là ảnh JPEG 300px, chỉ tải khi cuộn tới (`loading="lazy"`) | Ảnh bìa tốn 0 KB; ảnh lá bài tối đa 120 KB mỗi lá |
 | Phông chữ | Google Fonts, kết nối sẵn (`preconnect`), dùng `display=swap` | Chữ hiện ngay bằng phông của máy, phông web về sau thì thay vào |
@@ -78,14 +78,29 @@ Số đo lấy từ `npm run build` của bản 2.2.0.
 | Chống chèn mã (XSS) | Mọi nội dung đưa vào HTML đều qua `esc()`. CSP `script-src 'self'`: không mã nội tuyến, không `eval` | `tests/security.test.mjs`, CodeQL |
 | Chống nhúng khung (clickjacking) | `frame-ancestors 'none'` và `X-Frame-Options: DENY` trong `web/_headers`. Trên GitHub Pages (không hỗ trợ `_headers`), `boot.js` tự thoát khỏi khung lạ | `tests/security.test.mjs` |
 | Tiêu đề HTTP | HSTS, `nosniff`, `Referrer-Policy`, `Permissions-Policy`, COOP trong `web/_headers` (Netlify, Cloudflare Pages tự đọc) | `tests/security.test.mjs` |
-| Dữ liệu người dùng | Supabase Row Level Security: mỗi người chỉ đọc/sửa dữ liệu của mình. Bài cộng đồng phải được duyệt mới hiện; người dùng không tự duyệt được | `tests/cloud.test.mjs` |
-| Ràng buộc dữ liệu | Giới hạn độ dài bài, ngôn ngữ hợp lệ, định dạng `refs`; dữ liệu mỗi người tối đa 1 MB | `supabase/schema.sql` |
+| Dữ liệu người dùng | Supabase Row Level Security: mỗi người chỉ đọc/sửa dữ liệu của mình. Bài cộng đồng phải được duyệt mới hiện; người dùng không tự duyệt được. Người đọc không lấy được `user_id` của bài viết | `tests/cloud.test.mjs`, `tests/security.test.mjs` |
+| Ràng buộc dữ liệu | Giới hạn độ dài bài, ngôn ngữ hợp lệ, định dạng `refs`; dữ liệu mỗi người tối đa 1 MB; tối đa 10 bài mỗi giờ và 20 bài chờ duyệt mỗi người; thời điểm đăng do máy chủ đặt | `supabase/schema.sql` |
+| Liên kết đăng nhập | Token trên URL chỉ được nhận nếu chính trình duyệt đó vừa yêu cầu email, dùng một lần, trong 24 giờ. Mở link ở trình duyệt khác thì báo hết hạn; email đã xác nhận nên đăng nhập bằng mật khẩu như thường | `tests/cloud.test.mjs` |
+| Tấn công từ chối dịch vụ (DDoS) | Xem mục "Chống DDoS" ngay dưới bảng này | Không tự động kiểm thử được |
 | Khoá bí mật | Trong mã không có bí mật nào. Khoá `anon` của Supabase được thiết kế để công khai. Khoá `service_role` không bao giờ được đưa vào web; lỡ dán thì CI chặn | `tests/security.test.mjs` |
 | Chuỗi cung ứng | Web không dùng thư viện npm. CI chỉ dùng action chính chủ, cấp quyền tối thiểu, `persist-credentials: false`. Dependabot đề xuất cập nhật | `.github/dependabot.yml` |
 | Quét mã | CodeQL (`security-extended`) chạy mỗi lần đẩy mã và hằng tuần | `.github/workflows/codeql.yml` |
 | Toàn vẹn bản giao | `SHA256SUMS.txt` cho từng tệp, kèm mã SHA-256 của tệp zip | `tools/build.mjs`, `tools/package.mjs` |
 | An toàn tâm lý | Nhận diện cụm từ khủng hoảng ở 8 ngôn ngữ, hiện đường dây hỗ trợ của từng nước | `data/taxonomy.js` |
-| Riêng tư | Không quảng cáo, không công cụ theo dõi, không cookie. Dữ liệu ở trên máy người dùng; người dùng tự tải về hoặc xoá được trong mục *Tủ* | — |
+| Riêng tư | Không quảng cáo, không công cụ theo dõi, không cookie. Dữ liệu ở trên máy người dùng; người dùng tự tải về hoặc xoá được trong mục *Tủ*. Xoá tài khoản thì xoá cả bản sao trên máy | `tests/cloud.test.mjs` |
+
+### Chống DDoS
+
+Chưa có bài kiểm tra tải hay tấn công thử nào, vì không được phép đánh vào hạ tầng của GitHub. Phần dưới là phân tích theo kiến trúc.
+
+| Phần | Hiện trạng | Giới hạn |
+|---|---|---|
+| Web tĩnh trên GitHub Pages | Tệp tĩnh qua CDN của GitHub. Không có máy chủ riêng hay CSDL để bị đánh sập; người đang dùng vẫn mở được bản đã lưu nhờ service worker | Không có tường lửa, không tự chặn được IP. GitHub có thể trả lỗi 429 khi lưu lượng bất thường, và chủ web không can thiệp được |
+| Supabase (khi bật) | Auth giới hạn theo IP mặc định; schema giới hạn số bài mỗi người | Khoá `anon` công khai và `*.supabase.co` đi thẳng, không qua lớp lọc của mình. Gói miễn phí có thể hết hạn mức |
+
+**Muốn chắc hơn:** mua tên miền, trỏ qua Cloudflare gói Free (chống DDoS không giới hạn ở tầng 3, 4, 7, có luật giới hạn tần suất). Chuyển sang Cloudflare Pages thì `_headers` cũng có hiệu lực, GitHub Pages hiện không áp dụng tệp này. Việc này cần tài khoản của chủ web.
+
+**Trước khi bật tài khoản cho người thật,** làm đủ các bước trong *Cách C* ở mục 4, gồm CAPTCHA.
 
 ---
 
@@ -94,7 +109,7 @@ Số đo lấy từ `npm run build` của bản 2.2.0.
 ### Bước 0. Đóng gói
 
 ```bash
-npm test          # 94 ca phải đạt
+npm test          # 98 ca phải đạt
 npm run build     # tạo thư mục dist/ để đăng web
 ```
 
@@ -128,6 +143,8 @@ Netlify tự áp dụng `_headers`, nên đây là cách có đủ lớp bảo m
    - **Redirect URLs** = địa chỉ web thật và `http://localhost:5190/`.
 4. Vào *Project Settings → API*, chép **Project URL** và khoá **anon public** vào `web/assets/js/config.js` (`SUPABASE_URL`, `SUPABASE_ANON_KEY`). Sau đó build và đăng lại.
 5. Gói miễn phí: 500 MB, gửi được vài email mỗi giờ (nhiều người dùng thì gắn SMTP riêng ở *Authentication → SMTP Settings*). Dự án bị tạm dừng sau 1 tuần không ai dùng; bấm *Restore* là chạy lại.
+6. **Bắt buộc trước khi mở cho người thật** (trong *Authentication*): bật xác nhận email; đặt độ dài mật khẩu tối thiểu 8 ở máy chủ, vì kiểm tra trên web có thể bị bỏ qua; kiểm tra các mức *Rate Limits*. Tài khoản quản trị Supabase và GitHub phải bật 2FA.
+7. **Bắt buộc khi mở đăng ký công khai:** bật CAPTCHA (Cloudflare Turnstile hoặc hCaptcha) ở *Authentication → Attack Protection*. Web hiện chưa có ô CAPTCHA; thêm vào cần tải mã của bên thứ ba và nới CSP, nên phải quyết định riêng. Chưa có CAPTCHA thì kẻ xấu có thể tạo tài khoản hàng loạt.
 
 ### Tên miền riêng (không bắt buộc)
 
@@ -153,7 +170,7 @@ Mua tên miền, ví dụ `ansao.space` hay `ansaospace.com`. Trỏ tên miền 
 
 | Việc | Lệnh |
 |---|---|
-| Chạy thử trên máy | `npm start`, rồi mở http://localhost:5190 |
+| Chạy thử trên máy | `npm start`, rồi mở http://localhost:5190. Máy chủ nhỏ viết bằng Node (`tools/serve.mjs`), không cần Python: luôn gửi tệp mới nhất (`Cache-Control: no-store`), chỉ phục vụ thư mục `web/`, chỉ nghe trên máy này. Đổi cổng: `PORT=5191 npm start` |
 | Kiểm thử | `npm test` |
 | Kiểm thử và đóng gói | `npm run verify` |
 | Tạo bản bàn giao | `npm run package` |
@@ -180,7 +197,7 @@ Mua tên miền, ví dụ `ansao.space` hay `ansaospace.com`. Trỏ tên miền 
 
 | Hiện tượng | Nguyên nhân | Cách xử lý |
 |---|---|---|
-| Mở `localhost:<cổng>` thấy web cũ hoặc web khác, dù đã đổi máy chủ | Service worker gắn với địa chỉ `localhost:<cổng>` và trả về bản đã lưu | F12 → *Application* → *Service workers* → **Unregister**, rồi *Storage* → **Clear site data** |
+| Mở `localhost:5190` thấy bản cũ, hoặc vừa sửa code mà không thấy thay đổi | Từ bản này **không còn xảy ra**: khi chạy trên máy, app tự gỡ service worker cũ và xoá bộ nhớ đệm của nó, còn `npm start` không cho trình duyệt lưu tệp. Nếu vẫn thấy bản cũ (thường do máy chủ cũ bằng Python), nhấn Ctrl+Shift+R một lần | — |
 | Đăng xong vẫn thấy bản cũ | Trình duyệt còn giữ bản trước | Tải lại một lần. Service worker tự nhận bản mới vì tên bộ nhớ đệm đổi theo commit |
 | CI đỏ ở bước *Kiểm thử* | Thiếu bản dịch, sai biến `{x}`, lỡ dán khoá bí mật… | Đọc dòng `not ok` trong nhật ký, sửa rồi đẩy lại |
 | Mở trực tiếp `index.html` thì trang trắng | Trình duyệt chặn ES module khi mở từ `file://` | Chạy `npm start` hoặc dùng bất kỳ máy chủ tĩnh nào |
