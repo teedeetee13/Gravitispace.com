@@ -1,0 +1,12 @@
+// Cấu hình Cloudflare Workers cho Graviti (chỉ phục vụ tệp tĩnh, không chạy mã phía máy chủ).
+// Cloudflare chạy "npm run build" (tạo dist/) rồi "npx wrangler deploy" (đăng dist/ theo tệp này).
+// Tệp dist/_headers (tiêu đề bảo mật, CSP) được Cloudflare đọc tự động.
+{
+  "name": "gravitispace-com",
+  "compatibility_date": "2026-06-01",
+  "assets": {
+    "directory": "./dist",
+    // Đường dẫn không tồn tại → trả 404.html gần nhất (404.html ở gốc tự đưa về trang chính)
+    "not_found_handling": "404-page"
+  }
+}

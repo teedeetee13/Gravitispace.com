@@ -35,20 +35,22 @@ Dành cho chủ dự án, viết cho người mới. Làm theo thứ tự. Mỗi
 
 **Kiểm tra:** gửi thử một email tới `privacy@gravitispace.com`, thấy về Gmail là xong.
 
-## 2. Đưa web lên Cloudflare Pages
+## 2. Đưa web lên Cloudflare (Workers, tệp tĩnh)
 
-1. Cloudflare → *Workers & Pages → Create → Pages → Connect to Git* → cho phép truy cập kho `teedeetee13/Gravitispace.com`.
+Cloudflare hiện gộp Pages vào **Workers**: tạo mới từ Git sẽ ra một Worker phục vụ tệp tĩnh. Miễn phí như Pages, cũng đọc `_headers`. Cấu hình nằm sẵn trong `wrangler.jsonc` ở gốc kho (tên `gravitispace-com`, đăng thư mục `dist/`).
+
+1. Cloudflare → *Workers & Pages → Create → Import a repository* → cho phép truy cập kho `teedeetee13/Gravitispace.com`.
 2. Điền:
 
    | Ô | Giá trị |
    |---|---|
-   | Production branch | `main` |
-   | Build command | `npm run build:admin` |
-   | Build output directory | `dist` |
-   | Environment variable | `NODE_VERSION` = `22` |
+   | Project name | `gravitispace-com` (phải trùng `name` trong `wrangler.jsonc`) |
+   | Build command | `npm run build` (đổi thành `npm run build:admin` **sau khi** làm bước 3) |
+   | Deploy command | `npx wrangler deploy` |
+   | Root directory | `/` |
 
-   Lưu ý: chỉ dùng `build:admin` **sau khi** đã làm bước 3. Trước đó dùng `npm run build` (bản không có trang quản trị).
-3. *Custom domains → Set up a domain* → `gravitispace.com`, thêm `www.gravitispace.com` (Cloudflare tự chuyển hướng).
+   Mỗi lần gộp vào `main`, Cloudflare tự dựng và đăng lại. Địa chỉ miễn phí: `gravitispace-com.<tên-tài-khoản>.workers.dev` (xem ở tab *Overview* hoặc *Domains*).
+3. Khi có tên miền: tab *Domains → Add custom domain* → `gravitispace.com`, thêm `www.gravitispace.com` (Cloudflare tự chuyển hướng).
 4. Sửa `hub/assets/js/data.js`: `LIVE.stars` = `'https://gravitispace.com/stars/'`, xoá dòng `starsLegacy`. Đẩy code lên.
 5. Giữ GitHub Pages thêm 2–3 tháng. Đặt thông báo "Graviti đã chuyển về gravitispace.com".
    Dữ liệu trên máy gắn với địa chỉ web, nên người dùng cũ cần *Tủ của tôi → Tải dữ liệu về*, rồi *Nạp từ tệp* ở địa chỉ mới, hoặc đăng nhập nếu đã bật tài khoản.
@@ -57,7 +59,7 @@ Dành cho chủ dự án, viết cho người mới. Làm theo thứ tự. Mỗi
 - Mở `https://gravitispace.com`, `/stars/`, `/privacy/`.
 - Nhập địa chỉ vào https://securityheaders.com: phải đạt **A** trở lên. Cloudflare đọc tệp `_headers` ở gốc web.
 
-**Chống DDoS:** Cloudflare tự lọc tấn công cho mọi web chạy trên Pages, không cần bật gì. Muốn chặn chặt hơn: *Security → WAF → Rate limiting rules* (gói Free có 1 quy tắc), ví dụ 100 yêu cầu/10 giây mỗi IP cho `/stars/*`. Thêm *Security → Bots → Bot Fight Mode*: bật (miễn phí).
+**Chống DDoS:** Cloudflare tự lọc tấn công cho mọi web chạy trên Workers/Pages, không cần bật gì. Muốn chặn chặt hơn: *Security → WAF → Rate limiting rules* (gói Free có 1 quy tắc), ví dụ 100 yêu cầu/10 giây mỗi IP cho `/stars/*`. Thêm *Security → Bots → Bot Fight Mode*: bật (miễn phí).
 
 ### Chống spam thao tác của người dùng
 
@@ -74,23 +76,25 @@ Web Graviti là tệp tĩnh: bấm liên tục cũng chỉ tốn sức máy ngư
 
 Trang tĩnh **không tự khoá được**: ai có đường dẫn đều tải được tệp HTML. Vì vậy cổng phải đặt ở Cloudflare, chặn trước khi tệp được gửi đi. Bản đăng GitHub Pages (`npm run build`) không chứa `/admin/`.
 
-**Không cần tên miền riêng.** Access khoá được cả địa chỉ miễn phí `graviti.pages.dev`. Khi mua tên miền thì thêm một quy tắc nữa cho tên miền đó.
+**Không cần tên miền riêng.** Access khoá được cả địa chỉ miễn phí `gravitispace-com.<tên-tài-khoản>.workers.dev`. Khi mua tên miền thì thêm một dòng cho tên miền đó.
 
 1. Cloudflare → *Zero Trust* (gói Free, tối đa 50 người) → chọn tên nhóm, ví dụ `graviti`.
 2. *Settings → Authentication*: bật **One-time PIN**. Mỗi lần đăng nhập, Cloudflare gửi mã 6 số về email.
-3. *Access → Applications → Add an application → Self-hosted*, thêm **cả hai** địa chỉ (bấm *Add public hostname* để thêm dòng):
+3. *Access → Applications → Add an application → Self-hosted*, thêm địa chỉ dưới, rồi tắt địa chỉ xem trước:
 
    | Subdomain | Domain | Path | Khoá cái gì |
    |---|---|---|---|
-   | (để trống) | `graviti.pages.dev` | `admin/*` | Trang quản trị trên bản chính |
-   | `*` | `graviti.pages.dev` | `admin/*` | Trang quản trị trên **mọi bản xem trước** (mỗi lần dựng, Cloudflare tạo thêm địa chỉ dạng `abc123.graviti.pages.dev`; quên dòng này là lộ) |
+   | (để trống) | `gravitispace-com.<tên-tài-khoản>.workers.dev` | `admin/*` | Trang quản trị trên bản chính |
+   | — | — | — | **Tắt địa chỉ xem trước:** Worker → *Settings → Domains & Routes → Preview URLs → Disable*. Mỗi nhánh, mỗi lần dựng Cloudflare tạo thêm một địa chỉ xem trước; để bật là trang quản trị lộ qua đó |
 
    Session duration: 24 giờ.
 4. *Policies → Add a policy*: Action **Allow**, Include **Emails** = email của bạn (và của người quản trị khác nếu có).
 5. **Kiểm tra trước** (xem dưới), thấy đã khoá rồi mới đổi Build command ở bước 2 thành `npm run build:admin`.
 6. Khi có tên miền: vào lại ứng dụng này, thêm dòng `gravitispace.com` · path `admin/*` (và `www.gravitispace.com` nếu dùng).
 
-**Kiểm tra:** mở `https://graviti.pages.dev/admin/` trong cửa sổ ẩn danh, phải hiện trang đăng nhập của Cloudflare (dù trang quản trị chưa được đăng, Access vẫn chặn trước). Sau khi đổi sang `build:admin`, mở lại lần nữa, và thử một địa chỉ xem trước `https://<mã>.graviti.pages.dev/admin/` (lấy ở tab *Deployments*).
+**Kiểm tra:** mở `https://gravitispace-com.<tên-tài-khoản>.workers.dev/admin/` trong cửa sổ ẩn danh, phải hiện trang đăng nhập của Cloudflare (dù trang quản trị chưa được đăng, Access vẫn chặn trước). Sau khi đổi sang `build:admin`, mở lại lần nữa.
+
+*Không dùng* nút **Access** trên trang của Worker: nút đó khoá **toàn bộ địa chỉ** của Worker chứ không riêng `/admin/`, người dùng thường sẽ không vào được web.
 
 Trang quản trị chỉ chứa số liệu công khai (phiên bản, kiểm thử, lộ trình), không có khoá bí mật nào. Khoá lại là để giữ kín kế hoạch, không phải để giữ mật khẩu.
 
