@@ -12,8 +12,10 @@ export const CONFIG = {
   // Supabase Dashboard → Project Settings → API. Khoá "anon" là khoá CÔNG KHAI theo thiết kế của Supabase:
   // dữ liệu được bảo vệ bằng Row Level Security trong supabase/schema.sql, không phải bằng việc giấu khoá.
   // Để trống → web chạy chế độ khách (chỉ lưu trên máy), mục Tài khoản báo "chưa cấu hình".
-  SUPABASE_URL: '',
-  SUPABASE_ANON_KEY: '',
+  SUPABASE_URL: 'https://xxbqxgobcgritxxqlmyc.supabase.co',
+  // Khoá publishable (sb_publishable_…, thay cho khoá anon kiểu cũ): công khai, an toàn nhờ RLS.
+  // KHÔNG BAO GIỜ dán khoá sb_secret_… hay service_role vào đây.
+  SUPABASE_ANON_KEY: 'sb_publishable_rxE3rchZX-Q209JQMhJOgA_6m_gu2cA',
 };
 
 export const cloudEnabled = () => !!(CONFIG.SUPABASE_URL && CONFIG.SUPABASE_ANON_KEY);
