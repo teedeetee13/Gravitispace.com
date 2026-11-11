@@ -3,6 +3,11 @@
 -- Chạy một lần trong Supabase Dashboard → SQL Editor → New query → Run.
 -- Chạy lại nhiều lần cũng an toàn (dùng IF NOT EXISTS / OR REPLACE / DROP POLICY IF EXISTS).
 --
+-- Supabase sẽ hỏi "Potential issue detected … destructive operation" vì tệp có chữ DROP / DELETE.
+-- Đó là cảnh báo tự động, không phải lỗi: các lệnh DROP … IF EXISTS chỉ gỡ chính sách cũ của tệp này
+-- để tạo lại, không xoá bảng hay dữ liệu nào; DELETE nằm trong hàm xoá tài khoản, không chạy lúc này.
+-- Bấm "Run this query" để chạy.
+--
 -- Bảo mật: Row Level Security (RLS) bật cho mọi bảng. Khoá "anon" công khai trên web
 -- chỉ làm được những gì các chính sách (policy) dưới đây cho phép.
 -- =====================================================================

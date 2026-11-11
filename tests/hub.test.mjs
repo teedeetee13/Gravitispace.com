@@ -118,7 +118,7 @@ test('Quản trị: không lập chỉ mục, chỉ gọi GitHub API, không gi�
   assert.ok(connect.every((c) => c === "'self'" || c.startsWith('https://')), 'chỉ https');
   assert.doesNotMatch(read('assets/js/admin.js'), /Authorization|token\s*[:=]/i);
   assert.match(read('robots.txt'), /Disallow: \/admin\//);
-  const headers = read('_headers');
+  const headers = read('_headers').replace(/\r\n/g, '\n'); // Windows (autocrlf) đổi xuống dòng thành CRLF
   assert.match(headers, /\/admin\/\*[\s\S]*X-Robots-Tag: noindex/);
   // CSP không được đặt ở /* (sẽ cộng dồn và chặn Graviti Stars); CSP của /stars/* phải đúng bằng web/_headers
   const block = (path) => headers.split(/\n(?=\/)/).find((b) => b.startsWith(path + '\n')) || '';

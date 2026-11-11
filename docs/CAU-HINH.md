@@ -74,15 +74,25 @@ Web Graviti là tệp tĩnh: bấm liên tục cũng chỉ tốn sức máy ngư
 
 Trang tĩnh **không tự khoá được**: ai có đường dẫn đều tải được tệp HTML. Vì vậy cổng phải đặt ở Cloudflare, chặn trước khi tệp được gửi đi. Bản đăng GitHub Pages (`npm run build`) không chứa `/admin/`.
 
-1. Cloudflare → *Zero Trust* (gói Free, tối đa 50 người) → chọn tên nhóm, ví dụ `graviti`.
-2. *Access → Applications → Add an application → Self-hosted*:
-   - Application domain: `gravitispace.com`, path: `admin/*`
-   - Session duration: 24 giờ
-3. *Policies → Add a policy*: Action **Allow**, Include **Emails** = email của bạn (và của người quản trị khác nếu có).
-4. *Settings → Authentication*: bật **One-time PIN**. Mỗi lần đăng nhập, Cloudflare gửi mã 6 số về email.
-5. Lúc này mới đổi Build command ở bước 2 thành `npm run build:admin`.
+**Không cần tên miền riêng.** Access khoá được cả địa chỉ miễn phí `graviti.pages.dev`. Khi mua tên miền thì thêm một quy tắc nữa cho tên miền đó.
 
-**Kiểm tra:** mở `https://gravitispace.com/admin/` trong cửa sổ ẩn danh, phải hiện trang đăng nhập của Cloudflare chứ không phải bảng quản trị.
+1. Cloudflare → *Zero Trust* (gói Free, tối đa 50 người) → chọn tên nhóm, ví dụ `graviti`.
+2. *Settings → Authentication*: bật **One-time PIN**. Mỗi lần đăng nhập, Cloudflare gửi mã 6 số về email.
+3. *Access → Applications → Add an application → Self-hosted*, thêm **cả hai** địa chỉ (bấm *Add public hostname* để thêm dòng):
+
+   | Subdomain | Domain | Path | Khoá cái gì |
+   |---|---|---|---|
+   | (để trống) | `graviti.pages.dev` | `admin/*` | Trang quản trị trên bản chính |
+   | `*` | `graviti.pages.dev` | `admin/*` | Trang quản trị trên **mọi bản xem trước** (mỗi lần dựng, Cloudflare tạo thêm địa chỉ dạng `abc123.graviti.pages.dev`; quên dòng này là lộ) |
+
+   Session duration: 24 giờ.
+4. *Policies → Add a policy*: Action **Allow**, Include **Emails** = email của bạn (và của người quản trị khác nếu có).
+5. **Kiểm tra trước** (xem dưới), thấy đã khoá rồi mới đổi Build command ở bước 2 thành `npm run build:admin`.
+6. Khi có tên miền: vào lại ứng dụng này, thêm dòng `gravitispace.com` · path `admin/*` (và `www.gravitispace.com` nếu dùng).
+
+**Kiểm tra:** mở `https://graviti.pages.dev/admin/` trong cửa sổ ẩn danh, phải hiện trang đăng nhập của Cloudflare (dù trang quản trị chưa được đăng, Access vẫn chặn trước). Sau khi đổi sang `build:admin`, mở lại lần nữa, và thử một địa chỉ xem trước `https://<mã>.graviti.pages.dev/admin/` (lấy ở tab *Deployments*).
+
+Trang quản trị chỉ chứa số liệu công khai (phiên bản, kiểm thử, lộ trình), không có khoá bí mật nào. Khoá lại là để giữ kín kế hoạch, không phải để giữ mật khẩu.
 
 ## 4. Bật tài khoản: Supabase
 
@@ -90,6 +100,8 @@ Trang tĩnh **không tự khoá được**: ai có đường dẫn đều tải 
    - Name: `graviti`. Region: **Southeast Asia (Singapore)** (gần Việt Nam nhất; đã ghi trong chính sách).
    - Database password: tạo mật khẩu dài, cất trong trình quản lý mật khẩu, **không** dùng trong web.
 2. *SQL Editor → New query* → dán toàn bộ `supabase/schema.sql` → *Run*.
+   Supabase sẽ hiện hộp **"Potential issue detected… destructive operation"**. Đây là cảnh báo tự động khi thấy chữ `DROP`/`DELETE`, không phải lỗi: tệp chỉ gỡ chính sách cũ của chính nó để tạo lại, không xoá dữ liệu. Bấm **Run this query**. Kết quả đúng là dòng *Success. No rows returned*.
+   **Kiểm tra:** *Table Editor* có 2 bảng `user_state` và `posts`, cả hai không có nhãn đỏ *Unrestricted* (tức là RLS đã bật).
    Lần nào cập nhật lược đồ thì chạy lại cả tệp: tệp viết để chạy lại nhiều lần không hỏng.
 3. *Authentication → Sign In / Providers → Email*:
    - Bật **Confirm email**.

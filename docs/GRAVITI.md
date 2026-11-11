@@ -79,7 +79,7 @@ Cloudflare cũng có hosting giống Netlify, tên là **Cloudflare Pages**. S�
 - Chưa có người dùng thật thì chạy tạm trên địa chỉ miễn phí (`*.pages.dev`, `*.github.io`) vẫn được. Web ở `*.pages.dev` vẫn được Cloudflare chống DDoS.
 - **Nên mua trước khi quảng bá**, vì hai lẽ:
   1. Đổi địa chỉ sau này thì mất uy tín Google đã tích được, và dữ liệu trên máy người dùng không tự đi theo.
-  2. Tường lửa riêng, giới hạn tần suất và khoá `/admin/` cần tên miền của bạn.
+  2. Tường lửa riêng và giới hạn tần suất tuỳ chỉnh cần tên miền của bạn. (Khoá `/admin/` bằng Access thì làm được ngay trên `*.pages.dev`.)
 - 10–11 USD/năm là khoản rẻ nhất trong cả hệ.
 
 ## 5. Chi phí theo tính năng
