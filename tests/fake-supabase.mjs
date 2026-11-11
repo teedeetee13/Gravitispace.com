@@ -30,7 +30,7 @@ export function createFakeSupabase({ confirmEmail = false, tokenTtl = 3600 } = {
     if (path === '/auth/v1/signup' && method === 'POST') {
       if (db.users.has(body.email)) return json(422, { code: 422, error_code: 'user_already_exists', msg: 'User already registered' });
       if (String(body.password).length < 6) return json(422, { error_code: 'weak_password', msg: 'weak' });
-      const u = { id: randomUUID(), email: body.email, password: body.password, confirmed: !confirmEmail };
+      const u = { id: randomUUID(), email: body.email, password: body.password, confirmed: !confirmEmail, meta: body.data || {} };
       db.users.set(body.email, u);
       return confirmEmail ? json(200, { id: u.id, email: u.email, confirmation_sent_at: new Date().toISOString() }) : json(200, issue(u));
     }

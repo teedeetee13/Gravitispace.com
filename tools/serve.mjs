@@ -7,8 +7,11 @@ import { readFile, stat } from 'node:fs/promises';
 import { join, normalize, extname, resolve, sep, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..', 'web');
-const PORT = Number(process.env.PORT) || 5190;
+// Thư mục phục vụ: mặc định web/ (Graviti Stars). "node tools/serve.mjs dist" → cả web đã dựng (npm run preview).
+const DIR = process.argv[2] || 'web';
+if (!/^[\w-]+$/.test(DIR)) throw new Error('Tên thư mục không hợp lệ: ' + DIR);
+const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..', DIR);
+const PORT = Number(process.env.PORT) || (DIR === 'web' ? 5190 : 5191);
 const TYPES = {
   '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.mjs': 'text/javascript; charset=utf-8',
   '.css': 'text/css; charset=utf-8', '.json': 'application/json; charset=utf-8', '.webmanifest': 'application/manifest+json; charset=utf-8',
@@ -48,4 +51,4 @@ server.on('error', (e) => {
   else console.error(e.message);
   process.exit(1);
 });
-server.listen(PORT, '127.0.0.1', () => console.log(`An Sao Space chạy thử tại http://localhost:${PORT}  (Ctrl+C để dừng)`));
+server.listen(PORT, '127.0.0.1', () => console.log(`${DIR === 'web' ? 'Graviti Stars' : 'Graviti (' + DIR + ')'} chạy thử tại http://localhost:${PORT}  (Ctrl+C để dừng)`));

@@ -64,7 +64,7 @@ export const MODALITY_TEXT = {
 
 // ---------- Góc chiếu (aspects) ----------
 // Cách luận theo lối "delineation" kinh điển (như phần mềm Astrolog của Walter Pullen dùng):
-// [phần A của bạn] + [tính chất góc chiếu] + [phần B của bạn]. Lời văn do An Sao Space tự viết.
+// [phần A của bạn] + [tính chất góc chiếu] + [phần B của bạn]. Lời văn do Graviti Stars tự viết.
 export const PLANET_SHORT = {
   sun: { vi: 'bản ngã', en: 'core self' },
   moon: { vi: 'cảm xúc', en: 'feelings' },

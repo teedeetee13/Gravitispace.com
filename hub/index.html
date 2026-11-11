@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <!-- Chỉ chạy mã của chính trang; phông chữ từ Google Fonts. Không gọi máy chủ ngoài nào khác. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; manifest-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <title>Graviti · Lực hút của những điều hữu duyên</title>
+  <meta name="description" content="Graviti là hệ sinh thái chữa lành và kết nối: hiểu mình qua những vì sao, gặp đúng người, nhận giúp đỡ nhanh và dịu dàng." />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Graviti" />
+  <meta property="og:description" content="Những điều hữu duyên, tự tìm đến nhau. · What is meant to meet finds its way." />
+  <meta property="og:image" content="assets/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta property="og:locale" content="vi_VN" />
+  <meta property="og:locale:alternate" content="en_GB" />
+  <meta name="theme-color" content="#f6f1e9" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#110f18" media="(prefers-color-scheme: dark)" />
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/hub.css" />
+  <script src="assets/js/redirect.js"></script>
+  <script src="assets/js/boot.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main" data-i18n="skip">Bỏ qua tới nội dung</a>
+
+  <header class="topbar">
+    <div class="wrap topbar-in">
+      <a class="logo" href="./" aria-label="Graviti">
+        <svg class="logo-mark" viewBox="0 0 32 32" aria-hidden="true"><circle class="lm-core" cx="16" cy="16" r="5"/><ellipse class="lm-orbit" cx="16" cy="16" rx="13" ry="6.5" transform="rotate(-24 16 16)"/><circle class="lm-moon" cx="27.2" cy="10.4" r="2.3"/></svg>
+        <span>Graviti</span>
+      </a>
+      <nav class="topnav" aria-label="Graviti">
+        <a href="#services" data-i18n="nav.services">Dịch vụ</a>
+        <a href="#why" data-i18n="nav.why">Vì sao Graviti</a>
+        <a href="#roadmap" data-i18n="nav.roadmap">Lộ trình</a>
+      </nav>
+      <div class="tools">
+        <label class="lang-pick"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.5 2.6 3.5 5.4 3.5 8.5s-1 5.9-3.5 8.5c-2.5-2.6-3.5-5.4-3.5-8.5s1-5.9 3.5-8.5z"/></svg><select data-lang-select data-i18n-aria="lang.aria" aria-label="Chọn ngôn ngữ"></select></label>
+        <button class="icon-btn" type="button" data-theme-toggle data-i18n-aria="theme.aria" aria-label="Đổi giao diện sáng / tối">
+          <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M18.5 14.8A7 7 0 0 1 9.2 5.5a7 7 0 1 0 9.3 9.3z"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero">
+      <div class="wrap hero-in">
+        <div class="hero-text">
+          <p class="kicker" data-i18n="home.kicker">Hệ sinh thái chữa lành và kết nối</p>
+          <h1 data-i18n="home.h1">Những điều hữu duyên, tự tìm đến nhau.</h1>
+          <p class="lead" data-i18n="home.lead">Có một lực vô hình kéo những người, những điều cần gặp lại gần nhau.</p>
+          <div class="cta-row">
+            <a class="btn btn-primary" href="stars/"><span data-i18n="home.cta">Mở Graviti Stars</span></a>
+            <a class="btn btn-ghost" href="#services" data-i18n="home.cta2">Xem các dịch vụ</a>
+          </div>
+        </div>
+        <!-- Hình trang trí: một "mặt trời" giữa, các quỹ đạo, hành tinh nhỏ quay chậm (tắt chuyển động nếu người dùng chọn giảm chuyển động) -->
+        <div class="orbit-art" aria-hidden="true">
+          <svg viewBox="0 0 400 400">
+            <defs>
+              <radialGradient id="core" cx="50%" cy="50%" r="50%">
+                <stop offset="0" stop-color="var(--gold-soft)"/>
+                <stop offset="0.55" stop-color="var(--gold)"/>
+                <stop offset="1" stop-color="var(--gold)" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+            <g class="sky">
+              <circle cx="40" cy="60" r="1.6"/><circle cx="352" cy="44" r="1.2"/><circle cx="372" cy="250" r="1.8"/>
+              <circle cx="28" cy="300" r="1.2"/><circle cx="110" cy="368" r="1.5"/><circle cx="300" cy="372" r="1.1"/>
+              <circle cx="210" cy="22" r="1.3"/><circle cx="84" cy="168" r="1"/><circle cx="330" cy="150" r="1"/>
+            </g>
+            <circle cx="200" cy="200" r="62" fill="url(#core)" class="core-glow"/>
+            <circle cx="200" cy="200" r="22" class="core"/>
+            <ellipse cx="200" cy="200" rx="92" ry="92" class="orbit"/>
+            <ellipse cx="200" cy="200" rx="140" ry="140" class="orbit"/>
+            <ellipse cx="200" cy="200" rx="186" ry="186" class="orbit orbit-faint"/>
+            <g class="spin spin-1"><circle cx="292" cy="200" r="7" class="planet p1"/></g>
+            <g class="spin spin-2"><circle cx="60" cy="200" r="9" class="planet p2"/></g>
+            <g class="spin spin-3"><circle cx="200" cy="14" r="5" class="planet p3"/></g>
+            <path class="thread" d="M200 200 L292 200"/>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <section id="services" class="section">
+      <div class="wrap">
+        <h2 data-i18n="home.services">Các góc của Graviti</h2>
+        <p class="section-lead" data-i18n="home.servicesLead"></p>
+        <div class="svc-grid" id="services-list"></div>
+        <div class="modules">
+          <h3 data-i18n="home.modules">Trong Graviti Stars</h3>
+          <ul class="chips" id="modules-list"></ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="why" class="section section-alt">
+      <div class="wrap why">
+        <div>
+          <h2 data-i18n="home.whyTitle">Vì sao là Graviti?</h2>
+          <p data-i18n="home.why1"></p>
+          <p data-i18n="home.why2"></p>
+          <p class="why-domain" data-i18n="home.whyDomain"></p>
+        </div>
+        <div>
+          <h2 data-i18n="home.principles">Điều Graviti giữ</h2>
+          <ul class="principles" id="principles-list"></ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="roadmap" class="section">
+      <div class="wrap">
+        <h2 data-i18n="home.roadmap">Đang làm gì</h2>
+        <ol class="roadmap" id="roadmap-list"></ol>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <p data-i18n="home.foot"></p>
+      <p class="muted">© <span data-year>2026</span> Graviti · gravitispace.com · <a href="privacy/" data-i18n="home.privacy">Quyền riêng tư</a></p>
+    </div>
+  </footer>
+
+  <noscript><p class="wrap">Graviti cần JavaScript để hiển thị đầy đủ. · Graviti needs JavaScript.</p></noscript>
+  <script type="module" src="assets/js/home.js"></script>
+</body>
+</html>

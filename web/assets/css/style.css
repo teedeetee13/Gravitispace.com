@@ -1,5 +1,5 @@
 /* =========================================================
-   An Sao Space — giao diện
+   Graviti Stars — giao diện
    Màu: giấy ấm (sáng) / trời đêm (tối), điểm nhấn tím và vàng
    ========================================================= */
 
@@ -737,3 +737,8 @@ button.flip-slot:hover .tcard-face { transform: translateY(-4px); }
 .opt-year input[type='number'] { width: 5.5em; padding: 4px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg, var(--surface)); color: var(--ink); font: inherit; }
 .opt input:disabled + *, .opt:has(input:disabled) { opacity: 0.55; }
 @media (max-width: 520px) { .p-extra { display: none; } .opt-grid { grid-template-columns: 1fr 1fr; } .opt { font-size: 0.82rem; } .opt-year { grid-column: 1 / -1; } }
+
+/* Ô đồng ý chính sách quyền riêng tư khi đăng ký (Luật BVDLCN: không bao giờ đánh sẵn) */
+.consent { display: flex; gap: 10px; align-items: flex-start; font-size: 0.92rem; line-height: 1.5; margin: 4px 0 2px; cursor: pointer; }
+.consent input { width: 20px; height: 20px; margin: 2px 0 0; flex: none; accent-color: var(--accent); }
+.consent a { color: var(--accent); }

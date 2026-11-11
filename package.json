@@ -1,13 +1,15 @@
 {
-  "name": "an-sao-space",
-  "version": "2.2.1",
+  "name": "graviti",
+  "version": "2.3.0",
   "private": true,
   "type": "module",
-  "description": "An Sao Space — Tarot, chiêm tinh, tử vi theo hướng chữa lành. Web tĩnh, không phụ thuộc thư viện ngoài.",
+  "description": "Graviti — hệ sinh thái chữa lành và kết nối (gravitispace.com). Một web, chia theo đường dẫn: trang chính (hub/), Graviti Stars ở /stars/ (web/), quản trị ở /admin/. Web tĩnh, không phụ thuộc thư viện ngoài.",
   "scripts": {
     "start": "node tools/serve.mjs",
+    "preview": "node tools/build.mjs --admin && node tools/serve.mjs dist",
     "test": "node --test \"tests/*.test.mjs\"",
     "build": "node tools/build.mjs",
+    "build:admin": "node tools/build.mjs --admin",
     "package": "node tools/build.mjs && node tools/package.mjs",
     "i18n:missing": "node tools/i18n-strings.mjs",
     "verify": "npm test && npm run build"

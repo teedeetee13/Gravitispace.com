@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex" />
+  <title>Graviti</title>
+  <script>
+    // Đường dẫn không tồn tại → về trang chính. Trên GitHub Pages dạng dự án (*.github.io/ten-kho/) giữ lại /ten-kho/.
+    (function () {
+      var seg = location.pathname.split('/')[1];
+      var base = location.hostname.endsWith('github.io') && seg ? '/' + seg + '/' : '/';
+      location.replace(base);
+    })();
+  </script>
+  <style>body{margin:0;min-height:100vh;display:grid;place-items:center;font-family:system-ui,sans-serif;background:#f6f1e9;color:#2a2420;text-align:center;padding:24px}a{color:#6b4c9a}@media (prefers-color-scheme:dark){body{background:#110f18;color:#ece6f2}a{color:#b99ce6}}</style>
+</head>
+<body>
+  <main>
+    <p>Lạc giữa không gian rồi. Lực hút sẽ đưa bạn về. · Lost in space, gravity will bring you back.</p>
+    <p><a href="/">Về Graviti · Back to Graviti</a></p>
+  </main>
+</body>
+</html>

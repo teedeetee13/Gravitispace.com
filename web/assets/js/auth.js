@@ -86,8 +86,10 @@ export const auth = {
     return session;
   },
   /** Trả về 'signed-in' (vào luôn) hoặc 'confirm-email' (cần bấm link trong email). */
-  async signUp(email, password) {
-    const r = await cloud.signUp(email, password);
+  async signUp(email, password, consent) {
+    // Không có đồng ý thì không gửi gì lên máy chủ (Luật Bảo vệ dữ liệu cá nhân 91/2025/QH15)
+    if (!consent?.version) throw Object.assign(new Error('consent_required'), { code: 'consent_required' });
+    const r = await cloud.signUp(email, password, { consent_version: consent.version, consent_at: new Date().toISOString() });
     const s = toSession(r);
     if (s) {
       save(s);

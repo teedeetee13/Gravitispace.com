@@ -1,4 +1,6 @@
-# Sổ tay An Sao Space v2.2
+# Sổ tay Graviti Stars v2.3
+
+> Từ 2.3.0, An Sao Space đổi tên thành **Graviti Stars** (tên tiếng Việt: An Sao), là một phần của hệ **Graviti**. Từ 2.3.0 web chia theo đường dẫn: trang chính ở `/`, Graviti Stars ở `/stars/`, chính sách ở `/privacy/`, quản trị ở `/admin/`. Tên gọi, cấu trúc, hosting, chi phí: [GRAVITI.md](GRAVITI.md). Cấu hình từng bước (tên miền, Cloudflare, Supabase, luật dữ liệu): [CAU-HINH.md](CAU-HINH.md).
 
 Đây là tài liệu chính của dự án, gồm: tổng quan, tối ưu, bảo mật, triển khai, vận hành, bàn giao. Đọc mục 1 và 4 là đủ để đưa web lên mạng.
 
@@ -14,7 +16,7 @@ Các tài liệu khác:
 
 ## 1. Tổng quan
 
-**An Sao Space** là web chữa lành về Tarot, chiêm tinh phương Tây và Tử Vi Đẩu Số. Người dùng lướt bài viết theo kiểu "gặp là duyên", rút bài mỗi ngày, lập lá số Tử Vi và bản đồ sao. Web có 8 ngôn ngữ: Việt, Anh, Tây Ban Nha, Pháp, Đức, Trung phồn thể, Hindi, Thái.
+**Graviti Stars** là web chữa lành về Tarot, chiêm tinh phương Tây và Tử Vi Đẩu Số. Người dùng lướt bài viết theo kiểu "gặp là duyên", rút bài mỗi ngày, lập lá số Tử Vi và bản đồ sao. Web có 8 ngôn ngữ: Việt, Anh, Tây Ban Nha, Pháp, Đức, Trung phồn thể, Hindi, Thái.
 
 Tên gọi: "an" là bình an, nhẹ lòng. "An sao" cũng là bước xếp sao vào lá số Tử Vi (chữ Hán: 安星).
 
@@ -136,7 +138,7 @@ Netlify tự áp dụng `_headers`, nên đây là cách có đủ lớp bảo m
 
 ### Cách C: bật tài khoản Supabase (không bắt buộc, khoảng 10 phút)
 
-1. Vào https://supabase.com, tạo **New project** tên `an-sao-space`, chọn vùng **Southeast Asia (Singapore)**, lưu lại mật khẩu CSDL.
+1. Vào https://supabase.com, tạo **New project** tên `graviti`, chọn vùng **Southeast Asia (Singapore)**, lưu lại mật khẩu CSDL.
 2. Mở *SQL Editor*, dán toàn bộ [`supabase/schema.sql`](../supabase/schema.sql) rồi bấm **Run**. Kiểm tra: có 2 bảng `user_state`, `posts`, cả hai hiện nhãn *RLS enabled*. Tệp này chạy lại nhiều lần vẫn an toàn.
 3. Vào *Authentication → URL Configuration*:
    - **Site URL** = địa chỉ web thật.
@@ -154,13 +156,13 @@ Mua tên miền, ví dụ `ansao.space` hay `ansaospace.com`. Trỏ tên miền 
 
 - [ ] Mở link trên điện thoại: bảng tin, rút bài, lập lá số, đổi ngôn ngữ, đổi sáng/tối đều chạy.
 - [ ] Tắt mạng, tải lại trang: web vẫn mở được.
-- [ ] Chia sẻ link qua Zalo hoặc Messenger: hiện ảnh xem trước và tiêu đề "An Sao Space".
+- [ ] Chia sẻ link qua Zalo hoặc Messenger: hiện ảnh xem trước và tiêu đề "Graviti Stars".
 - [ ] Nếu đăng bằng Netlify: kiểm tra tiêu đề bảo mật tại https://securityheaders.com.
 
 ### Chia sẻ web
 
 - Gửi **link**, hoặc **mã QR** để quét bằng điện thoại. Trên điện thoại có thể chọn "Thêm vào màn hình chính" để dùng như một app.
-- Cần gửi mã nguồn cho người khác: `npm run package` tạo ra `release/an-sao-space-<phiên bản>.zip` và tệp `.sha256`.
+- Cần gửi mã nguồn cho người khác: `npm run package` tạo ra `release/graviti-<phiên bản>.zip` và tệp `.sha256`.
 
 ---
 

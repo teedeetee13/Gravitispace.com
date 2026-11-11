@@ -1,5 +1,9 @@
-// Đóng gói bản phát hành: web/ → dist/ (không thư viện ngoài, chỉ Node.js ≥ 20).
-//   npm run build
+// Đóng gói cả web Graviti (không thư viện ngoài, Node.js ≥ 22). Một tên miền, chia theo đường dẫn:
+//   dist/          trang chính Graviti + /privacy/ (từ hub/, xem tools/build-hub.mjs)
+//   dist/stars/    Graviti Stars (từ web/)
+//   dist/admin/    trang quản trị — CHỈ khi dựng với --admin (Cloudflare, có Cloudflare Access chặn cổng)
+//   npm run build          bản công khai (GitHub Pages)
+//   npm run build:admin    bản có trang quản trị
 // Việc làm:
 //  1. Chép web/ sang dist/ (bỏ tệp ẩn, tệp nháp _dev*).
 //  2. Đóng dấu phiên bản: APP_VERSION trong config.js lấy từ package.json; tên bộ nhớ đệm của service worker
@@ -15,7 +19,9 @@ import { execSync } from 'node:child_process';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const SRC = join(ROOT, 'web');
-const OUT = join(ROOT, 'dist');
+const OUT_ROOT = join(ROOT, 'dist');
+const OUT = join(OUT_ROOT, 'stars');
+const WITH_ADMIN = process.argv.includes('--admin');
 const pkg = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8'));
 const sha = (process.env.GITHUB_SHA || safe(() => execSync('git rev-parse HEAD', { cwd: ROOT }).toString().trim()) || 'local').slice(0, 7);
 const builtAt = new Date().toISOString();
@@ -35,13 +41,15 @@ const walk = (dir) =>
 const posix = (p) => p.split(sep).join('/');
 
 // 1. Chép
-rmSync(OUT, { recursive: true, force: true });
+rmSync(OUT_ROOT, { recursive: true, force: true });
 const files = walk(SRC).filter((f) => !relative(SRC, f).split(sep).some((part) => part.startsWith('.') || part.startsWith('_dev')));
 for (const f of files) {
   const to = join(OUT, relative(SRC, f));
   mkdirSync(dirname(to), { recursive: true });
   copyFileSync(f, to);
 }
+// web/_headers chỉ dùng khi đăng riêng Graviti Stars; trong web chung, quy tắc nằm ở hub/_headers (gốc web)
+rmSync(join(OUT, '_headers'), { force: true });
 
 // 2. Đóng dấu phiên bản
 const cfgPath = join(OUT, 'assets', 'js', 'config.js');
@@ -84,7 +92,7 @@ const groups = {
   'Tổng': size(() => true),
 };
 const BUDGET = { 'Khung + CSS': 140 * 1024, 'Mã JS (trừ gói ngôn ngữ)': 520 * 1024 };
-console.log(`An Sao Space ${pkg.version} (${sha}) → dist/  ${all.length} tệp`);
+console.log(`Graviti Stars ${pkg.version} (${sha}) → dist/stars/  ${all.length} tệp`);
 let over = false;
 for (const [k, v] of Object.entries(groups)) {
   const b = BUDGET[k];
@@ -93,3 +101,7 @@ for (const [k, v] of Object.entries(groups)) {
   console.log(`  ${k.padEnd(28)} ${kb(v).padStart(8)}${flag}`);
 }
 if (over) process.exit(1);
+
+// 6. Trang chính + quyền riêng tư (+ quản trị nếu --admin) vào gốc dist/. Tệp _headers chỉ có hiệu lực ở gốc web.
+const { buildHub } = await import('./build-hub.mjs');
+await buildHub(OUT_ROOT, { admin: WITH_ADMIN });

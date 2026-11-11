@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <!-- Trang quản trị chỉ được gọi: chính trang, GitHub API (công khai) và web Graviti Stars đang chạy (đọc build-info.json). -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.github.com https://teedeetee13.github.io; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests" />
+  <meta name="referrer" content="no-referrer" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Quản trị · Graviti</title>
+  <meta name="description" content="Quản trị Graviti" />
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/hub.css" />
+  <script src="../assets/js/boot.js"></script>
+</head>
+<body>
+  <a class="skip" href="#overview" data-i18n="skip">Bỏ qua tới nội dung</a>
+  <header class="topbar">
+    <div class="wrap topbar-in">
+      <a class="logo" href="../" aria-label="Graviti">
+        <svg class="logo-mark" viewBox="0 0 32 32" aria-hidden="true"><circle class="lm-core" cx="16" cy="16" r="5"/><ellipse class="lm-orbit" cx="16" cy="16" rx="13" ry="6.5" transform="rotate(-24 16 16)"/><circle class="lm-moon" cx="27.2" cy="10.4" r="2.3"/></svg>
+        <span>Graviti</span>
+      </a>
+      <div class="tools">
+        <button class="ghost-btn" type="button" data-lang-toggle aria-label="Chuyển sang tiếng Anh"><span data-i18n="lang.switch">English</span></button>
+        <button class="icon-btn" type="button" data-theme-toggle data-i18n-aria="theme.aria" aria-label="Đổi giao diện sáng / tối">
+          <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M18.5 14.8A7 7 0 0 1 9.2 5.5a7 7 0 1 0 9.3 9.3z"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="wrap dash">
+    <nav class="dash-nav" aria-label="Dashboard">
+      <a href="#overview" data-i18n="dash.sec.overview">Tổng quan</a>
+      <a href="#release" data-i18n="dash.sec.release">Phát hành</a>
+      <a href="#content" data-i18n="dash.sec.content">Nội dung</a>
+      <a href="#roadmap" data-i18n="dash.sec.roadmap">Lộ trình</a>
+      <a href="#todo" data-i18n="dash.sec.todo">Việc cần làm</a>
+      <a href="#plan" data-i18n="dash.sec.plan">Kế hoạch quản trị</a>
+    </nav>
+
+    <main class="dash-main">
+      <div class="dash-head">
+        <h1 data-i18n="dash.h1">Bảng quản trị</h1>
+        <div class="dash-meta">
+          <span data-updated aria-live="polite"></span>
+          <button class="ghost-btn" type="button" data-refresh><span data-i18n="dash.refresh">Làm mới</span></button>
+        </div>
+      </div>
+      <p class="dash-lead" data-i18n="dash.lead"></p>
+      <div data-alert></div>
+
+      <section class="dash-sec" id="overview">
+        <h2 data-i18n="dash.sec.overview">Tổng quan</h2>
+        <div class="tiles" id="tiles"></div>
+      </section>
+
+      <section class="dash-sec" id="release">
+        <h2 data-i18n="dash.sec.release">Phát hành</h2>
+        <div class="panel">
+          <h3 data-i18n="dash.runs">Các lần chạy gần đây</h3>
+          <div class="table-wrap" id="runs"></div>
+        </div>
+        <div class="grid-2">
+          <div class="panel"><h3 data-i18n="dash.releases">Bản phát hành</h3><ul class="list" id="releases"></ul></div>
+          <div class="panel"><h3 data-i18n="dash.openPrs">Pull request đang mở</h3><ul class="list" id="prs"></ul></div>
+        </div>
+      </section>
+
+      <section class="dash-sec" id="content">
+        <h2 data-i18n="dash.sec.content">Nội dung</h2>
+        <div id="content-body"></div>
+      </section>
+
+      <section class="dash-sec" id="roadmap">
+        <h2 data-i18n="dash.sec.roadmap">Lộ trình</h2>
+        <div class="grid-2">
+          <div class="panel"><h3 data-i18n="dash.services">Dịch vụ Graviti</h3><ul class="list" id="svc-status"></ul></div>
+          <div class="panel"><h3 data-i18n="dash.modules">Phân môn Graviti Stars</h3><ul class="list" id="mod-status"></ul></div>
+        </div>
+        <div class="panel"><ol class="roadmap" id="roadmap-list"></ol></div>
+      </section>
+
+      <section class="dash-sec" id="todo">
+        <h2 data-i18n="dash.sec.todo">Việc cần làm</h2>
+        <div class="panel"><ul class="todo" id="todo-list"></ul></div>
+      </section>
+
+      <section class="dash-sec" id="plan">
+        <h2 data-i18n="dash.sec.plan">Kế hoạch quản trị</h2>
+        <div class="plan" id="plan-list"></div>
+        <p class="note" data-i18n="dash.gate"></p>
+      </section>
+    </main>
+  </div>
+
+  <noscript><p class="wrap">Trang quản trị cần JavaScript. · The admin page needs JavaScript.</p></noscript>
+  <script type="module" src="../assets/js/admin.js"></script>
+</body>
+</html>

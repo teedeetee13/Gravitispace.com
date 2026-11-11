@@ -1,4 +1,4 @@
-# Chính sách bảo mật — An Sao Space
+# Chính sách bảo mật — Graviti (Graviti Stars + trang chính)
 
 ## Báo lỗ hổng
 

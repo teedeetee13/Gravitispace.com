@@ -1,4 +1,4 @@
-# An Sao Space — Checklist hoàn thiện để duyệt
+# Graviti Stars (trước là An Sao Space) — Checklist hoàn thiện để duyệt
 
 > Tài liệu này ghi rõ từng hạng mục đã làm: **làm gì, làm bằng cách nào, công nghệ gì, nằm ở tệp nào, và bạn tự kiểm tra lại ra sao**.
 > Ký hiệu: ✅ đã xong và đã kiểm chứng · ⚠️ đã xong nhưng cần bạn quyết định / xác nhận · ⏳ để dành cho giai đoạn web động.
@@ -249,6 +249,25 @@ Bảng tin (sáng, tối), Tìm kiếm, Bài viết, Lá số Tử Vi, Bản đ�
 | 14.9 | Bảo vệ nhánh `main` | ⚠️ | Đang tắt. Bật theo [SO-TAY.md](SO-TAY.md) mục 4, cách B | GitHub Settings |
 
 **Cách tự kiểm tra:** chạy `npm test` (98 ca). Rút bài xuôi/ngược không đổi trong bản này: mỗi lá có 1/3 khả năng ngược (`views/tarot.js`).
+
+## 15. Hệ Graviti, bản 2.3.0 (11–12/11/2026)
+
+| # | Hạng mục | Trạng thái | Làm thế nào | Tệp |
+|---|---|---|---|---|
+| 15.1 | Đổi tên **An Sao Space → Graviti Stars** | ✅ | Thay bằng script ở tiêu đề, logo chữ, manifest, Open Graph, 8 bản dịch, công cụ, quy trình phát hành. Ảnh chia sẻ vẽ lại bằng HTML rồi chụp qua Edge không giao diện | `web/**`, `tools/*` |
+| 15.2 | Một web, chia theo đường dẫn | ✅ | `tools/build.mjs` dựng Stars vào `dist/stars/`, trang chính vào gốc. `redirect.js` chuyển link `#/…` cũ và ứng dụng đã cài sang `/stars/` | `tools/build.mjs`, `tools/build-hub.mjs`, `hub/assets/js/redirect.js` |
+| 15.3 | Không làm mất dữ liệu người dùng cũ | ✅ | Giữ khoá `ansao:`: cùng tên miền nên dữ liệu còn nguyên. Tệp xuất cũ vẫn nạp được | `store.js`, `tests/store.test.mjs` |
+| 15.4 | Trang chính 9 ngôn ngữ (có tiếng Hàn) | ✅ | Mỗi ngôn ngữ một tệp `hub/assets/js/i18n/<mã>.js`, chỉ tải khi chọn. Kiểm thử bắt buộc đủ khoá, đúng chữ viết. Tiếng Hàn không ngắt giữa từ (`word-break: keep-all`) | `hub/assets/js/i18n/` |
+| 15.5 | Trang quản trị, giai đoạn 1 (Việt/Anh) | ✅ | GitHub REST API công khai (lưu 5 phút), `build-info.json`, `admin/stats.json` sinh lúc dựng | `hub/admin/`, `hub/assets/js/admin*.js` |
+| 15.6 | Chỉ quản trị viên vào được `/admin/` | ✅ mã / ⏳ bạn | Bản công khai không chép `/admin/` (có kiểm thử). Trên Cloudflare, Cloudflare Access chặn ngay ở cổng ([CAU-HINH.md](CAU-HINH.md) mục 3) | `tools/build-hub.mjs` |
+| 15.7 | Luật BVDLCN 91/2025/QH15 | ✅ mã / ⏳ bạn | Trang `/privacy/`. Ô đồng ý bắt buộc, không đánh sẵn; chưa đồng ý thì không gửi gì. Lưu phiên bản + thời điểm đồng ý. Phiên bản chính sách phải khớp `CONSENT_VERSION` (có kiểm thử). Phần giấy tờ: [CAU-HINH.md](CAU-HINH.md) mục 6 | `hub/privacy/`, `auth.js`, `cloud.js`, `views/account.js` |
+| 15.8 | Tiêu đề bảo mật cho web chung | ✅ | `hub/_headers` ở gốc. Không đặt CSP ở `/*` (nếu đặt, các CSP cộng dồn và chặn Supabase). CSP của `/stars/*` phải bằng `web/_headers` (có kiểm thử) | `hub/_headers` |
+| 15.9 | Kiểm thử | ✅ | 110/110 | `tests/hub.test.mjs`, `tests/cloud.test.mjs` |
+| 15.10 | Thử trên điện thoại (390×844) | ✅ | Trang chính (tiếng Hàn, sáng/tối), `/privacy/`, `/admin/` (tối), `/stars/`, chuyển hướng link cũ: không tràn ngang, không lỗi console | Edge không giao diện + DevTools Protocol |
+| 15.11 | Tiếng Hàn cho Graviti Stars | ⏳ | Việc lớn (khoảng 190 KB chữ: giao diện, 78 lá bài, cung, bài mẫu, lời luận). Làm thành một đợt riêng | — |
+| 15.12 | Mua tên miền, chuyển sang Cloudflare | ⏳ bạn | [CAU-HINH.md](CAU-HINH.md) mục 1–3 | — |
+
+**Cách tự kiểm tra:** chạy `npm run verify`, rồi `npm run preview` và mở http://localhost:5191, `/stars/`, `/privacy/`, `/admin/`.
 
 ---
 
