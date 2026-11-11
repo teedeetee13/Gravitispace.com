@@ -1,7 +1,10 @@
 // Cấu hình chung.
 export const CONFIG = {
-  APP_VERSION: '2.2.1',
-  STORAGE_PREFIX: 'ansao:',
+  APP_VERSION: '2.3.0',
+  STORAGE_PREFIX: 'ansao:', // giữ nguyên dù đã đổi tên: đổi là người dùng cũ mất dữ liệu
+  // Chính sách quyền riêng tư (trang chính Graviti). Đổi nội dung chính sách → tăng phiên bản ở cả hai nơi.
+  PRIVACY_URL: '../privacy/',
+  CONSENT_VERSION: '1.0',
   DEFAULT_LANG: 'vi',
   // Danh mục ngôn ngữ: xem i18n/langs.js
 

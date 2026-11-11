@@ -52,7 +52,8 @@ const redirect = () => (typeof location !== 'undefined' ? `?redirect_to=${encode
 export const cloud = {
   // ---------- Tài khoản ----------
   /** Đăng ký. Nếu dự án bật xác nhận email, kết quả không có access_token (chờ người dùng bấm link). */
-  signUp: (email, password) => request('/auth/v1/signup', { method: 'POST', body: { email, password }, query: redirect() }),
+  // data → user_metadata: ghi lại phiên bản chính sách người dùng đã đồng ý (Luật BVDLCN: phải chứng minh được sự đồng ý)
+  signUp: (email, password, data = {}) => request('/auth/v1/signup', { method: 'POST', body: { email, password, data }, query: redirect() }),
   signIn: (email, password) => request('/auth/v1/token', { method: 'POST', body: { email, password }, query: '?grant_type=password' }),
   refresh: (refreshToken) => request('/auth/v1/token', { method: 'POST', body: { refresh_token: refreshToken }, query: '?grant_type=refresh_token' }),
   signOut: (token) => request('/auth/v1/logout', { method: 'POST', token }),

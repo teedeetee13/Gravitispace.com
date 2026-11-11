@@ -1,4 +1,4 @@
-// Ba chủ đề chính của An Sao Space
+// Ba chủ đề chính của Graviti Stars
 export const TOPICS = [
   { id: 'tarot', label: 'Tarot', color: '#9d6fb0' },
   { id: 'chiem-tinh', label: 'Chiêm tinh', color: '#4f7fb0' },

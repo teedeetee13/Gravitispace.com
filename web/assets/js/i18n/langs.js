@@ -1,4 +1,4 @@
-// Danh mục ngôn ngữ của An Sao Space. Thêm một ngôn ngữ = thêm một dòng ở đây + 3 tệp trong i18n/
+// Danh mục ngôn ngữ của Graviti Stars. Thêm một ngôn ngữ = thêm một dòng ở đây + 3 tệp trong i18n/
 // (<ma>.js: giao diện, <ma>-content.js: lá bài/cung/con giáp/bài mẫu, <ma>-text.js: lời luận giải).
 // Kiểm thử tests/i18n.test.mjs bắt buộc mỗi ngôn ngữ phải đủ 100% — thiếu một chuỗi là CI báo đỏ, không đăng web.
 //  - html: mã BCP 47 cho <html lang> (trình đọc màn hình, phông chữ, ngắt dòng đúng chữ viết)

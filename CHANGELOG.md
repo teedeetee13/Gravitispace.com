@@ -2,6 +2,26 @@
 
 Theo [Semantic Versioning](https://semver.org/lang/vi/). Phát hành bằng thẻ `vX.Y.Z` (xem docs/SO-TAY.md mục 5).
 
+## 2.3.0 — 12/11/2026
+
+### Đổi tên và cấu trúc
+- **An Sao Space → Graviti Stars** (tên tiếng Việt vẫn là An Sao), thuộc hệ **Graviti** (`gravitispace.com`). Trang *Về* ở 8 ngôn ngữ kể ý nghĩa tên. Ảnh chia sẻ vẽ lại.
+- **Một web, chia theo đường dẫn** (tốt cho SEO): trang chính ở `/`, Graviti Stars ở `/stars/`, chính sách ở `/privacy/`, quản trị ở `/admin/`. Link cũ dạng `#/tarot` và ứng dụng đã cài tự chuyển sang `/stars/`. Dữ liệu trên máy giữ nguyên (khoá `ansao:` không đổi).
+- Kho GitHub đổi tên thành `Gravitispace.com`. Web tạm chạy ở `teedeetee13.github.io/Gravitispace.com/`, cùng nguồn với địa chỉ cũ nên dữ liệu trên máy vẫn còn.
+- Tệp xuất mang `"app": "graviti-stars"`; tệp xuất cũ `an-sao-space` vẫn nạp được.
+
+### Thêm
+- **Trang chính Graviti, 9 ngôn ngữ** (có tiếng Hàn): 4 dịch vụ, các phân môn của Stars, lý do đặt tên, nguyên tắc, lộ trình. Chọn ngôn ngữ và giao diện một lần, cả hệ nhớ.
+- **Trang quản trị** (`/admin/`, chỉ Việt/Anh): web có sống không, bản phát hành, kiểm thử, pull request, bảo vệ nhánh, nội dung, độ phủ bản dịch, lộ trình, 14 việc cần làm (5 tự kiểm tra), kế hoạch 5 giai đoạn. **Bản công khai không chứa trang này**. Chỉ `npm run build:admin` mới có, và chỉ dùng sau khi Cloudflare Access chặn `/admin/*`.
+- **Luật Bảo vệ dữ liệu cá nhân (91/2025/QH15):** trang Chính sách quyền riêng tư (Việt + Anh); **ô đồng ý bắt buộc, không đánh sẵn** khi đăng ký; chưa đồng ý thì không gửi gì lên máy chủ; lưu phiên bản và thời điểm đồng ý vào tài khoản.
+- `hub/_headers`: tiêu đề bảo mật cho cả web, CSP riêng từng nhóm trang.
+- `docs/CAU-HINH.md` (cấu hình từng bước), `docs/GRAVITI.md` (đường dẫn hay tên miền phụ, so sánh hosting, chi phí AI).
+
+### Sửa
+- Graviti Stars: trình duyệt ở ngôn ngữ chưa hỗ trợ (vd. tiếng Hàn) giờ hiện tiếng Anh thay vì tiếng Việt, và không ghi đè ngôn ngữ người dùng đã chọn ở trang chính.
+- Thêm dòng bản quyền vào `tuvi-stars.js`.
+- 110 kiểm thử (thêm 12).
+
 ## 2.2.1 — 10/11/2026
 
 Bản phát hành chính thức đầu tiên, sau đợt rà soát bảo mật. Các lỗi dưới đây nằm ở phần tài khoản, chỉ có tác dụng khi bật Supabase. **Ai đã bật Supabase cần chạy lại `supabase/schema.sql`.**

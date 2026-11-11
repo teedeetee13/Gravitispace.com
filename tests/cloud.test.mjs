@@ -24,6 +24,7 @@ const { store, mergeStates } = await import('../web/assets/js/store.js');
 const { auth } = await import('../web/assets/js/auth.js');
 const { errorText } = await import('../web/assets/js/views/account.js').catch(() => ({}));
 
+const CONSENT = { version: CONFIG.CONSENT_VERSION };
 const PROFILE = { day: 15, month: 8, year: 1995, timeKnown: true, hour: 9, minute: 30, gender: 'nu', placeId: 'ha-noi', lat: 21, lon: 105.8, tz: 7 };
 const flush = () => new Promise((r) => setTimeout(r, 1700)); // chờ hẹn giờ đồng bộ (1,5 giây)
 
@@ -38,7 +39,7 @@ test('Khách dùng offline, rồi đăng ký: dữ liệu trên máy được ch
   store.toggleSave('hd-001');
   assert.equal(auth.user(), null);
 
-  assert.equal(await auth.signUp('lan@example.com', 'matkhau123'), 'signed-in');
+  assert.equal(await auth.signUp('lan@example.com', 'matkhau123', CONSENT), 'signed-in');
   await store.afterSignIn();
   const row = fake.db.userState.get(auth.user().id);
   assert.ok(row, 'đã có dòng user_state trên máy chủ');
@@ -138,7 +139,7 @@ test('Đăng xuất: xoá bản sao dữ liệu tài khoản khỏi máy, quay v
 
 test('Sai mật khẩu và email đã tồn tại báo lỗi thân thiện', async () => {
   await assert.rejects(auth.signIn('lan@example.com', 'sai'), (e) => e.code === 'invalid_credentials');
-  await assert.rejects(auth.signUp('lan@example.com', 'matkhau123'), (e) => e.code === 'user_already_exists');
+  await assert.rejects(auth.signUp('lan@example.com', 'matkhau123', CONSENT), (e) => e.code === 'user_already_exists');
   if (errorText) assert.ok(errorText({ code: 'invalid_credentials' }).length > 5);
 });
 
@@ -179,7 +180,7 @@ test('Link đặt lại mật khẩu do chính trình duyệt này yêu cầu th
 test('Xoá tài khoản: xoá trên máy chủ và xoá cả bản sao trên máy này', async () => {
   current = new Map();
   await store.init();
-  await auth.signUp('xoa@example.com', 'matkhau123');
+  await auth.signUp('xoa@example.com', 'matkhau123', CONSENT);
   await store.afterSignIn();
   store.setProfile(PROFILE);
   const id = auth.user().id;
@@ -198,4 +199,17 @@ test('mergeStates hợp danh sách và ưu tiên hồ sơ mới hơn', () => {
   assert.deepEqual(m.saved.sort(), ['x', 'y']);
   assert.deepEqual(Object.keys(m.draws).sort(), ['d1', 'd2']);
   assert.equal(m.profile.year, 2002);
+});
+
+test('Luật BVDLCN: chưa đồng ý chính sách thì không gửi gì lên máy chủ; đồng ý thì lưu lại phiên bản và thời điểm', async () => {
+  current = devices.A;
+  const before = fake.db.users.size;
+  await assert.rejects(auth.signUp('chua@example.com', 'matkhau123'), (e) => e.code === 'consent_required');
+  await assert.rejects(auth.signUp('chua@example.com', 'matkhau123', {}), (e) => e.code === 'consent_required');
+  assert.equal(fake.db.users.size, before, 'không tạo tài khoản khi chưa đồng ý');
+  await auth.signUp('dongy@example.com', 'matkhau123', CONSENT);
+  const u = fake.db.users.get('dongy@example.com');
+  assert.equal(u.meta.consent_version, CONFIG.CONSENT_VERSION);
+  assert.ok(!Number.isNaN(Date.parse(u.meta.consent_at)));
+  await auth.signOut?.();
 });

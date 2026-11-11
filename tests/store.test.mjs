@@ -45,3 +45,14 @@ test('Xuất rồi nhập lại giữ nguyên dữ liệu; tệp lạ bị từ 
   assert.equal(store.importData(JSON.stringify({ app: 'khac', data: {} })), false);
   assert.equal(migrate({}).schema, 2);
 });
+
+test('Đổi tên Graviti Stars: tệp xuất mang tên mới, tệp xuất từ An Sao Space cũ vẫn nạp được', async () => {
+  await store.init();
+  store.toggleSave('hd-003');
+  const json = store.exportData();
+  assert.equal(JSON.parse(json).app, 'graviti-stars');
+  const old = JSON.stringify({ ...JSON.parse(json), app: 'an-sao-space' });
+  store.clearAll();
+  assert.equal(store.importData(old), true);
+  assert.equal(store.isSaved('hd-003'), true);
+});

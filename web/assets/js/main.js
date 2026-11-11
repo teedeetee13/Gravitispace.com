@@ -79,7 +79,7 @@ async function render() {
     root.innerHTML = `<div class="page narrow">${emptyState(t('notFound.title'), t('notFound.body'), `<a class="btn" href="#/">${t('notFound.home')}</a>`)}</div>`;
     title = t('notFound.short');
   }
-  document.title = title ? `${title} · An Sao Space` : 'An Sao Space';
+  document.title = title ? `${title} · Graviti Stars` : 'Graviti Stars';
   view.removeAttribute('aria-busy');
 
   // Đánh dấu mục điều hướng đang mở
@@ -193,7 +193,7 @@ document.addEventListener('click', async (e) => {
     const url = `${location.origin}${location.pathname}#/bai/${id}`;
     const text = post.title || post.body.slice(0, 80);
     try {
-      if (navigator.share) await navigator.share({ title: 'An Sao Space', text, url });
+      if (navigator.share) await navigator.share({ title: 'Graviti Stars', text, url });
       else {
         await navigator.clipboard.writeText(url);
         toast(t('post.copied'));

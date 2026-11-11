@@ -1,5 +1,5 @@
 -- =====================================================================
--- An Sao Space — lược đồ cơ sở dữ liệu Supabase (PostgreSQL)
+-- Graviti Stars — lược đồ cơ sở dữ liệu Supabase (PostgreSQL)
 -- Chạy một lần trong Supabase Dashboard → SQL Editor → New query → Run.
 -- Chạy lại nhiều lần cũng an toàn (dùng IF NOT EXISTS / OR REPLACE / DROP POLICY IF EXISTS).
 --

@@ -3,7 +3,7 @@
 // 西洋占星（回歸黃道、上升點、天頂、整宮制、托勒密相位）；
 // 紫微斗數依越南派（太次郎《紫微斗數新編》），與台港常見盤法的差異已在「排盤方法」中註明。
 export default {
-  'meta.description': 'An Sao Space（安星）— 塔羅、西洋占星與越南紫微斗數，以療癒的角度閱讀。往下滑：來到你面前的，都是有緣。',
+  'meta.description': 'Graviti Stars（安星）— 塔羅、西洋占星與越南紫微斗數，以療癒的角度閱讀。往下滑：來到你面前的，都是有緣。',
   'skip': '跳至主要內容',
 
   'nav.main': '主選單',
@@ -369,7 +369,7 @@ export default {
   'shelf.cleared': '已清除。溫柔地重新開始。',
 
   'about.title': '一座文字的圖書館——你遇見的，都是有緣。',
-  'about.lead': 'An Sao Space 是人們留下關於塔羅、占星、紫微與自身生活文字的地方。你不需要刻意尋找，只要往下滑——在對的時候來到你面前的，都是有緣。名字來自越南語：「an」是安、心安之意；「an sao」即紫微斗數的「安星」。',
+  'about.lead': "Graviti Stars（越南名：An Sao，安星）是人們留下關於塔羅、占星、紫微與自身生活文字的地方。你不需要刻意尋找，只要往下滑——在對的時候來到你面前的，都是有緣。Graviti 是那股看不見、把有緣的人事拉近的引力；Stars 是星辰、牌卡與自我地圖的角落。越南語中「an」是安、心安之意；「an sao」即紫微斗數的「安星」。",
   'about.soberTitle': '清醒的玄學',
   'about.sober1': '在這裡，牌卡、星辰與生肖都是<strong>照見自己的鏡子</strong>，而不是對命運的判決。我們從不以「犯太歲」「流年不利」嚇人，不賣符咒化解，也不叫任何人分手或辭職。',
   'about.sober2': '一張牌最美的時候，是它向你提出了對的問題。答案永遠屬於你。',
@@ -433,6 +433,9 @@ export default {
   'account.signIn': '登入',
   'account.signUp': '建立帳號',
   'account.signUpNote': '我們會寄一封信確認你的電子郵件。這台裝置上已有的資料會移入你的帳號，不會遺失。',
+  'account.consent': "我同意 Graviti 依照{link}處理我的電子郵件與出生資料。",
+  'account.privacyLink': "隱私權政策",
+  'account.err.consent': "請先同意隱私權政策才能建立帳號。",
   'account.forgot': '忘記密碼？',
   'account.recoverIntro': '輸入你註冊時使用的電子郵件，我們會寄送重設密碼的連結。',
   'account.recoverSend': '寄送連結',

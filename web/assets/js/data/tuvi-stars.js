@@ -1,6 +1,10 @@
+// © 2026 Graviti. Bản quyền lời văn luận giải thuộc Graviti (Luật Sở hữu trí tuệ Việt Nam).
+// Tính chất gốc của sao lấy từ sách truyền thống, là tri thức chung; phần lời văn bên dưới là tác phẩm viết riêng,
+// không được sao chép để dùng cho sản phẩm khác khi chưa được phép. Đây là lớp nội dung MIỄN PHÍ, cố ý để công khai
+// (giúp Google tìm thấy Graviti). Lớp chuyên sâu (kết hợp sao, luận giải AI) sẽ nằm phía máy chủ — xem docs/GRAVITI.md.
 // Ý nghĩa sao và cung trong Tử Vi Đẩu Số, viết theo giọng "chiêm nghiệm, chữa lành":
 // nói về khuynh hướng năng lượng và tâm thế, không phán định số phận, không bảo người đọc phải làm gì.
-// Tính chất gốc của sao theo sách truyền thống (Thái Thứ Lang, Nguyễn Phát Lộc); lời văn do An Sao Space biên soạn.
+// Tính chất gốc của sao theo sách truyền thống (Thái Thứ Lang, Nguyễn Phát Lộc); lời văn do Graviti Stars biên soạn.
 // Mỗi chuỗi có hai bản { vi, en }.
 
 export const STARS = {

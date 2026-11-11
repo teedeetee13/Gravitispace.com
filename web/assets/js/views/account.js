@@ -3,7 +3,7 @@ import { $, esc, icon, toast } from '../util.js';
 import { t, fmtDate } from '../i18n.js';
 import { auth } from '../auth.js';
 import { store } from '../store.js';
-import { cloudEnabled } from '../config.js';
+import { CONFIG, cloudEnabled } from '../config.js';
 
 const MIN_PASSWORD = 8;
 
@@ -43,6 +43,7 @@ function guestView(mode) {
         ${field('email', 'email', t('account.email'), 'autocomplete="email" inputmode="email"')}
         ${field('password', 'password', t('account.passwordNew', { n: MIN_PASSWORD }), `autocomplete="new-password" minlength="${MIN_PASSWORD}"`)}
         ${field('password2', 'password', t('account.passwordAgain'), 'autocomplete="new-password"')}
+        <label class="consent"><input type="checkbox" name="consent" value="1" /><span>${t('account.consent', { link: `<a href="${CONFIG.PRIVACY_URL}" target="_blank" rel="noopener noreferrer">${t('account.privacyLink')}</a>` })}</span></label>
         <p class="form-error" data-error role="alert"></p>
         <button class="btn btn-lg" type="submit">${icon('plus')} ${t('account.signUp')}</button>
         <p class="muted small">${t('account.signUpNote')}</p>
@@ -121,6 +122,7 @@ export function renderAccount(view, params) {
     if (form.elements.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return (err.textContent = t('account.err.email'));
     if (['signup', 'password'].includes(form.dataset.auth) && password.length < MIN_PASSWORD) return (err.textContent = t('account.err.short', { n: MIN_PASSWORD }));
     if (form.dataset.auth === 'signup' && password !== f.get('password2')) return (err.textContent = t('account.err.mismatch'));
+    if (form.dataset.auth === 'signup' && !f.get('consent')) return (err.textContent = t('account.err.consent'));
     btn.disabled = true;
     try {
       if (form.dataset.auth === 'signin') {
@@ -130,7 +132,7 @@ export function renderAccount(view, params) {
         location.hash = '#/tai-khoan';
         window.dispatchEvent(new Event('ansao:auth'));
       } else if (form.dataset.auth === 'signup') {
-        const r = await auth.signUp(email, password);
+        const r = await auth.signUp(email, password, { version: CONFIG.CONSENT_VERSION });
         if (r === 'signed-in') {
           await store.afterSignIn();
           toast(t('account.welcome'));

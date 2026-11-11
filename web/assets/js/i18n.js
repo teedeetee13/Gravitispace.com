@@ -18,7 +18,7 @@ let text = null;
 export const getLang = () => lang;
 export { LANGS } from './i18n/langs.js';
 
-/** Đoán ngôn ngữ: đã chọn trước đó → ngôn ngữ trình duyệt (nếu có hỗ trợ) → tiếng Việt. */
+/** Đoán ngôn ngữ: đã chọn trước đó → ngôn ngữ trình duyệt (nếu có hỗ trợ) → tiếng Anh (khách quốc tế) → tiếng Việt. */
 function savedLang() {
   try {
     const v = localStorage.getItem(KEY);
@@ -28,7 +28,8 @@ function savedLang() {
     const base = String(l).toLowerCase().split('-')[0];
     if (LANG_CODES.includes(base)) return base;
   }
-  return CONFIG.DEFAULT_LANG;
+  // Trình duyệt ở ngôn ngữ chưa hỗ trợ (vd. tiếng Hàn, chọn từ trang chính) → tiếng Anh, dễ hiểu với khách quốc tế hơn
+  return (navigator.languages || [navigator.language]).some(Boolean) ? 'en' : CONFIG.DEFAULT_LANG;
 }
 
 // Mỗi ngôn ngữ một bộ import tĩnh để trình duyệt (và công cụ kiểm tra) thấy rõ đường dẫn.
@@ -43,7 +44,10 @@ const PACKS = {
 };
 
 /** Đổi ngôn ngữ; tải gói nếu cần. Lỗi mạng khi tải gói → giữ nguyên ngôn ngữ cũ và báo lỗi cho nơi gọi. */
-export async function setLang(next = savedLang()) {
+// Chỉ ghi nhớ khi người dùng tự chọn (có đối số). Ngôn ngữ đoán ra thì không ghi, để không đè lựa chọn
+// ở trang chính Graviti (vd. tiếng Hàn, Graviti Stars chưa có → tạm hiện tiếng Anh nhưng vẫn nhớ "ko").
+export async function setLang(chosen) {
+  let next = chosen ?? savedLang();
   if (!LANG_CODES.includes(next)) next = CONFIG.DEFAULT_LANG;
   if (next === 'vi') {
     dict = VI;
@@ -57,9 +61,11 @@ export async function setLang(next = savedLang()) {
   }
   lang = next;
   document.documentElement.lang = langMeta(next).html;
-  try {
-    localStorage.setItem(KEY, next);
-  } catch {}
+  if (chosen) {
+    try {
+      localStorage.setItem(KEY, next);
+    } catch {}
+  }
 }
 
 /** Lấy chuỗi giao diện theo khoá; {ten} trong chuỗi được thay bằng vars.ten */

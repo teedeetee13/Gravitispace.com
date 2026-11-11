@@ -1,6 +1,6 @@
 # Phát hành bản bàn giao: gắn thẻ phiên bản rồi đẩy lên, ví dụ
 #   git tag v2.2.0 && git push origin v2.2.0
-# → kiểm thử → đóng gói → tạo GitHub Release kèm an-sao-space-<phiên bản>.zip và mã SHA-256 để đối chiếu.
+# → kiểm thử → đóng gói → tạo GitHub Release kèm graviti-<phiên bản>.zip và mã SHA-256 để đối chiếu.
 name: Phát hành bản bàn giao
 
 on:
@@ -34,4 +34,4 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release create "$GITHUB_REF_NAME" release/*.zip release/*.sha256 \
-            --repo "$GITHUB_REPOSITORY" --title "An Sao Space $GITHUB_REF_NAME" --generate-notes --verify-tag
+            --repo "$GITHUB_REPOSITORY" --title "Graviti Stars $GITHUB_REF_NAME" --generate-notes --verify-tag

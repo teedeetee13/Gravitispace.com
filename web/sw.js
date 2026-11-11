@@ -1,4 +1,4 @@
-// Service worker: cho phép mở lại An Sao Space khi mất mạng.
+// Service worker: cho phép mở lại Graviti Stars khi mất mạng.
 // Chiến lược "mạng trước, bộ nhớ đệm sau" cho tệp cùng nguồn: luôn lấy bản mới nhất khi có mạng,
 // chỉ dùng bản đã lưu khi offline → không bao giờ kẹt ở phiên bản cũ.
 const CACHE = 'ansao-v6'; // npm run build tự thay bằng ansao-<phiên bản>-<commit>
