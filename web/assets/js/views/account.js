@@ -1,5 +1,6 @@
 // Tài khoản: đăng nhập, đăng ký, quên mật khẩu, đặt mật khẩu mới, trạng thái đồng bộ, đăng xuất, xoá tài khoản
 import { $, esc, icon, toast } from '../util.js';
+import { link, navigate } from '../route.js';
 import { t, fmtDate } from '../i18n.js';
 import { auth } from '../auth.js';
 import { store } from '../store.js';
@@ -46,14 +47,14 @@ const field = (name, type, label, extra = '') =>
   `<label class="field"><span>${label}</span><input name="${name}" type="${type}" required ${extra} /></label>`;
 
 function guestView(mode) {
-  const tabs = ['dang-nhap', 'dang-ky'].map((m) => `<a href="#/tai-khoan?che-do=${m}" class="${m === mode ? 'on' : ''}" ${m === mode ? 'aria-current="page"' : ''}>${t(`account.tab.${m}`)}</a>`).join('');
+  const tabs = ['dang-nhap', 'dang-ky'].map((m) => `<a href="${link(`tai-khoan?che-do=${m}`)}" class="${m === mode ? 'on' : ''}" ${m === mode ? 'aria-current="page"' : ''}>${t(`account.tab.${m}`)}</a>`).join('');
   const forms = {
     'dang-nhap': `<form class="birth-form" data-auth="signin" novalidate>
         ${field('email', 'email', t('account.email'), 'autocomplete="email" inputmode="email"')}
         ${field('password', 'password', t('account.password'), 'autocomplete="current-password"')}
         <p class="form-error" data-error role="alert"></p>
         <button class="btn btn-lg" type="submit">${icon('user')} ${t('account.signIn')}</button>
-        <a href="#/tai-khoan?che-do=quen-mat-khau" class="small">${t('account.forgot')}</a>
+        <a href="${link(`tai-khoan?che-do=quen-mat-khau`)}" class="small">${t('account.forgot')}</a>
       </form>`,
     'dang-ky': `<form class="birth-form" data-auth="signup" novalidate>
         ${field('email', 'email', t('account.email'), 'autocomplete="email" inputmode="email"')}
@@ -69,7 +70,7 @@ function guestView(mode) {
         ${field('email', 'email', t('account.email'), 'autocomplete="email" inputmode="email"')}
         <p class="form-error" data-error role="alert"></p>
         <button class="btn btn-lg" type="submit">${t('account.recoverSend')}</button>
-        <a href="#/tai-khoan" class="small">${t('account.backToSignIn')}</a>
+        <a href="${link(`tai-khoan`)}" class="small">${t('account.backToSignIn')}</a>
       </form>`,
   };
   return `${mode !== 'quen-mat-khau' ? `<nav class="tabs" aria-label="${esc(t('nav.account'))}">${tabs}</nav>${oauthBox()}` : ''}${forms[mode]}
@@ -145,14 +146,14 @@ export function renderAccount(view, params) {
         await auth.signIn(email, password);
         await store.afterSignIn();
         toast(t('account.welcome'));
-        location.hash = '#/tai-khoan';
+        navigate('/tai-khoan');
         window.dispatchEvent(new Event('ansao:auth'));
       } else if (form.dataset.auth === 'signup') {
         const r = await auth.signUp(email, password, { version: CONFIG.CONSENT_VERSION });
         if (r === 'signed-in') {
           await store.afterSignIn();
           toast(t('account.welcome'));
-          location.hash = '#/tai-khoan';
+          navigate('/tai-khoan');
           window.dispatchEvent(new Event('ansao:auth'));
         } else form.outerHTML = `<div class="note-box">${t('account.checkEmail', { email: esc(email) })}</div>`;
       } else if (form.dataset.auth === 'recover') {
@@ -197,7 +198,7 @@ export function renderAccount(view, params) {
       await store.signOut();
       toast(t('account.signedOut'));
       window.dispatchEvent(new Event('ansao:auth'));
-      location.hash = '#/tai-khoan';
+      navigate('/tai-khoan');
     }
     if (e.target.closest('[data-delete]')) {
       if (!confirm(t('account.deleteConfirm'))) return;
@@ -205,7 +206,7 @@ export function renderAccount(view, params) {
         await store.deleteAccount();
         toast(t('account.deleted'));
         window.dispatchEvent(new Event('ansao:auth'));
-        location.hash = '#/';
+        navigate('/');
       } catch (ex) {
         toast(errorText(ex));
       }

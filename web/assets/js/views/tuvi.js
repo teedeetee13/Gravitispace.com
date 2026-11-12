@@ -1,12 +1,13 @@
 // Tử vi: tra Can Chi + mệnh theo năm sinh âm lịch, 12 con giáp, ngũ hành, lối vào Lá số Tử Vi
 import { $, esc, icon } from '../util.js';
+import { link } from '../route.js';
 import { t } from '../i18n.js';
 import { store } from '../store.js';
 import { CHI, HANH, chiById, yearInfo } from '../data/tuvi.js';
 import * as C from '../content.js';
 import { backLink, postCard } from '../ui.js';
 
-const chiTile = (c) => `<a class="chi-tile" href="#/tu-vi/${c.id}" style="--c:${HANH[c.hanh].color}">
+const chiTile = (c) => `<a class="chi-tile" href="${link(`tu-vi/${c.id}`)}" style="--c:${HANH[c.hanh].color}">
   <span class="chi-name">${esc(C.ganzhi(c.name))}</span><span>${esc(C.chi(c).animal)}</span><span class="muted small">${t('tuvi.hanhOf', { h: esc(C.hanhName(c.hanh)) })}</span>
 </a>`;
 
@@ -25,8 +26,8 @@ export function yearCard(info) {
       <div><dt>${t('tuvi.hanhNature', { h: esc(h.name) })}</dt><dd>${esc(h.trait)}</dd></div>
       <div><dt>${t('tuvi.colors')}</dt><dd>${t('tuvi.colorsText', { tone: esc(h.tone), support: hn(HANH[info.hanh].support), h: esc(h.name) })}</dd></div>
       <div><dt>${t('tuvi.cycle')}</dt><dd>${t('tuvi.cycleText', { s: hn(HANH[info.hanh].support), h: esc(h.name), sinh: hn(HANH[info.hanh].sinh), khac: hn(HANH[info.hanh].khac) })}</dd></div>
-      <div><dt>${t('tuvi.tamHop')}</dt><dd>${info.hop.map((c) => `<a href="#/tu-vi/${c.id}">${esc(C.ganzhi(c.name))}</a>`).join(', ')}</dd></div>
-      <div><dt>${t('tuvi.tuXung')}</dt><dd>${info.xung.map((c) => `<a href="#/tu-vi/${c.id}">${esc(C.ganzhi(c.name))}</a>`).join(', ')}</dd></div>
+      <div><dt>${t('tuvi.tamHop')}</dt><dd>${info.hop.map((c) => `<a href="${link(`tu-vi/${c.id}`)}">${esc(C.ganzhi(c.name))}</a>`).join(', ')}</dd></div>
+      <div><dt>${t('tuvi.tuXung')}</dt><dd>${info.xung.map((c) => `<a href="${link(`tu-vi/${c.id}`)}">${esc(C.ganzhi(c.name))}</a>`).join(', ')}</dd></div>
     </dl>
     <div class="heal-note"><p class="eyebrow">${t('tuvi.healFor', { name: esc(C.ganzhi(chi.name)) })}</p><p>${esc(chi.heal)}</p></div>
   </div>`;
@@ -40,7 +41,7 @@ export function renderTuvi(view) {
       <p class="lead">${t('tuvi.lead')}</p>
     </header>
 
-    <a class="feature-card" href="#/tu-vi/la-so">
+    <a class="feature-card" href="${link(`tu-vi/la-so`)}">
       <span class="sign-glyph">${icon('yinyang')}</span>
       <div><p class="eyebrow">${t('tuvi.lasoEyebrow')}</p><h2>${t('laso.title')}</h2><p>${t('tuvi.lasoDesc')}</p></div>${icon('arrow')}
     </a>
@@ -87,7 +88,7 @@ export function renderChi(view, id) {
   const next = CHI[(raw.index + 1) % 12];
 
   view.innerHTML = `<div class="page">
-    ${backLink('#/tu-vi', t('nav.tuvi'))}
+    ${backLink(link('tu-vi'), t('nav.tuvi'))}
     <div class="detail">
       <div class="detail-visual"><div class="chi-hero" style="--c:${HANH[raw.hanh].color}"><span>${esc(raw.name)}</span><small>${esc(c.animal)}</small></div></div>
       <div class="detail-body">
@@ -96,7 +97,7 @@ export function renderChi(view, id) {
         <p class="kw">${esc(c.traits)}</p>
         <h2 class="h-sm">${t('tuvi.notice')}</h2><p>${esc(c.shadow)}</p>
         <div class="heal-note"><p class="eyebrow">${t('common.healing')}</p><p>${esc(c.heal)}</p></div>
-        <div class="row"><a class="btn" href="#/gieo?chu-de=tu-vi&ref=${raw.id}">${icon('plus')} ${t('tuvi.writeAbout', { name: esc(raw.name) })}</a></div>
+        <div class="row"><a class="btn" href="${link(`gieo?chu-de=tu-vi&ref=${raw.id}`)}">${icon('plus')} ${t('tuvi.writeAbout', { name: esc(raw.name) })}</a></div>
       </div>
     </div>
 
@@ -111,8 +112,8 @@ export function renderChi(view, id) {
     </section>
 
     <nav class="pager" aria-label="${esc(t('common.pager'))}">
-      <a href="#/tu-vi/${prev.id}">${icon('back')} ${t('tuvi.ageTitle', { name: esc(prev.name) })}</a>
-      <a href="#/tu-vi/${next.id}">${t('tuvi.ageTitle', { name: esc(next.name) })} ${icon('arrow')}</a>
+      <a href="${link(`tu-vi/${prev.id}`)}">${icon('back')} ${t('tuvi.ageTitle', { name: esc(prev.name) })}</a>
+      <a href="${link(`tu-vi/${next.id}`)}">${t('tuvi.ageTitle', { name: esc(next.name) })} ${icon('arrow')}</a>
     </nav>
 
     <section class="section">

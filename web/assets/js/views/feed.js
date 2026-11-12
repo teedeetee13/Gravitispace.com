@@ -1,5 +1,6 @@
 // Lướt duyên — bảng tin cuộn từng trang, thứ tự ngẫu nhiên ("gặp là duyên")
 import { esc, icon, paragraphs, shuffle, todayKey } from '../util.js';
+import { link } from '../route.js';
 import { t } from '../i18n.js';
 import { store } from '../store.js';
 import { TOPICS, topicById } from '../data/taxonomy.js';
@@ -30,8 +31,8 @@ function introSlide(topic) {
   const card = draw && cardById[draw.cardId] && C.card(cardById[draw.cardId]);
   const d = new Date();
   const today = card
-    ? `<a class="intro-today" href="#/tarot">${t('feed.todayCard')} <strong>${esc(card.name)}</strong>${draw.reversed ? ` (${t('tarot.reversedShort')})` : ''} ${icon('arrow')}</a>`
-    : `<a class="btn btn-ghost" href="#/tarot">${icon('card')} ${t('feed.drawToday')}</a>`;
+    ? `<a class="intro-today" href="${link(`tarot`)}">${t('feed.todayCard')} <strong>${esc(card.name)}</strong>${draw.reversed ? ` (${t('tarot.reversedShort')})` : ''} ${icon('arrow')}</a>`
+    : `<a class="btn btn-ghost" href="${link(`tarot`)}">${icon('card')} ${t('feed.drawToday')}</a>`;
   return `<article class="slide slide-intro">
     <div class="slide-inner center">
       <p class="eyebrow">${t('feed.date', { d: d.getDate(), m: d.getMonth() + 1 })}${topic ? ` · ${esc(C.topicLabel(topicById[topic]))}` : ''}</p>
@@ -48,7 +49,7 @@ const endSlide = () => `<article class="slide slide-intro">
     <p class="eyebrow">${t('feed.endEyebrow')}</p>
     <h2 class="display">${t('feed.endTitle')}</h2>
     <p class="lead">${t('feed.endLead')}</p>
-    <a class="btn" href="#/gieo">${icon('plus')} ${t('feed.seed')}</a>
+    <a class="btn" href="${link(`gieo`)}">${icon('plus')} ${t('feed.seed')}</a>
     <span class="scroll-hint" aria-hidden="true">${icon('down')} ${t('feed.again')}</span>
   </div>
 </article>`;
@@ -59,7 +60,7 @@ export function renderFeed(view, params) {
   const pool = store.allPosts().filter((p) => !topic || p.topic === topic);
 
   const tabs = [{ id: '', label: t('common.all') }, ...TOPICS.map((tp) => ({ ...tp, label: C.topicLabel(tp) }))]
-    .map((tp) => `<a class="ftab ${tp.id === topic ? 'on' : ''}" href="#/${tp.id ? `?chu-de=${tp.id}` : ''}" ${tp.id === topic ? 'aria-current="page"' : ''}>${esc(tp.label)}</a>`)
+    .map((tp) => `<a class="ftab ${tp.id === topic ? 'on' : ''}" href="${link(`${tp.id ? `?chu-de=${tp.id}` : ''}`)}" ${tp.id === topic ? 'aria-current="page"' : ''}>${esc(tp.label)}</a>`)
     .join('');
 
   view.innerHTML = `<div class="feed-wrap">

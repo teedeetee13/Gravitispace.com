@@ -31,20 +31,20 @@ Tên gọi: "an" là bình an, nhẹ lòng. "An sao" cũng là bước xếp sao
 
 | Trang | Đường dẫn | Nội dung |
 |---|---|---|
-| Lướt duyên | `#/` | Bảng tin cuộn từng trang, mỗi bài có ảnh bìa riêng, lọc theo chủ đề |
-| Tìm kiếm | `#/tim` | Tìm bài viết, 78 lá bài, 12 cung, 12 con giáp; tìm được khi gõ không dấu |
-| Tarot | `#/tarot` | Lá bài hôm nay, 5 kiểu trải bài, thư viện 78 lá Rider–Waite–Smith |
-| Chiêm tinh / Bản đồ sao | `#/chiem-tinh`, `…/ban-do-sao` | 12 cung, hành tinh, nhà, góc chiếu, luận giải |
-| Tử vi / Lá số | `#/tu-vi`, `…/la-so` | Can Chi, nạp âm; lá số 12 cung, 14 chính tinh, khoảng 40 phụ tinh, Tứ Hóa, Tuần Triệt, độ sáng sao, đại hạn |
-| Bản mệnh | `#/ban-menh` | Nhập ngày giờ sinh một lần để xem tổng hợp Đông và Tây |
-| Gieo duyên, Tủ, Tài khoản, Về | `#/gieo`, `#/tu`, `#/tai-khoan`, `#/ve` | Viết bài, xem bài đã lưu, xuất/nhập/xoá dữ liệu, đăng nhập, xem phương pháp và đường dây hỗ trợ |
+| Lướt duyên | `/stars/` | Bảng tin cuộn từng trang, mỗi bài có ảnh bìa riêng, lọc theo chủ đề |
+| Tìm kiếm | `/stars/tim/` | Tìm bài viết, 78 lá bài, 12 cung, 12 con giáp; tìm được khi gõ không dấu |
+| Tarot | `/stars/tarot/` | Lá bài hôm nay, 5 kiểu trải bài, thư viện 78 lá Rider–Waite–Smith |
+| Chiêm tinh / Bản đồ sao | `/stars/chiem-tinh/`, `…/ban-do-sao` | 12 cung, hành tinh, nhà, góc chiếu, luận giải |
+| Tử vi / Lá số | `/stars/tu-vi/`, `…/la-so` | Can Chi, nạp âm; lá số 12 cung, 14 chính tinh, khoảng 40 phụ tinh, Tứ Hóa, Tuần Triệt, độ sáng sao, đại hạn |
+| Bản mệnh | `/stars/ban-menh/` | Nhập ngày giờ sinh một lần để xem tổng hợp Đông và Tây |
+| Gieo duyên, Tủ, Tài khoản, Về | `/stars/gieo/`, `/stars/tu/`, `/stars/tai-khoan/`, `/stars/ve/` | Viết bài, xem bài đã lưu, xuất/nhập/xoá dữ liệu, đăng nhập, xem phương pháp và đường dây hỗ trợ |
 
 ### Kiến trúc
 
 ```
 web/
 ├─ index.html, boot.js  CSP, giao diện sáng/tối, ngôn ngữ, chống nhúng khung
-├─ main.js              Định tuyến #/…, tải từng trang khi cần (views/*.js)
+├─ main.js              Định tuyến theo đường dẫn thật (route.js), tải từng trang khi cần (views/*.js)
 ├─ views/               Giao diện từng trang
 ├─ content.js, i18n.js  Bản địa hoá; gói ngôn ngữ i18n/<mã>.js, -content.js, -text.js (tải khi chọn)
 ├─ cover.js             Vẽ ảnh bìa SVG cho từng bài
@@ -224,7 +224,7 @@ Mua tên miền, ví dụ `ansao.space` hay `ansaospace.com`. Trỏ tên miền 
 
 **Giới hạn**
 
-- Đường dẫn dùng `#/` nên công cụ tìm kiếm chỉ thấy trang chủ.
+- Trang dựng sẵn chưa có tiêu đề và mô tả riêng (Google thấy cùng một tiêu đề), chưa có `sitemap.xml`.
 - Múi giờ nơi sinh chỉ tính chính xác cho Việt Nam. Ngoài Việt Nam, múi giờ ước lượng theo kinh độ và không tính giờ mùa hè.
 - Lịch âm tính theo UTC+7, nên một số năm có Tết hoặc tháng nhuận khác lịch Trung Quốc. Bản tiếng Trung đã ghi rõ điều này.
 - Chiêm tinh dùng hoàng đạo nhiệt đới. Bản Hindi và Thái đã ghi rõ khác biệt với hệ sidereal.

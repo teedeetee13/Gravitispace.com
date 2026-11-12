@@ -30,7 +30,7 @@ Tài liệu cho chủ dự án. Hướng dẫn bấm từng bước nằm ở [C
 
 **Chỉ dùng tên miền phụ cho thứ máy móc gọi, không cần lên Google**, ví dụ `api.gravitispace.com` (máy chủ AI). Trang quản trị vẫn để ở `/admin/` vì Cloudflare Access khoá được theo đường dẫn.
 
-**Một việc SEO quan trọng cho sau này:** Graviti Stars đang chia trang bằng dấu `#` (`/stars/#/tarot`). Google coi cả ứng dụng là **một trang**. Muốn từng lá bài, từng sao, từng cung có trang riêng trên Google (`/stars/tarot/the-star`), cần chuyển sang đường dẫn thật và tạo sẵn HTML cho từng trang. Đây là đợt việc riêng, nên làm sau khi có tên miền.
+**Đường dẫn thật, không dấu `#`:** mỗi trang của Graviti Stars có địa chỉ riêng (`/stars/tarot/major-17/`, `/stars/chiem-tinh/kim-nguu/`). Khi đóng gói, `tools/build.mjs` tạo sẵn một tệp `index.html` cho mỗi trang (138 trang: trang cố định, 78 lá bài, 12 cung, 12 con giáp, bài có sẵn), nên mở thẳng link hay tải lại đều chạy, trên cả GitHub Pages lẫn Cloudflare, và Google thấy từng trang riêng. Bài người dùng gửi dùng `/stars/bai/?id=…`. Đường dẫn lạ trả `stars/404.html`, trang này đưa về ứng dụng để báo "không tìm thấy". Việc SEO tiếp theo: tiêu đề và mô tả riêng trong từng trang dựng sẵn, `sitemap.xml` (làm khi có tên miền).
 
 ## 3. Cấu trúc kho mã và bản dựng
 
@@ -50,7 +50,7 @@ hub/_headers           tiêu đề bảo mật cho CẢ web (Cloudflare chỉ đ
 | `npm run build:admin` | Bản có `/admin/`. Chỉ dùng trên Cloudflare **sau khi** bật Access |
 
 **Chuyển nhà từ bản 2.2:** Graviti Stars trước nằm ở gốc web, nay nằm ở `/stars/`.
-- Link cũ dạng `…/#/tarot` tự chuyển sang `/stars/#/tarot`. Ứng dụng đã cài lên màn hình chính mở thẳng `/stars/`.
+- Link cũ dạng `…/#/tarot` hay `…/stars/#/tarot` tự chuyển sang `/stars/tarot/`. Ứng dụng đã cài lên màn hình chính mở thẳng `/stars/`.
 - Dữ liệu trên máy vẫn còn, vì cùng tên miền và khoá lưu `ansao:` giữ nguyên.
 
 **Cố ý KHÔNG đổi tên:**

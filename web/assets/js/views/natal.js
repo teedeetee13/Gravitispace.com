@@ -1,5 +1,6 @@
 // Bản đồ sao (natal chart): biểu mẫu → vòng hoàng đạo → bảng vị trí → luận giải → năng lượng giai đoạn hiện tại
 import { $, esc, icon, toast } from '../util.js';
+import { link } from '../route.js';
 import { t, tr } from '../i18n.js';
 import { store } from '../store.js';
 import { SIGNS, glyph } from '../data/zodiac.js';
@@ -67,7 +68,7 @@ function wheel(chart) {
 function bigThree(chart) {
   const sun = chart.bodies.find((b) => b.id === 'sun');
   const moon = chart.bodies.find((b) => b.id === 'moon');
-  const card = (eyebrow, signIdx, desc, extra = '') => `<a class="result-card" href="#/chiem-tinh/${SIGNS[signIdx].id}">
+  const card = (eyebrow, signIdx, desc, extra = '') => `<a class="result-card" href="${link(`chiem-tinh/${SIGNS[signIdx].id}`)}">
     <span class="sign-glyph">${glyph(SIGNS[signIdx])}</span>
     <div><p class="eyebrow">${eyebrow}</p><h3>${esc(signName(signIdx))}</h3><p>${desc}${extra}</p></div>${icon('arrow')}</a>`;
   return `<div class="profile-grid">
@@ -190,7 +191,7 @@ function renderResult(view, profile) {
 export function renderNatal(view) {
   const p = store.getProfile();
   view.innerHTML = `<div class="page">
-    ${backLink('#/chiem-tinh', t('nav.astro'))}
+    ${backLink(link('chiem-tinh'), t('nav.astro'))}
     <header class="page-head">
       <p class="eyebrow">${t('natal.eyebrow')}</p>
       <h1>${t('natal.title')}</h1>

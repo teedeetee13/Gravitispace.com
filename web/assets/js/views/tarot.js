@@ -1,5 +1,6 @@
 // Tarot: lá bài hôm nay, trải bài (gồm Thập tự Celtic 10 lá), thư viện 78 lá, trang chi tiết từng lá
 import { $, $$, esc, icon, norm, shuffle, todayKey, toast } from '../util.js';
+import { link } from '../route.js';
 import { t } from '../i18n.js';
 import { store } from '../store.js';
 import { DECK, SUITS, SPREADS, cardById, suitById } from '../data/tarot.js';
@@ -12,7 +13,7 @@ function reading(raw, reversed, position) {
   const card = C.card(raw);
   return `<div class="reading">
     ${position ? `<p class="eyebrow">${esc(position)}</p>` : ''}
-    <h3><a href="#/tarot/${card.id}">${esc(card.name)}</a>${reversed ? ` <span class="tag">${t('tarot.reversed')}</span>` : ''}</h3>
+    <h3><a href="${link(`tarot/${card.id}`)}">${esc(card.name)}</a>${reversed ? ` <span class="tag">${t('tarot.reversed')}</span>` : ''}</h3>
     <p class="kw">${esc(reversed ? card.rev : card.up)}</p>
     <p>${esc(card.msg)}</p>
     <p class="question">${esc(card.q)}</p>
@@ -84,7 +85,7 @@ function dealSpread(spread, area) {
       readings.insertAdjacentHTML(
         'beforeend',
         `<div class="note-box">${t('tarot.spreadDone', { n: cards.length })}
-        <a class="btn btn-ghost" href="#/gieo?chu-de=tarot&loai=trai-bai&ref=${cards.slice(0, 3).map((c) => c.card.id).join(',')}">${icon('plus')} ${t('tarot.shareSpread')}</a></div>${gentleNote()}`
+        <a class="btn btn-ghost" href="${link(`gieo?chu-de=tarot&loai=trai-bai&ref=${cards.slice(0, 3).map((c) => c.card.id).join(',')}`)}">${icon('plus')} ${t('tarot.shareSpread')}</a></div>${gentleNote()}`
       );
   };
   area.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -100,7 +101,7 @@ function libraryGrid(filter, q) {
     return !nq || norm(`${c.name} ${raw.name} ${raw.en} ${c.up} ${c.rev}`).includes(nq);
   });
   if (!list.length) return `<p class="muted">${t('tarot.libEmpty', { q: esc(q) })}</p>`;
-  return list.map((c) => `<a class="lib-item" href="#/tarot/${c.id}">${tarotFace(c, { size: 'sm' })}<span>${esc(C.card(c).name)}</span></a>`).join('');
+  return list.map((c) => `<a class="lib-item" href="${link(`tarot/${c.id}`)}">${tarotFace(c, { size: 'sm' })}<span>${esc(C.card(c).name)}</span></a>`).join('');
 }
 
 export function renderTarot(view) {
@@ -200,7 +201,7 @@ export function renderTarotCard(view, id) {
   const group = raw.arcana === 'major' ? t('tarot.majorFull') : t('tarot.suitGroup', { name: s.name, en: suitById[raw.suit].en, el: s.element });
 
   view.innerHTML = `<div class="page">
-    ${backLink('#/tarot', 'Tarot')}
+    ${backLink(link('tarot'), 'Tarot')}
     <div class="detail">
       <div class="detail-visual">${tarotFace(raw, { size: 'lg' })}</div>
       <div class="detail-body">
@@ -214,13 +215,13 @@ export function renderTarotCard(view, id) {
         <p class="prose-lg">${esc(card.msg)}</p>
         <p class="question">${esc(card.q)}</p>
         <div class="row">
-          <a class="btn" href="#/gieo?chu-de=tarot&ref=${card.id}">${icon('plus')} ${t('tarot.writeAbout')}</a>
+          <a class="btn" href="${link(`gieo?chu-de=tarot&ref=${card.id}`)}">${icon('plus')} ${t('tarot.writeAbout')}</a>
         </div>
       </div>
     </div>
     <nav class="pager" aria-label="${esc(t('common.pager'))}">
-      <a href="#/tarot/${prev.id}">${icon('back')} ${esc(C.card(prev).name)}</a>
-      <a href="#/tarot/${next.id}">${esc(C.card(next).name)} ${icon('arrow')}</a>
+      <a href="${link(`tarot/${prev.id}`)}">${icon('back')} ${esc(C.card(prev).name)}</a>
+      <a href="${link(`tarot/${next.id}`)}">${esc(C.card(next).name)} ${icon('arrow')}</a>
     </nav>
     <section class="section">
       <h2 class="section-title">${t('tarot.related')}</h2>

@@ -1,5 +1,6 @@
 // Bản mệnh: nhập thông tin sinh một lần → tổng quan Đông + Tây, lá bài hôm nay, lối vào lá số, lộ trình năng lượng
 import { $, esc, icon, todayKey, toast } from '../util.js';
+import { link } from '../route.js';
 import { t, tr } from '../i18n.js';
 import { store } from '../store.js';
 import { signFromDate, SIGNS, glyph } from '../data/zodiac.js';
@@ -28,14 +29,14 @@ function result(p) {
     `<a class="result-card" href="${href}">${badge}<div><p class="eyebrow">${eyebrow}</p><h3>${title}</h3><p>${desc}</p></div>${icon('arrow')}</a>`;
 
   return `<div class="profile-grid">
-    ${small(`#/chiem-tinh/${s.id}`, signBadge(s), t('profile.sun'), esc(C.sign(s).name), esc(C.sign(s).keywords))}
-    ${small(`#/chiem-tinh/${SIGNS[moon.sign].id}`, `<span class="sign-glyph">${glyph(SIGNS[moon.sign])}</span>`, t('natal.moon'), esc(C.sign(SIGNS[moon.sign]).name), natal.moonUncertain ? t('natal.moonUncertain') : t('natal.moonDesc'))}
+    ${small(link(`chiem-tinh/${s.id}`), signBadge(s), t('profile.sun'), esc(C.sign(s).name), esc(C.sign(s).keywords))}
+    ${small(link(`chiem-tinh/${SIGNS[moon.sign].id}`), `<span class="sign-glyph">${glyph(SIGNS[moon.sign])}</span>`, t('natal.moon'), esc(C.sign(SIGNS[moon.sign]).name), natal.moonUncertain ? t('natal.moonUncertain') : t('natal.moonDesc'))}
     ${natal.ascSign
-      ? small('#/chiem-tinh/ban-do-sao', `<span class="sign-glyph">${glyph(SIGNS[natal.ascSign.sign])}</span>`, t('natal.asc'), esc(C.sign(SIGNS[natal.ascSign.sign]).name), t('natal.ascDesc'))
-      : small('#/chiem-tinh/ban-do-sao', `<span class="sign-glyph">?</span>`, t('natal.asc'), t('natal.needTime'), t('natal.needTimeDesc'))}
-    ${small(`#/tu-vi/${info.chi.id}`, `<span class="sign-glyph">${esc(C.ganzhi(info.chi.name))}</span>`, t('profile.lunarAge'), esc(C.ganzhi(info.canChi)), t('profile.lunarDate', { d: lunar.day, m: lunar.month, y: lunar.year, menh: esc(C.napAm(info.napAm, info.meaning).name) }))}
-    ${small('#/tarot', card ? `<span class="mini-card">${tarotFace(card, { size: 'xs', reversed: draw.reversed })}</span>` : `<span class="sign-glyph">${icon('card')}</span>`, t('today.label'), card ? esc(C.card(card).name) : t('today.none'), card ? esc(C.card(card).q) : t('today.cta'))}
-    ${small('#/tu-vi/la-so', `<span class="sign-glyph">${icon('yinyang')}</span>`, t('laso.title'), tuvi ? t('profile.cucMenh', { p: esc(tr(PALACE_INFO.menh.name)), label: esc(C.ganzhi(tuvi.palaces[tuvi.menh].label)) }) : t('profile.lasoNeed'), tuvi ? t('profile.openLaso') : t('profile.lasoNeedDesc'))}
+      ? small(link('chiem-tinh/ban-do-sao'), `<span class="sign-glyph">${glyph(SIGNS[natal.ascSign.sign])}</span>`, t('natal.asc'), esc(C.sign(SIGNS[natal.ascSign.sign]).name), t('natal.ascDesc'))
+      : small(link('chiem-tinh/ban-do-sao'), `<span class="sign-glyph">?</span>`, t('natal.asc'), t('natal.needTime'), t('natal.needTimeDesc'))}
+    ${small(link(`tu-vi/${info.chi.id}`), `<span class="sign-glyph">${esc(C.ganzhi(info.chi.name))}</span>`, t('profile.lunarAge'), esc(C.ganzhi(info.canChi)), t('profile.lunarDate', { d: lunar.day, m: lunar.month, y: lunar.year, menh: esc(C.napAm(info.napAm, info.meaning).name) }))}
+    ${small(link('tarot'), card ? `<span class="mini-card">${tarotFace(card, { size: 'xs', reversed: draw.reversed })}</span>` : `<span class="sign-glyph">${icon('card')}</span>`, t('today.label'), card ? esc(C.card(card).name) : t('today.none'), card ? esc(C.card(card).q) : t('today.cta'))}
+    ${small(link('tu-vi/la-so'), `<span class="sign-glyph">${icon('yinyang')}</span>`, t('laso.title'), tuvi ? t('profile.cucMenh', { p: esc(tr(PALACE_INFO.menh.name)), label: esc(C.ganzhi(tuvi.palaces[tuvi.menh].label)) }) : t('profile.lasoNeed'), tuvi ? t('profile.openLaso') : t('profile.lasoNeedDesc'))}
   </div>
 
   <section class="section">
@@ -44,7 +45,7 @@ function result(p) {
       ${tuvi && tuvi.current
         ? `<h3>${t('profile.daiHanNow', { a: tuvi.current.daiHan.from, b: tuvi.current.daiHan.to, p: esc(tr(PALACE_INFO[tuvi.current.palace].name)) })}</h3><p>${esc(tr(DAI_HAN_THEME[tuvi.current.palace]))}</p>`
         : `<p class="muted">${t('profile.daiHanNeed')}</p>`}
-      <p><a href="#/tu-vi/la-so">${t('profile.seeDaiHan')}</a> · <a href="#/chiem-tinh/ban-do-sao">${t('profile.seeTransits')}</a></p>
+      <p><a href="${link(`tu-vi/la-so`)}">${t('profile.seeDaiHan')}</a> · <a href="${link(`chiem-tinh/ban-do-sao`)}">${t('profile.seeTransits')}</a></p>
     </div>
     ${gentleNote()}
   </section>

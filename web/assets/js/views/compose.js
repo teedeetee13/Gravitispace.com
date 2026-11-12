@@ -1,5 +1,6 @@
 // Gieo duyên: viết một bài để người lướt sau có thể gặp
 import { $, esc, icon, openModal, toast } from '../util.js';
+import { navigate, postLink } from '../route.js';
 import { t, getLang } from '../i18n.js';
 import { store } from '../store.js';
 import { auth } from '../auth.js';
@@ -91,7 +92,7 @@ export function renderCompose(view, params) {
     const post = { id: crypto.randomUUID(), ...data, refs, lang: getLang(), createdAt: new Date().toISOString(), hearts: 0 };
     store.addPost(post);
     toast(auth.user() ? t('compose.doneCloud') : t('compose.done'));
-    location.hash = `#/bai/${post.id}`;
+    navigate(postLink(post.id));
   };
 
   form.addEventListener('submit', (e) => {

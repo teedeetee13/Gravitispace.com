@@ -32,6 +32,22 @@ self.addEventListener('fetch', (e) => {
         }
         return res;
       })
-      .catch(() => caches.match(req).then((hit) => hit || (req.mode === 'navigate' ? caches.match('./index.html') : Response.error())))
+      .catch(() => caches.match(req).then((hit) => hit || (req.mode === 'navigate' ? offlinePage(url) : Response.error())))
   );
 });
+
+// Mất mạng, mở một trang chưa từng xem (vd. /stars/tarot/major-5/): lấy index.html đã lưu,
+// sửa đường dẫn tương đối theo độ sâu của trang. Giống rewriteForDepth trong tools/routes.mjs.
+function rewriteForDepth(html, depth) {
+  if (!depth) return html;
+  const up = '../'.repeat(depth);
+  return html.replace(/\b(src|href)="(?![a-z][a-z0-9+.-]*:|\/|#)([^"]*)"/gi, (_, attr, v) => `${attr}="${up}${v === './' ? '' : v}"`);
+}
+async function offlinePage(url) {
+  const res = await caches.match('./index.html');
+  if (!res) return Response.error();
+  const scope = new URL('./', self.location).pathname;
+  const rest = url.pathname.startsWith(scope) ? url.pathname.slice(scope.length) : '';
+  const depth = (rest.match(/\//g) || []).length;
+  return new Response(rewriteForDepth(await res.text(), depth), { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+}

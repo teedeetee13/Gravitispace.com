@@ -1,5 +1,6 @@
 // Chiêm tinh: tra cung theo ngày sinh, 12 cung, trang chi tiết, lối vào Bản đồ sao
 import { $, esc, icon } from '../util.js';
+import { link } from '../route.js';
 import { t } from '../i18n.js';
 import { store } from '../store.js';
 import { ELEMENTS, SIGNS, dateRange, signById, signFromDate } from '../data/zodiac.js';
@@ -8,7 +9,7 @@ import { backLink, postCard, signBadge } from '../ui.js';
 
 export const ELEMENT_COLOR = { 'Lửa': '#c7604a', 'Đất': '#9a8150', 'Khí': '#6b93a8', 'Nước': '#4f6fb0' };
 
-const signTile = (s) => `<a class="sign-tile" href="#/chiem-tinh/${s.id}" style="--c:${ELEMENT_COLOR[s.element]}">
+const signTile = (s) => `<a class="sign-tile" href="${link(`chiem-tinh/${s.id}`)}" style="--c:${ELEMENT_COLOR[s.element]}">
   ${signBadge(s)}<span class="sign-name">${esc(C.sign(s).name)}</span><span class="muted small">${dateRange(s)}</span>
 </a>`;
 
@@ -20,7 +21,7 @@ export function renderAstro(view) {
       <p class="lead">${t('astro.lead')}</p>
     </header>
 
-    <a class="feature-card" href="#/chiem-tinh/ban-do-sao">
+    <a class="feature-card" href="${link(`chiem-tinh/ban-do-sao`)}">
       <span class="sign-glyph">${icon('star')}</span>
       <div><p class="eyebrow">${t('astro.natalEyebrow')}</p><h2>${t('natal.title')}</h2><p>${t('astro.natalDesc')}</p></div>${icon('arrow')}
     </a>
@@ -54,7 +55,7 @@ export function renderAstro(view) {
     const valid = m >= 1 && m <= 12 && d >= 1 && new Date(2000, m - 1, d).getDate() === d;
     const s = valid && signFromDate(m, d);
     $('#sign-result', view).innerHTML = s
-      ? `<a class="result-card" href="#/chiem-tinh/${s.id}" style="--c:${ELEMENT_COLOR[s.element]}">${signBadge(s)}
+      ? `<a class="result-card" href="${link(`chiem-tinh/${s.id}`)}" style="--c:${ELEMENT_COLOR[s.element]}">${signBadge(s)}
           <div><p class="eyebrow">${t('astro.yourSun')}</p><h3>${esc(C.sign(s).name)}</h3><p>${esc(C.sign(s).keywords)}</p></div>${icon('arrow')}</a>`
       : `<p class="muted">${t('form.invalidDate')}</p>`;
   });
@@ -71,7 +72,7 @@ export function renderSign(view, id) {
   const related = store.allPosts().filter((p) => p.refs?.includes(id));
 
   view.innerHTML = `<div class="page">
-    ${backLink('#/chiem-tinh', t('nav.astro'))}
+    ${backLink(link('chiem-tinh'), t('nav.astro'))}
     <div class="detail">
       <div class="detail-visual"><div class="sign-hero" style="--c:${ELEMENT_COLOR[raw.element]}">${signBadge(raw)}</div></div>
       <div class="detail-body">
@@ -86,13 +87,13 @@ export function renderSign(view, id) {
         <h2 class="h-sm">${t('astro.light')}</h2><p>${esc(s.light)}</p>
         <h2 class="h-sm">${t('astro.shadow')}</h2><p>${esc(s.shadow)}</p>
         <div class="heal-note"><p class="eyebrow">${t('common.healing')}</p><p>${esc(s.heal)}</p></div>
-        <p class="muted small">${t('astro.sameElement', { el: esc(s.element) })} ${siblings.map((x) => `<a href="#/chiem-tinh/${x.id}">${esc(C.sign(x).name)}</a>`).join(', ')}</p>
-        <div class="row"><a class="btn" href="#/gieo?chu-de=chiem-tinh&ref=${raw.id}">${icon('plus')} ${t('astro.writeAbout', { name: esc(s.name) })}</a></div>
+        <p class="muted small">${t('astro.sameElement', { el: esc(s.element) })} ${siblings.map((x) => `<a href="${link(`chiem-tinh/${x.id}`)}">${esc(C.sign(x).name)}</a>`).join(', ')}</p>
+        <div class="row"><a class="btn" href="${link(`gieo?chu-de=chiem-tinh&ref=${raw.id}`)}">${icon('plus')} ${t('astro.writeAbout', { name: esc(s.name) })}</a></div>
       </div>
     </div>
     <nav class="pager" aria-label="${esc(t('common.pager'))}">
-      <a href="#/chiem-tinh/${prev.id}">${icon('back')} ${esc(C.sign(prev).name)}</a>
-      <a href="#/chiem-tinh/${next.id}">${esc(C.sign(next).name)} ${icon('arrow')}</a>
+      <a href="${link(`chiem-tinh/${prev.id}`)}">${icon('back')} ${esc(C.sign(prev).name)}</a>
+      <a href="${link(`chiem-tinh/${next.id}`)}">${esc(C.sign(next).name)} ${icon('arrow')}</a>
     </nav>
     <section class="section">
       <h2 class="section-title">${t('astro.shares', { name: esc(s.name) })}</h2>

@@ -5,18 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="robots" content="noindex" />
   <title>Graviti Stars</title>
-  <script>
-    // GitHub Pages trả trang này cho mọi đường dẫn không tồn tại → đưa về trang chính.
-    // Trang dự án (*.github.io/ten-repo/) cần giữ lại đoạn /ten-repo/.
-    (function () {
-      var seg = location.pathname.split('/')[1];
-      var base = location.hostname.endsWith('github.io') && seg ? '/' + seg + '/' : '/';
-      location.replace(base);
-    })();
-  </script>
+  <!-- Cloudflare trả trang này cho đường dẫn lạ trong /stars/ (vd. trang mới chưa dựng sẵn).
+       Chuyển về /stars/?p=<đường-dẫn> để ứng dụng tự mở đúng trang, hoặc báo "không tìm thấy" thật dịu dàng.
+       Đoạn mã nằm ngay trong trang (không tải được tệp ngoài vì không biết trang đang ở độ sâu nào), nên
+       Content-Security-Policy của /stars/* cho phép đúng mã băm sha256 của nó (hub/_headers; tests/routes.test.mjs kiểm tra). -->
+  <script>(function () { var p = location.pathname, i = p.indexOf('/stars/'), root = i >= 0 ? p.slice(0, i + 7) : '/'; location.replace(root + '?p=' + encodeURIComponent(p.slice(root.length) + location.search) + location.hash); })();</script>
 </head>
 <body style="font-family: system-ui, sans-serif; padding: 32px; text-align: center">
   <p>Lạc đường rồi, nhưng lạc đường đôi khi cũng là duyên. · A little lost.</p>
-  <p><a href="/">Về Graviti Stars · Back to Graviti Stars</a></p>
+  <p><a href="/stars/">Về Graviti Stars · Back to Graviti Stars</a></p>
 </body>
 </html>

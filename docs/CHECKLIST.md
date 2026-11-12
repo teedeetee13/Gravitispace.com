@@ -92,7 +92,7 @@
 2. Viết bộ chuyển `remote` trong `store.js` (`init()` tải dữ liệu, các hàm ghi gọi API) → giao diện giữ nguyên.
 3. Bài viết công khai cần **kiểm duyệt** trước khi hiện; tài khoản tuỳ chọn.
 4. Lõi `lib/` có thể chạy phía máy chủ để tạo ảnh lá số chia sẻ.
-5. Chuyển định tuyến `#/` sang đường dẫn thật (History API) khi có máy chủ hỗ trợ — để từng trang được tìm thấy trên Google.
+5. ~~Chuyển định tuyến `#/` sang đường dẫn thật~~ Đã xong: History API + 138 trang dựng sẵn (`tools/routes.mjs`). Việc tiếp: tiêu đề, mô tả riêng cho từng trang dựng sẵn và `sitemap.xml` khi có tên miền.
 
 ---
 
@@ -291,7 +291,7 @@ Bảng tin (sáng, tối), Tìm kiếm, Bài viết, Lá số Tử Vi, Bản đ�
 | Việc | Kết quả |
 |---|---|
 | Chọn nền tảng | **Supabase** (PostgreSQL + Auth). Lý do: dữ liệu quan hệ hợp với cộng đồng bài viết + kiểm duyệt; bảo mật bằng RLS ngay trong cơ sở dữ liệu; mã nguồn mở, tự cài máy chủ riêng được, không bị khoá vào một nhà cung cấp; gọi được bằng REST thuần nên **không cần cài SDK** (Firebase cũng gọi REST được nhưng Firestore REST rườm rà, SDK nặng). |
-| Đăng ký / đăng nhập / quên mật khẩu / đặt mật khẩu mới / đăng xuất / xoá tài khoản | Trang mới `#/tai-khoan`. Gọi Supabase Auth qua `fetch` (`cloud.js`). |
+| Đăng ký / đăng nhập / quên mật khẩu / đặt mật khẩu mới / đăng xuất / xoá tài khoản | Trang mới `/stars/tai-khoan/`. Gọi Supabase Auth qua `fetch` (`cloud.js`). |
 | Mở lại khi mất mạng **nhờ phiên tài khoản** | Phiên (access + refresh token) lưu trên máy (`auth.js`). Mất mạng → mở web vẫn đang đăng nhập, thấy dữ liệu của tài khoản (bản đồng bộ gần nhất), sửa được; có mạng lại → tự làm mới token và đồng bộ. |
 | Đồng bộ nhiều thiết bị | Bảng `user_state`. Chỉ máy sửa → đẩy lên; chỉ máy chủ đổi → kéo về; cả hai cùng sửa → gộp không mất dữ liệu (`mergeStates`). |
 | Khách đăng nhập lần đầu | Dữ liệu đang có trên máy được chuyển vào tài khoản, không mất gì. |

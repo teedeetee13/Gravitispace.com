@@ -1,5 +1,6 @@
 // Các mảnh giao diện dùng chung
 import { esc, icon, timeAgo } from './util.js';
+import { ROOT, link, postLink } from './route.js';
 import { t } from './i18n.js';
 import { store } from './store.js';
 import { topicById, typeById } from './data/taxonomy.js';
@@ -11,15 +12,15 @@ import { cover } from './cover.js';
 
 /** Đổi một mã tham chiếu thành { label, href, kind } */
 export function resolveRef(id) {
-  if (cardById[id]) return { kind: t('ref.tarot'), label: C.card(cardById[id]).name, href: `#/tarot/${id}` };
-  if (signById[id]) return { kind: t('ref.sign'), label: C.sign(signById[id]).name, href: `#/chiem-tinh/${id}` };
-  if (chiById[id]) return { kind: t('ref.chi'), label: `${C.ganzhi(chiById[id].name)} (${C.chi(chiById[id]).animal})`, href: `#/tu-vi/${id}` };
+  if (cardById[id]) return { kind: t('ref.tarot'), label: C.card(cardById[id]).name, href: link(`tarot/${id}`) };
+  if (signById[id]) return { kind: t('ref.sign'), label: C.sign(signById[id]).name, href: link(`chiem-tinh/${id}`) };
+  if (chiById[id]) return { kind: t('ref.chi'), label: `${C.ganzhi(chiById[id].name)} (${C.chi(chiById[id]).animal})`, href: link(`tu-vi/${id}`) };
   return null;
 }
 
 export const topicChip = (topicId) => {
   const tp = topicById[topicId];
-  return tp ? `<a class="chip chip-topic" style="--c:${tp.color}" href="#/tim?chu-de=${tp.id}">${esc(C.topicLabel(tp))}</a>` : '';
+  return tp ? `<a class="chip chip-topic" style="--c:${tp.color}" href="${link(`tim?chu-de=${tp.id}`)}">${esc(C.topicLabel(tp))}</a>` : '';
 };
 
 export const refChips = (refs = []) =>
@@ -39,7 +40,7 @@ export function postActions(p, { open = true } = {}) {
       ${icon('bookmark')}<span>${saved ? t('post.saved') : t('post.save')}</span></button>
     <button type="button" class="act" data-action="share" data-id="${esc(p.id)}" aria-label="${esc(t('post.shareAria'))}">
       ${icon('share')}<span>${t('post.share')}</span></button>
-    ${open ? `<a class="act act-open" href="#/bai/${esc(p.id)}">${t('post.readFull')} ${icon('arrow')}</a>` : ''}
+    ${open ? `<a class="act act-open" href="${postLink(p.id)}">${t('post.readFull')} ${icon('arrow')}</a>` : ''}
   </div>`;
 }
 
@@ -61,9 +62,9 @@ export function postCard(raw) {
   const p = C.post(raw);
   const excerpt = p.body.length > 220 ? p.body.slice(0, 220).trimEnd() + '…' : p.body;
   return `<article class="post-card has-cover" style="--c:${topicById[p.topic]?.color || 'var(--accent)'}">
-    <a class="post-card-cover" href="#/bai/${esc(p.id)}" tabindex="-1" aria-hidden="true">${postCover(p)}</a>
+    <a class="post-card-cover" href="${postLink(p.id)}" tabindex="-1" aria-hidden="true">${postCover(p)}</a>
     ${postMeta(p)}
-    <a class="post-card-link" href="#/bai/${esc(p.id)}">
+    <a class="post-card-link" href="${postLink(p.id)}">
       ${p.title ? `<h3>${esc(p.title)}</h3>` : ''}
       <p class="excerpt">${esc(excerpt).replace(/\n+/g, ' ')}</p>
     </a>
@@ -91,7 +92,7 @@ export function tarotFace(raw, { reversed = false, size = '' } = {}) {
   const card = C.card(raw);
   const art = card.arcana === 'major' ? MAJOR_ART : SUIT_ART[card.suit];
   const suitName = card.arcana === 'major' ? t('tarot.major') : C.suitName(card.suit);
-  const img = `<img class="tcard-img" src="assets/tarot/${esc(card.id)}.jpg" alt="${esc(card.name)}${reversed ? ` (${esc(t('tarot.reversedShort'))})` : ''}" loading="lazy" decoding="async" width="300" height="520" data-fallback />`;
+  const img = `<img class="tcard-img" src="${ROOT}assets/tarot/${esc(card.id)}.jpg" alt="${esc(card.name)}${reversed ? ` (${esc(t('tarot.reversedShort'))})` : ''}" loading="lazy" decoding="async" width="300" height="520" data-fallback />`;
   return `<div class="tcard has-img ${card.arcana === 'major' ? 'is-major' : `suit-${card.suit}`} ${reversed ? 'is-rev' : ''} ${size}">
     <div class="tcard-face">${img}
       <span class="tcard-num">${esc(card.numeral)}</span>

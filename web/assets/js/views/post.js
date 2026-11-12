@@ -1,5 +1,6 @@
 // Trang một bài viết (có đường dẫn riêng để chia sẻ)
 import { esc, paragraphs } from '../util.js';
+import { link } from '../route.js';
 import { t } from '../i18n.js';
 import { store } from '../store.js';
 import { topicById } from '../data/taxonomy.js';
@@ -15,7 +16,7 @@ export function renderPost(view, id) {
   const related = all.map((x) => [x, score(x)]).filter(([, s]) => s > 0).sort((a, b) => b[1] - a[1]).slice(0, 4).map(([x]) => x);
 
   view.innerHTML = `<div class="page narrow">
-    ${backLink('#/', t('nav.feed'))}
+    ${backLink(link(''), t('nav.feed'))}
     <article class="post-full" style="--c:${topicById[p.topic]?.color}">
       <div class="post-cover">${postCover(p)}</div>
       ${postMeta(p)}
