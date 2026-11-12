@@ -7,7 +7,13 @@
   <title>Graviti</title>
   <script>
     // Đường dẫn không tồn tại → về trang chính. Trên GitHub Pages dạng dự án (*.github.io/ten-kho/) giữ lại /ten-kho/.
+    // Đường dẫn trong /stars/ (GitHub Pages chỉ dùng 404.html ở gốc) → đưa về Graviti Stars để ứng dụng tự mở hoặc báo "không tìm thấy".
     (function () {
+      var p = location.pathname, i = p.indexOf('/stars/');
+      if (i >= 0) {
+        location.replace(p.slice(0, i + 7) + '?p=' + encodeURIComponent(p.slice(i + 7) + location.search) + location.hash);
+        return;
+      }
       var seg = location.pathname.split('/')[1];
       var base = location.hostname.endsWith('github.io') && seg ? '/' + seg + '/' : '/';
       location.replace(base);

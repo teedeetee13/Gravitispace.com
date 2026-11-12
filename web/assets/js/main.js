@@ -272,6 +272,9 @@ window.addEventListener('offline', () => auth.user() && store.syncNow().catch(()
 
 /** Link kiểu cũ và link từ trang 404 → đổi về địa chỉ mới trước khi vẽ (không tải lại trang). */
 function normalizeUrl() {
+  // Chốt địa chỉ tệp trong <head> (manifest, biểu tượng) theo địa chỉ lúc tải trang, trước khi đổi địa chỉ:
+  // trình duyệt có thể tải các tệp này muộn, khi đó đường dẫn tương đối sẽ bị tính theo địa chỉ mới.
+  document.querySelectorAll('head link[href]').forEach((el) => el.setAttribute('href', el.href));
   const legacy = fromLegacyHash(location.hash);
   if (legacy) return history.replaceState(null, '', legacy);
   // 404.html chuyển đường dẫn lạ về /stars/?p=<đường-dẫn>: thử mở nó như một trang trong ứng dụng
