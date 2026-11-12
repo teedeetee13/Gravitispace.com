@@ -116,8 +116,14 @@ Trang quản trị chỉ chứa số liệu công khai (phiên bản, kiểm th�
    - Bật **Confirm email**.
    - Minimum password length: **10**.
 4. *Authentication → URL Configuration*:
-   - Site URL: `https://gravitispace.com/stars/`
-   - Redirect URLs: `https://gravitispace.com/stars/**` (và `http://localhost:5190/**` khi chạy thử).
+   - Site URL: `https://gravitispace.com/`
+   - Redirect URLs: mỗi địa chỉ web một dòng, **kết thúc bằng `/**`** (hai dấu sao: mọi trang bên dưới):
+     - `https://gravitispace.com/**`
+     - `https://teedeetee13.github.io/Gravitispace.com/**` (bản GitHub Pages)
+     - `https://gravitispace-com.<tên-tài-khoản>.workers.dev/**` (bản Cloudflare trước khi có tên miền)
+     - `http://localhost:5191/**` và `http://localhost:5190/**` (chạy thử trên máy)
+
+   Vì sao phải `/**`: hộp đăng nhập hiện ngay trên trang đang xem (trang chính, một lá bài, một bài viết…), và Google hay link trong email quay về **đúng trang đó**. Supabase chỉ cho quay về địa chỉ có trong danh sách; địa chỉ lạ thì nó đưa về Site URL (vẫn đăng nhập được, chỉ là về trang chủ).
 5. *Project Settings → API*: chép **Project URL** và khoá **anon public** vào `web/assets/js/config.js`:
    ```js
    SUPABASE_URL: 'https://xxxx.supabase.co',
@@ -126,7 +132,7 @@ Trang quản trị chỉ chứa số liệu công khai (phiên bản, kiểm th�
    **Không** chép khoá `service_role` hay `sb_secret_...`: khoá đó vượt qua mọi lớp bảo vệ.
 6. Gói Free tự **tạm dừng** dự án nếu 7 ngày không có ai dùng. Khi có người dùng thật, cân nhắc gói Pro (25 USD/tháng). Gói Pro còn có sao lưu hằng ngày.
 
-**Kiểm tra:** `npm run preview` → mở http://localhost:5191/stars/tai-khoan/ → đăng ký bằng email thật. Phải có ô "Tôi đồng ý…" (không đánh sẵn), thư xác nhận phải về.
+**Kiểm tra:** `npm run preview` → mở http://localhost:5191/ → bấm *Đăng nhập* ở góc trên → *Tạo tài khoản* → đăng ký bằng email thật. Phải có ô "Tôi đồng ý…" (không đánh sẵn), thư xác nhận phải về.
 
 ### 4b. Đăng nhập bằng Google
 

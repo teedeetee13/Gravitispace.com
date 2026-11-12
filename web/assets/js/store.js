@@ -143,6 +143,11 @@ export const store = {
   /** Khởi tạo: đọc phiên + dữ liệu trên máy (chạy offline), rồi đồng bộ nếu có mạng. */
   async init() {
     auth.load();
+    // Đã đăng nhập (vd. ở trang chính Graviti) nhưng máy này chưa có bản sao dữ liệu của tài khoản → main.js gọi afterSignIn()
+    store.pendingMerge = false;
+    try {
+      store.pendingMerge = !!auth.user() && localStorage.getItem(keyFor(auth.user())) === null;
+    } catch {}
     state = readLocal(keyFor(auth.user()));
     try {
       remotePosts = JSON.parse(localStorage.getItem(REMOTE_POSTS_KEY) || '[]');
