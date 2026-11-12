@@ -9,6 +9,9 @@ import { auth } from './auth.js';
 import { cardById } from './data/tarot.js';
 import * as C from './content.js';
 import { emptyState } from './ui.js';
+import { redirectMessageKey } from './login.js';
+import { showLogin } from './signin.js';
+import { cloudEnabled } from './config.js';
 
 // [mẫu đường dẫn, tải module, tên hàm vẽ, tiêu đề]
 // Đường dẫn cụ thể (la-so, ban-do-sao) đặt trước đường dẫn có tham số.
@@ -238,6 +241,11 @@ document.addEventListener('click', (e) => {
   const url = new URL(a.href, location.href);
   if (url.origin !== location.origin || !url.pathname.startsWith(ROOT)) return; // trang chính, /privacy/, web ngoài: mở bình thường
   if (/\.[a-z0-9]+$/i.test(url.pathname)) return; // tệp (ảnh, json…)
+  // Nút Tài khoản: chưa đăng nhập → hộp đăng nhập hiện ngay trên trang đang xem, không chuyển trang
+  if (url.pathname === link('tai-khoan') && !auth.user() && cloudEnabled()) {
+    e.preventDefault();
+    return showLogin(new URLSearchParams(url.search).get('che-do') === 'dang-ky' ? 'signup' : 'signin');
+  }
   if (url.pathname === location.pathname && url.search === location.search && url.hash) return; // neo trong cùng trang
   e.preventDefault();
   if (url.href !== location.href) history.pushState(null, '', url.pathname + url.search + url.hash);
@@ -287,15 +295,16 @@ async function boot() {
   const redirectType = await auth.consumeRedirect().catch(() => null);
   await Promise.all([setLang().catch(() => setLang('vi')), store.init()]); // gói ngôn ngữ lỗi mạng → về tiếng Việt
   const failed = redirectType === 'error' || redirectType === 'oauth-error';
-  if (redirectType && !failed) await store.afterSignIn();
-  if (redirectType === 'recovery') history.replaceState(null, '', link('tai-khoan?dat-lai=1'));
+  // Vừa quay về từ Google / email, hoặc đã đăng nhập ở trang chính Graviti mà máy này chưa có dữ liệu của tài khoản:
+  // gộp dữ liệu khách trên máy vào tài khoản (không mất gì)
+  if ((redirectType && !failed) || store.pendingMerge) await store.afterSignIn();
   store.onSync(renderAccountBadge);
   translateShell();
   renderAccountBadge();
   await render();
-  if (redirectType === 'error') toast(t('account.linkExpired'));
-  else if (redirectType === 'oauth-error') toast(t('account.oauthFailed'));
-  else if (redirectType && redirectType !== 'recovery') toast(t('account.welcome'));
+  const msg = redirectMessageKey(redirectType);
+  if (msg) toast(t(msg));
+  if (redirectType === 'recovery') showLogin('newpass'); // link đặt lại mật khẩu: hộp đặt mật khẩu mới, ở nguyên trang
   // Service worker: cho phép mở lại trang khi mất mạng (chỉ bản đăng thật qua https).
   // Khi chạy thử trên máy thì gỡ service worker cũ + xoá bộ nhớ đệm của nó, để luôn thấy code mới nhất
   // và không "đè" lên các web khác từng chạy ở cùng địa chỉ localhost.

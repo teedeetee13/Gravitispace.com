@@ -3,7 +3,6 @@
 // có mạng lại thì làm mới token và đồng bộ.
 import { CONFIG, cloudEnabled } from './config.js';
 import { cloud, CloudError } from './cloud.js';
-import { ROOT, link } from './route.js';
 
 const KEY = CONFIG.STORAGE_PREFIX + 'session';
 const EMAIL_FLOW_KEY = CONFIG.STORAGE_PREFIX + 'email-flow';
@@ -14,6 +13,16 @@ const listeners = new Set();
 let session = null;
 
 const now = () => Math.floor(Date.now() / 1000);
+
+/** Địa chỉ trang đang xem (không kèm ?… và #…): Google và link trong email quay về đúng trang này. */
+export const hereUrl = () => location.origin + location.pathname;
+/** Dọn mã đăng nhập khỏi thanh địa chỉ, giữ nguyên trang đang xem. */
+function cleanUrl() {
+  const q = new URLSearchParams(location.search);
+  ['code', 'error', 'error_code', 'error_description', 'state'].forEach((k) => q.delete(k));
+  const rest = q.toString();
+  history.replaceState(null, '', location.pathname + (rest ? '?' + rest : ''));
+}
 
 // Chống giả liên kết đăng nhập: chỉ nhận token trên URL nếu chính trình duyệt này vừa yêu cầu email xác nhận / đặt lại mật khẩu.
 // Không có bước này, kẻ xấu gửi một link chứa token tài khoản của họ là nạn nhân bị đăng nhập vào đó, và ngày giờ sinh sẽ bị đồng bộ sang.
@@ -121,7 +130,7 @@ export const auth = {
     const verifier = b64url(crypto.getRandomValues(new Uint8Array(32)));
     const challenge = b64url(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifier)));
     localStorage.setItem(OAUTH_KEY, JSON.stringify({ verifier, consent: consent.version, at: now() }));
-    location.assign(cloud.authorizeUrl(provider, location.origin + ROOT, challenge));
+    location.assign(cloud.authorizeUrl(provider, hereUrl(), challenge));
   },
   async recover(email) {
     await cloud.recover(email);
@@ -143,7 +152,7 @@ export const auth = {
   /**
    * Xử lý đường dẫn quay về từ email (xác nhận đăng ký / đặt lại mật khẩu):
    * Supabase gắn #access_token=…&refresh_token=…&type=signup|recovery vào URL.
-   * Trả về type nếu có, và dọn URL về trang Tài khoản.
+   * Trả về type nếu có, và dọn token khỏi địa chỉ (ở nguyên trang đang xem).
    */
   async consumeRedirect() {
     const oauth = await auth.consumeOAuth();
@@ -151,7 +160,7 @@ export const auth = {
     const h = location.hash.slice(1);
     if (!h.includes('access_token=') && !h.includes('error_description=')) return null;
     const p = new URLSearchParams(h);
-    history.replaceState(null, '', link('tai-khoan'));
+    history.replaceState(null, '', location.pathname + location.search);
     if (p.get('error_description')) return 'error';
     if (!takeEmailFlow()) return 'error';
     const base = { access_token: p.get('access_token'), refresh_token: p.get('refresh_token'), expires_in: Number(p.get('expires_in')) || 3600 };
@@ -168,7 +177,7 @@ export const auth = {
     const q = new URLSearchParams(location.search);
     const code = q.get('code');
     if (!code && !q.get('error')) return null;
-    history.replaceState(null, '', link('tai-khoan'));
+    cleanUrl();
     const pending = takeOAuth();
     if (!code || !pending) return 'oauth-error';
     try {

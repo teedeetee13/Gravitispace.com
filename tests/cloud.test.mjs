@@ -23,7 +23,6 @@ CONFIG.SUPABASE_ANON_KEY = 'anon-key';
 const { store, mergeStates } = await import('../web/assets/js/store.js');
 const { auth } = await import('../web/assets/js/auth.js');
 const { errorText } = await import('../web/assets/js/views/account.js').catch(() => ({}));
-const { ROOT, link } = await import('../web/assets/js/route.js');
 
 const CONSENT = { version: CONFIG.CONSENT_VERSION };
 const PROFILE = { day: 15, month: 8, year: 1995, timeKnown: true, hour: 9, minute: 30, gender: 'nu', placeId: 'ha-noi', lat: 21, lon: 105.8, tz: 7 };
@@ -218,7 +217,7 @@ test('Luật BVDLCN: chưa đồng ý chính sách thì không gửi gì lên m�
 test('Đăng nhập Google (PKCE): đổi mã thành phiên, ghi dấu đồng ý; link giả mạo hay mã bị lộ đều không vào được', async () => {
   current = devices.B;
   await auth.signOut();
-  const page = { origin: 'https://graviti.test', pathname: '/stars/', search: '', hash: '', opened: null };
+  const page = { origin: 'https://graviti.test', pathname: '/stars/tarot/', search: '', hash: '', opened: null };
   globalThis.location = { ...page, assign: (u) => (globalThis.location.opened = u) };
   Object.assign(globalThis.location, page);
   globalThis.history = { replaceState: (_s, _t, url) => Object.assign(globalThis.location, { search: '', hash: '', pathname: url }) };
@@ -231,7 +230,7 @@ test('Đăng nhập Google (PKCE): đổi mã thành phiên, ghi dấu đồng �
   const url = new URL(location.opened);
   assert.equal(url.origin + url.pathname, 'https://fake.supabase.co/auth/v1/authorize');
   assert.equal(url.searchParams.get('provider'), 'google');
-  assert.equal(url.searchParams.get('redirect_to'), 'https://graviti.test' + ROOT, 'quay về gốc Graviti Stars');
+  assert.equal(url.searchParams.get('redirect_to'), 'https://graviti.test/stars/tarot/', 'quay về đúng trang đang xem');
   assert.equal(url.searchParams.get('code_challenge_method'), 's256');
   const raw = current.get('ansao:oauth');
   assert.ok(raw && !location.opened.includes(JSON.parse(raw).verifier), 'verifier chỉ nằm trên máy, không gửi đi');
@@ -241,7 +240,7 @@ test('Đăng nhập Google (PKCE): đổi mã thành phiên, ghi dấu đồng �
   assert.equal(await auth.consumeRedirect(), 'oauth');
   assert.equal(auth.user()?.email, 'google@example.com');
   assert.equal(location.search, '', 'mã đã được xoá khỏi thanh địa chỉ');
-  assert.equal(location.pathname, link('tai-khoan'), 'về trang Tài khoản, địa chỉ không có dấu #');
+  assert.equal(location.pathname, '/stars/tarot/', 'ở nguyên trang đang xem, không bị đẩy sang trang Tài khoản');
   assert.equal(fake.db.users.get('google@example.com').meta.consent_version, CONFIG.CONSENT_VERSION);
   assert.equal(current.has('ansao:oauth'), false, 'verifier dùng một lần');
   await auth.signOut();

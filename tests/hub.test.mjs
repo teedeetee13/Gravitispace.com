@@ -6,7 +6,7 @@
 //  4. Luật Bảo vệ dữ liệu cá nhân: có trang chính sách, phiên bản khớp với ô đồng ý khi đăng ký.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync, readdirSync, statSync, existsSync, rmSync, mkdtempSync, mkdirSync } from 'node:fs';
+import { readFileSync, readdirSync, statSync, existsSync, rmSync, mkdtempSync, mkdirSync, cpSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
@@ -107,7 +107,9 @@ test('Bảo mật trang: CSP, không mã nội tuyến, không script ngoài, ch
     assert.doesNotMatch(html, /<script[^>]+src="https?:/, 'script ngoài: ' + name);
     assert.match(html, /assets\/js\/boot\.js/, 'thiếu boot.js chống nhúng khung: ' + name);
   }
-  assert.match(read('index.html'), /connect-src 'self';/, 'trang chính không gọi máy chủ ngoài');
+  // Trang chính chỉ gọi thêm Supabase (đăng nhập); trang quyền riêng tư không gọi máy chủ ngoài nào
+  assert.match(read('index.html'), /connect-src 'self' https:\/\/\*\.supabase\.co;/, 'trang chính chỉ gọi Supabase');
+  assert.match(read('privacy/index.html'), /connect-src 'self';/, 'trang quyền riêng tư không gọi máy chủ ngoài');
 });
 
 test('Quản trị: không lập chỉ mục, chỉ gọi GitHub API, không giữ token; _headers chặn đúng nhóm trang', () => {
@@ -130,7 +132,11 @@ test('Quản trị: không lập chỉ mục, chỉ gọi GitHub API, không gi�
 test('Bản dựng công khai không có trang quản trị; bản --admin có, kèm số liệu', async () => {
   const pub = mkdtempSync(join(tmpdir(), 'graviti-pub-'));
   const adm = mkdtempSync(join(tmpdir(), 'graviti-adm-'));
-  for (const d of [pub, adm]) mkdirSync(join(d, 'stars', 'tai-khoan'), { recursive: true }); // tools/build.mjs dựng Graviti Stars (cả trang dựng sẵn) vào đây trước
+  // tools/build.mjs dựng Graviti Stars vào dist/stars/ trước; trang chính dùng chung mã đăng nhập (stars/assets/js/login.js…)
+  for (const d of [pub, adm]) {
+    mkdirSync(join(d, 'stars', 'tai-khoan'), { recursive: true });
+    cpSync(join(ROOT, 'web', 'assets'), join(d, 'stars', 'assets'), { recursive: true });
+  }
   const log = console.log;
   console.log = () => {};
   try {
@@ -162,4 +168,17 @@ test('Số liệu nội dung khớp mã Graviti Stars', async () => {
   assert.equal(s.posts.byTopic.reduce((n, x) => n + x.count, 0), s.posts.total);
   for (const l of s.langs) assert.equal(l.coverage, 100, 'ngôn ngữ chưa dịch đủ: ' + l.code);
   assert.equal(typeof s.cloud, 'boolean');
+});
+
+test('Hộp đăng nhập dùng chung: đủ chữ ở mọi ngôn ngữ của trang chính và của Graviti Stars', async () => {
+  const { LOGIN_KEYS } = await import('../web/assets/js/login.js');
+  const { LANG_CODES } = await import('../web/assets/js/i18n/langs.js');
+  for (const l of LANGS) for (const k of LOGIN_KEYS) assert.ok(packs[l.code].strings[k], `trang chính ${l.code} thiếu ${k}`);
+  for (const code of LANG_CODES) {
+    const pack = (await import(`../web/assets/js/i18n/${code}.js`)).default;
+    for (const k of LOGIN_KEYS) assert.ok(pack[k], `Graviti Stars ${code} thiếu ${k}`);
+  }
+  // Trang chính gọi đúng tệp của Graviti Stars (dist/stars/…) và nạp giao diện hộp đăng nhập
+  assert.match(read('assets/js/home.js'), /'\.\.\/\.\.\/stars\/assets\/js\/login\.js'/);
+  assert.match(read('index.html'), /href="stars\/assets\/css\/login\.css"/);
 });

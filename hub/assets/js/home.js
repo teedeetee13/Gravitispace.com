@@ -2,11 +2,15 @@
 import { t, td, esc, icon, applyStrings, setupTheme, loadLang, saveLang, pickLang, lang } from './common.js';
 import { SERVICES, STAR_MODULES, PRINCIPLES, ROADMAP, SITE } from './data.js';
 import { LANGS } from './i18n/langs.js';
+// Đăng nhập dùng chung cả hệ: mã nằm trong Graviti Stars (dist/stars/), trang chính gọi sang (cùng địa chỉ web nên cùng phiên)
+import { auth } from '../../stars/assets/js/auth.js';
+import { openLogin, flash, redirectMessageKey } from '../../stars/assets/js/login.js';
 
 const $ = (s) => document.querySelector(s);
 
 // Tài khoản dùng chung: Graviti Stars lưu phiên và dữ liệu trên máy với tiền tố 'ansao:' (giữ nguyên từ tên cũ).
-// Trang chính chỉ ĐỌC để hiện tóm tắt, không gọi máy chủ, không sửa gì. Cấu trúc khớp web/assets/js/store.js + auth.js.
+// "Không gian của bạn" chỉ ĐỌC dữ liệu trên máy để hiện tóm tắt. Cấu trúc khớp web/assets/js/store.js + auth.js.
+// Đăng nhập / đăng xuất qua hộp nổi dùng chung (login.js): ở nguyên trang chính, không chuyển sang Graviti Stars.
 const PREFIX = 'ansao:';
 function readJson(key) {
   try {
@@ -18,7 +22,7 @@ function readJson(key) {
 function readMe() {
   const session = readJson(PREFIX + 'session');
   if (!session?.user?.id) return null;
-  return { email: String(session.user.email || ''), state: readJson(`${PREFIX}v2:u:${session.user.id}`) || {} };
+  return { id: session.user.id, email: String(session.user.email || ''), state: readJson(`${PREFIX}v2:u:${session.user.id}`) || {} };
 }
 const todayKey = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 
@@ -28,14 +32,12 @@ function renderMe() {
   const label = $('[data-acct-label]');
   $('#me').hidden = !me;
   if (!me) {
-    btn.setAttribute('href', 'stars/tai-khoan/');
     btn.removeAttribute('aria-label');
     label.textContent = t('nav.signIn');
     return;
   }
-  // Đã đăng nhập: nút trên cùng dẫn về "Không gian của bạn", hiện phần trước @ của email
-  btn.setAttribute('href', '#me');
-  btn.setAttribute('aria-label', `${t('me.title')}: ${me.email}`);
+  // Đã đăng nhập: nút trên cùng hiện phần trước @ của email, bấm vào mở hộp tài khoản (quản lý, đăng xuất)
+  btn.setAttribute('aria-label', `${t('account.signedInAs')}: ${me.email}`);
   label.textContent = me.email.split('@')[0];
   $('[data-me-hello]').textContent = t('me.hello', { email: me.email });
 
@@ -105,6 +107,34 @@ function render() {
   renderMe();
 }
 
+/** Đăng xuất ở trang chính: xoá phiên; xoá luôn bản sao dữ liệu của tài khoản trên máy nếu đã đồng bộ hết
+ *  (còn thay đổi chưa đồng bộ thì giữ lại, lần sau đăng nhập trên máy này Graviti Stars sẽ gửi nốt). */
+async function signOut() {
+  const me = readMe();
+  await auth.signOut();
+  try {
+    if (me && !me.state.dirty) localStorage.removeItem(`${PREFIX}v2:u:${me.id}`);
+  } catch {}
+}
+
+function login(mode) {
+  openLogin({
+    t,
+    mode,
+    toast: flash,
+    privacyUrl: 'privacy/',
+    manageUrl: 'stars/tai-khoan/',
+    signOut,
+    onDone: () => renderMe(),
+  });
+}
+
+$('[data-acct]').addEventListener('click', (e) => {
+  if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey) return; // mở tab mới: vẫn tới trang Tài khoản
+  e.preventDefault();
+  login(readMe() ? 'me' : 'signin');
+});
+
 // Đăng nhập / đăng xuất ở tab khác (Graviti Stars) → cập nhật ngay; quay lại trang bằng nút Back cũng vẽ lại
 window.addEventListener('storage', (e) => {
   if (!e.key || e.key.startsWith(PREFIX)) renderMe();
@@ -119,5 +149,10 @@ select.addEventListener('change', async () => {
   render();
 });
 setupTheme();
+auth.load();
+// Quay về từ Google / link trong email: đổi mã thành phiên trước khi vẽ (lỗi mạng → bỏ qua, trang vẫn hiện)
+const back = await auth.consumeRedirect().catch(() => null);
 await loadLang(pickLang());
 render();
+if (redirectMessageKey(back)) flash(t(redirectMessageKey(back)));
+if (back === 'recovery') login('newpass');
