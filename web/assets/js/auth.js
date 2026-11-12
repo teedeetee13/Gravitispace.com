@@ -7,6 +7,8 @@ import { cloud, CloudError } from './cloud.js';
 const KEY = CONFIG.STORAGE_PREFIX + 'session';
 const EMAIL_FLOW_KEY = CONFIG.STORAGE_PREFIX + 'email-flow';
 const EMAIL_FLOW_TTL = 24 * 3600;
+const OAUTH_KEY = CONFIG.STORAGE_PREFIX + 'oauth';
+const OAUTH_TTL = 15 * 60;
 const listeners = new Set();
 let session = null;
 
@@ -26,6 +28,19 @@ function takeEmailFlow() {
     return at > 0 && now() - at < EMAIL_FLOW_TTL;
   } catch {
     return false;
+  }
+}
+
+// PKCE: chuỗi bí mật ngẫu nhiên (verifier) giữ trên máy; chỉ gửi bản băm (challenge) đi.
+// Mã ?code=… quay về chỉ đổi được ra phiên khi có đúng verifier, nên link giả mạo hay mã bị lộ đều vô dụng.
+const b64url = (bytes) => btoa(String.fromCharCode(...new Uint8Array(bytes))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+function takeOAuth() {
+  try {
+    const p = JSON.parse(localStorage.getItem(OAUTH_KEY) || 'null');
+    localStorage.removeItem(OAUTH_KEY);
+    return p && p.verifier && now() - p.at < OAUTH_TTL ? p : null;
+  } catch {
+    return null;
   }
 }
 
@@ -98,6 +113,15 @@ export const auth = {
     markEmailFlow();
     return 'confirm-email';
   },
+  /** Đăng nhập / đăng ký bằng tài khoản ngoài (Google). Rời trang, quay lại qua consumeRedirect(). */
+  async startOAuth(provider, consent) {
+    // Lần đầu bằng Google là tạo tài khoản, nên cũng cần đồng ý chính sách trước (Luật BVDLCN)
+    if (!consent?.version) throw Object.assign(new Error('consent_required'), { code: 'consent_required' });
+    const verifier = b64url(crypto.getRandomValues(new Uint8Array(32)));
+    const challenge = b64url(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifier)));
+    localStorage.setItem(OAUTH_KEY, JSON.stringify({ verifier, consent: consent.version, at: now() }));
+    location.assign(cloud.authorizeUrl(provider, location.origin + location.pathname, challenge));
+  },
   async recover(email) {
     await cloud.recover(email);
     markEmailFlow();
@@ -121,6 +145,8 @@ export const auth = {
    * Trả về type nếu có, và dọn URL về #/tai-khoan.
    */
   async consumeRedirect() {
+    const oauth = await auth.consumeOAuth();
+    if (oauth) return oauth;
     const h = location.hash.slice(1);
     if (!h.includes('access_token=') && !h.includes('error_description=')) return null;
     const p = new URLSearchParams(h);
@@ -134,5 +160,28 @@ export const auth = {
     } catch {}
     save(toSession({ ...base, user }));
     return p.get('type') || 'signup';
+  },
+
+  /** Quay về từ Google: ?code=… (thành công) hoặc ?error=… Trả 'oauth' | 'oauth-error' | null. */
+  async consumeOAuth() {
+    const q = new URLSearchParams(location.search);
+    const code = q.get('code');
+    if (!code && !q.get('error')) return null;
+    history.replaceState(null, '', `${location.pathname}#/tai-khoan`);
+    const pending = takeOAuth();
+    if (!code || !pending) return 'oauth-error';
+    try {
+      const r = await cloud.exchangeCode(code, pending.verifier);
+      const s = toSession(r);
+      if (!s) return 'oauth-error';
+      save(s);
+      // Tài khoản mới tạo qua Google chưa có dấu đồng ý: ghi lại phiên bản chính sách người dùng vừa tích
+      if (!r.user?.user_metadata?.consent_version) {
+        await cloud.updateUserData(s.accessToken, { consent_version: pending.consent, consent_at: new Date().toISOString() }).catch(() => {});
+      }
+      return 'oauth';
+    } catch {
+      return 'oauth-error';
+    }
   },
 };

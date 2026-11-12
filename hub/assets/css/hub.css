@@ -83,6 +83,28 @@ p { margin: 0 0 0.8em; }
 .icon-btn svg { width: 18px; height: 18px; }
 .ghost-btn:hover, .icon-btn:hover { border-color: var(--accent); }
 
+/* Nút đăng nhập / không gian của bạn: trên điện thoại chỉ còn biểu tượng */
+.acct-btn { position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 38px; min-width: 38px; max-width: 160px; padding: 0 12px; border: 1px solid var(--line); background: var(--surface); border-radius: 999px; text-decoration: none; font-size: 0.88rem; }
+.acct-btn:hover { border-color: var(--accent); }
+.acct-btn span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@media (max-width: 520px) { .acct-btn { padding: 0; width: 38px; } .acct-btn span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); } }
+
+/* ---------- Không gian của bạn ---------- */
+.me { background: var(--bg-2); border-bottom: 1px solid var(--line); scroll-margin-top: 60px; }
+.me + .hero { padding-top: 32px; }
+.me h2 { overflow-wrap: anywhere; }
+.me-grid { display: grid; gap: 12px; grid-template-columns: 1fr; }
+@media (min-width: 640px) { .me-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1000px) { .me-grid { grid-template-columns: repeat(4, 1fr); } }
+.me-tile { display: flex; align-items: center; gap: 14px; padding: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); text-decoration: none; min-width: 0; transition: border-color 0.15s, transform 0.15s; }
+.me-tile:hover { border-color: var(--accent); transform: translateY(-2px); }
+.me-tile.is-on { border-color: color-mix(in srgb, var(--accent) 40%, var(--line)); }
+.me-text { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+.me-text span { color: var(--muted); font-size: 0.9rem; }
+.me-go { color: var(--muted); }
+.me-more { margin-top: 16px; font-size: 0.9rem; }
+@media (prefers-reduced-motion: reduce) { .me-tile { transition: none; } .me-tile:hover { transform: none; } }
+
 /* ---------- Nút ---------- */
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 46px; padding: 10px 22px; border-radius: 999px; text-decoration: none; font-weight: 500; border: 1px solid transparent; cursor: pointer; }
 .btn-primary { background: var(--accent); color: var(--accent-ink); box-shadow: var(--shadow); }

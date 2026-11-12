@@ -59,6 +59,12 @@ export const cloud = {
   signOut: (token) => request('/auth/v1/logout', { method: 'POST', token }),
   recover: (email) => request('/auth/v1/recover', { method: 'POST', body: { email }, query: redirect() }),
   getUser: (token) => request('/auth/v1/user', { token }),
+  /** Địa chỉ mở trang đăng nhập của nhà cung cấp (Google…). Supabase quay về redirectTo kèm ?code=… */
+  authorizeUrl: (provider, redirectTo, challenge) =>
+    `${CONFIG.SUPABASE_URL}/auth/v1/authorize?provider=${encodeURIComponent(provider)}&redirect_to=${encodeURIComponent(redirectTo)}&code_challenge=${challenge}&code_challenge_method=s256`,
+  /** Đổi mã ?code=… lấy phiên. Cần đúng code_verifier mà chính trình duyệt này đã tạo (PKCE). */
+  exchangeCode: (code, verifier) => request('/auth/v1/token', { method: 'POST', body: { auth_code: code, code_verifier: verifier }, query: '?grant_type=pkce' }),
+  updateUserData: (token, data) => request('/auth/v1/user', { method: 'PUT', token, body: { data } }),
   updatePassword: (token, password) => request('/auth/v1/user', { method: 'PUT', token, body: { password } }),
   deleteAccount: (token) => request('/rest/v1/rpc/delete_my_account', { method: 'POST', token, body: {} }),
 

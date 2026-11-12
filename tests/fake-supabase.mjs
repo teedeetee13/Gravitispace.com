@@ -1,10 +1,10 @@
 // Supabase giả lập trong bộ nhớ: mô phỏng các endpoint Auth (/auth/v1) và PostgREST (/rest/v1) mà web dùng,
 // kèm quy tắc RLS chính (chỉ đọc/ghi dữ liệu của chính mình, bài mới phải ở trạng thái pending).
 // Dùng cho kiểm thử tự động (tests/cloud.test.mjs) và kiểm thử giao diện trên trình duyệt.
-import { randomUUID } from 'node:crypto';
+import { randomUUID, createHash } from 'node:crypto';
 
 export function createFakeSupabase({ confirmEmail = false, tokenTtl = 3600 } = {}) {
-  const db = { users: new Map(), tokens: new Map(), refresh: new Map(), userState: new Map(), posts: [] };
+  const db = { users: new Map(), tokens: new Map(), refresh: new Map(), userState: new Map(), posts: [], codes: new Map() };
   const log = [];
 
   const json = (status, body) => ({ status, body });
@@ -41,6 +41,15 @@ export function createFakeSupabase({ confirmEmail = false, tokenTtl = 3600 } = {
         if (!u.confirmed) return json(400, { error_code: 'email_not_confirmed', msg: 'Email not confirmed' });
         return json(200, issue(u));
       }
+      if (q.get('grant_type') === 'pkce') {
+        // Mã chỉ đổi được một lần, và chỉ khi băm SHA-256 của code_verifier khớp code_challenge lúc mở Google
+        const c = db.codes.get(body.auth_code);
+        db.codes.delete(body.auth_code);
+        const hash = createHash('sha256').update(String(body.code_verifier || '')).digest('base64url');
+        if (!c || hash !== c.challenge) return json(400, { error_code: 'bad_code_verifier', msg: 'code challenge does not match previously saved code verifier' });
+        const u = db.users.get(c.email);
+        return json(200, { ...issue(u), user: { id: u.id, email: u.email, user_metadata: { ...u.meta } } });
+      }
       if (q.get('grant_type') === 'refresh_token') {
         const email = db.refresh.get(body.refresh_token);
         if (!email) return json(400, { error_code: 'refresh_token_not_found', msg: 'Invalid Refresh Token' });
@@ -53,7 +62,8 @@ export function createFakeSupabase({ confirmEmail = false, tokenTtl = 3600 } = {
     if (path === '/auth/v1/user') {
       const u = userOf(headers);
       if (!u) return json(401, { error_code: 'bad_jwt', msg: 'invalid JWT' });
-      if (method === 'PUT') u.password = body.password;
+      if (method === 'PUT' && body.password) u.password = body.password;
+      if (method === 'PUT' && body.data) u.meta = { ...u.meta, ...body.data };
       return json(200, { id: u.id, email: u.email });
     }
     if (path === '/rest/v1/rpc/delete_my_account' && method === 'POST') {
@@ -96,5 +106,13 @@ export function createFakeSupabase({ confirmEmail = false, tokenTtl = 3600 } = {
     return { ok: r.status < 400, status: r.status, text: async () => (r.body === null ? '' : JSON.stringify(r.body)) };
   };
 
-  return { db, log, handle, fetch, confirm: (email) => (db.users.get(email).confirmed = true), approveAll: () => db.posts.forEach((p) => (p.status = 'approved')) };
+  /** Mô phỏng Google + Supabase /authorize: người dùng chọn tài khoản Google, nhận mã ?code=… (tạo tài khoản nếu chưa có). */
+  function oauthCode(email, challenge) {
+    if (!db.users.has(email)) db.users.set(email, { id: randomUUID(), email, password: null, confirmed: true, meta: {} });
+    const code = 'code_' + randomUUID();
+    db.codes.set(code, { email, challenge });
+    return code;
+  }
+
+  return { db, log, handle, fetch, oauthCode, confirm: (email) => (db.users.get(email).confirmed = true), approveAll: () => db.posts.forEach((p) => (p.status = 'approved')) };
 }

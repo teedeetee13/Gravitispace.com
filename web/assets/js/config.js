@@ -16,6 +16,9 @@ export const CONFIG = {
   // Khoá publishable (sb_publishable_…, thay cho khoá anon kiểu cũ): công khai, an toàn nhờ RLS.
   // KHÔNG BAO GIỜ dán khoá sb_secret_… hay service_role vào đây.
   SUPABASE_ANON_KEY: 'sb_publishable_rxE3rchZX-Q209JQMhJOgA_6m_gu2cA',
+  // Đăng nhập bằng tài khoản ngoài (OAuth, luồng PKCE). Phải bật nhà cung cấp tương ứng trong
+  // Supabase → Authentication → Sign In / Providers, xem docs/CAU-HINH.md mục 4b. Để [] là ẩn nút.
+  OAUTH_PROVIDERS: ['google'],
 };
 
 export const cloudEnabled = () => !!(CONFIG.SUPABASE_URL && CONFIG.SUPABASE_ANON_KEY);
