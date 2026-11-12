@@ -28,7 +28,7 @@ function renderMe() {
   const label = $('[data-acct-label]');
   $('#me').hidden = !me;
   if (!me) {
-    btn.setAttribute('href', 'stars/#/tai-khoan');
+    btn.setAttribute('href', 'stars/tai-khoan/');
     btn.removeAttribute('aria-label');
     label.textContent = t('nav.signIn');
     return;
@@ -52,10 +52,10 @@ function renderMe() {
     }
   }
   const tiles = [
-    { href: 'stars/#/tarot', ic: 'card', title: t('me.today'), body: t(drawn ? 'me.todayYes' : 'me.todayNo'), on: drawn },
-    { href: 'stars/#/ban-menh', ic: 'star', title: t('me.profile'), body: born ? t('me.profileYes', { date: born }) : t('me.profileNo'), on: !!born },
-    { href: 'stars/#/tu', ic: 'bookmark', title: t('me.shelf'), body: t('me.shelfN', { n: saved }), on: saved > 0 },
-    { href: 'stars/#/tai-khoan', ic: 'sync', title: t('me.account'), body: t(s.dirty ? 'me.pending' : 'me.synced'), on: !s.dirty },
+    { href: 'stars/tarot/', ic: 'card', title: t('me.today'), body: t(drawn ? 'me.todayYes' : 'me.todayNo'), on: drawn },
+    { href: 'stars/ban-menh/', ic: 'star', title: t('me.profile'), body: born ? t('me.profileYes', { date: born }) : t('me.profileNo'), on: !!born },
+    { href: 'stars/tu/', ic: 'bookmark', title: t('me.shelf'), body: t('me.shelfN', { n: saved }), on: saved > 0 },
+    { href: 'stars/tai-khoan/', ic: 'sync', title: t('me.account'), body: t(s.dirty ? 'me.pending' : 'me.synced'), on: !s.dirty },
   ];
   $('#me-tiles').innerHTML = tiles
     .map(

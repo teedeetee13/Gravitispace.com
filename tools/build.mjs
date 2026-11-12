@@ -68,7 +68,8 @@ for (const f of walk(OUT).filter((x) => x.endsWith('.js'))) {
   }
 }
 const html = readFileSync(join(OUT, 'index.html'), 'utf8');
-for (const m of html.matchAll(/(?:src|href)="((?!https?:|#|data:)[^"]+)"/g)) if (!existsSync(join(OUT, m[1]))) problems.push(`index.html → ${m[1]}`);
+// Link có data-link là trang trong ứng dụng (dựng sẵn ở bước 5b), không phải tệp
+for (const m of html.matchAll(/(?:src|href)="((?!https?:|#|data:)[^"]+)"(?! data-link)/g)) if (!existsSync(join(OUT, m[1]))) problems.push(`index.html → ${m[1]}`);
 for (const id of readdirSync(join(OUT, 'assets', 'tarot')).length ? [] : ['tarot']) problems.push(`thiếu ảnh ${id}`);
 if (problems.length) {
   console.error('Đường dẫn hỏng:\n  ' + problems.join('\n  '));
@@ -101,6 +102,16 @@ for (const [k, v] of Object.entries(groups)) {
   console.log(`  ${k.padEnd(28)} ${kb(v).padStart(8)}${flag}`);
 }
 if (over) process.exit(1);
+
+// 5b. Dựng sẵn từng trang (địa chỉ thật, không dấu #): stars/tarot/major-17/index.html… Cùng nội dung với
+//     index.html gốc, chỉ sửa đường dẫn tương đối cho đúng độ sâu. Làm sau bước 4–5 để không tính trùng dung lượng.
+const { appRoutes, rewriteForDepth } = await import('./routes.mjs');
+const routes = await appRoutes(SRC);
+for (const r of routes) {
+  mkdirSync(join(OUT, r), { recursive: true });
+  writeFileSync(join(OUT, r, 'index.html'), rewriteForDepth(html, r.split('/').length));
+}
+console.log(`  Trang dựng sẵn               ${String(routes.length).padStart(8)}`);
 
 // 6. Trang chính + quyền riêng tư (+ quản trị nếu --admin) vào gốc dist/. Tệp _headers chỉ có hiệu lực ở gốc web.
 const { buildHub } = await import('./build-hub.mjs');

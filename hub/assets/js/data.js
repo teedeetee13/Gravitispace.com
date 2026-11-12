@@ -68,7 +68,7 @@ export const CHECKLIST = [
   { id: 'cloudflare', title: { vi: 'Đưa web lên Cloudflare (Workers)', en: 'Deploy to Cloudflare (Workers)' },
     how: { vi: 'docs/CAU-HINH.md mục 2.', en: 'docs/CAU-HINH.md section 2.' } },
   { id: 'access', title: { vi: 'Khoá trang quản trị bằng Cloudflare Access', en: 'Lock the admin page with Cloudflare Access' },
-    how: { vi: 'docs/CAU-HINH.md mục 3. Làm được ngay trên địa chỉ *.workers.dev; nhớ tắt Preview URLs. Chỉ email của bạn mới mở được /admin/.', en: 'docs/CAU-HINH.md section 3. Works on the *.workers.dev address right away; turn off Preview URLs. Only your email can open /admin/.' } },
+    how: { vi: 'docs/CAU-HINH.md mục 3. Chưa có tên miền: Worker riêng graviti-admin, Access "All traffic" + "Cloudflare account". Có tên miền: khoá đường dẫn gravitispace.com/admin/.', en: 'docs/CAU-HINH.md section 3. Before the domain: a separate graviti-admin Worker, Access "All traffic" + "Cloudflare account". With the domain: lock the path gravitispace.com/admin/.' } },
   { id: 'privacy-legal', title: { vi: 'Luật sư rà Chính sách quyền riêng tư, điền tên bên kiểm soát dữ liệu', en: 'Lawyer review of the privacy policy, controller identity filled in' },
     how: { vi: 'Trang /privacy/. Xem docs/CAU-HINH.md mục 6 (Luật BVDLCN 91/2025/QH15).', en: 'Page /privacy/. See docs/CAU-HINH.md section 6.' } },
   { id: 'trademark', title: { vi: 'Tra nhãn hiệu "Graviti" (Cục SHTT, WIPO)', en: 'Search the "Graviti" trademark (IP Viet Nam, WIPO)' } },

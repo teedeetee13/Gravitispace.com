@@ -1,6 +1,7 @@
-// Điểm khởi động: khởi tạo ngôn ngữ + kho dữ liệu, điều hướng theo #đường-dẫn (tải lười từng trang),
+// Điểm khởi động: khởi tạo ngôn ngữ + kho dữ liệu, điều hướng theo đường dẫn thật /stars/… (tải lười từng trang),
 // xử lý các nút dùng chung, bắt lỗi toàn cục, đăng ký service worker để chạy offline.
 import { $, $$, esc, toast, todayKey } from './util.js';
+import { ROOT, link, navigate, postLink, currentRoute, fromLegacyHash } from './route.js';
 import { t, getLang, setLang, LANGS } from './i18n.js';
 import { langMeta } from './i18n/langs.js';
 import { store } from './store.js';
@@ -25,24 +26,23 @@ const ROUTES = [
   [/^\/ban-menh$/, () => import('./views/profile.js'), 'renderProfile', 'nav.profile'],
   [/^\/gieo$/, () => import('./views/compose.js'), 'renderCompose', 'nav.compose'],
   [/^\/tu$/, () => import('./views/shelf.js'), 'renderShelf', 'nav.shelf'],
-  [/^\/bai\/([\w-]+)$/, () => import('./views/post.js'), 'renderPost', (id) => (store.getPost(id) ? C.post(store.getPost(id)).title || t('post.title') : '')],
+  [/^\/bai\/([\w-]+)$/, () => import('./views/post.js'), 'renderPost', (id) => postTitle(id)],
+  // Bài người dùng gửi: /bai/?id=<mã> (mã ngẫu nhiên nên không dựng sẵn trang riêng được)
+  [/^\/bai$/, () => import('./views/post.js'), 'renderPost', (id) => postTitle(id), (params) => params.get('id')],
   [/^\/ve$/, () => import('./views/about.js'), 'renderAbout', 'nav.about'],
   [/^\/tai-khoan$/, () => import('./views/account.js'), 'renderAccount', 'nav.account'],
 ];
 
-function parseHash() {
-  // Dạng: #/duong-dan?tham=so#neo
-  const raw = location.hash.slice(1) || '/';
-  const [beforeAnchor, anchor] = raw.split('#');
-  const [path, query] = beforeAnchor.split('?');
-  return { path: path || '/', params: new URLSearchParams(query || ''), anchor };
+function postTitle(id) {
+  const p = id && store.getPost(id);
+  return p ? C.post(p).title || t('post.title') : '';
 }
 
 let navToken = 0;
 
 async function render() {
   const token = ++navToken;
-  const { path, params, anchor } = parseHash();
+  const { path, params, anchor } = currentRoute();
   const view = $('#view');
   view.setAttribute('aria-busy', 'true');
 
@@ -52,16 +52,18 @@ async function render() {
   let title = '';
   let ok = false;
   try {
-    for (const [re, load, fnName, tt] of ROUTES) {
+    for (const [re, load, fnName, tt, paramOf] of ROUTES) {
       const m = path.match(re);
       if (!m) continue;
+      const arg = m[1] ?? paramOf?.(params);
+      if (paramOf && !arg) continue;
       const mod = await load();
       if (token !== navToken) return; // người dùng đã chuyển trang khác trong lúc tải
       document.body.classList.remove('is-feed');
       view.replaceChildren(root);
-      const res = m[1] ? mod[fnName](root, m[1], params) : mod[fnName](root, params);
+      const res = arg ? mod[fnName](root, arg, params) : mod[fnName](root, params);
       ok = res !== false;
-      title = typeof tt === 'function' ? tt(m[1]) : t(tt);
+      title = typeof tt === 'function' ? tt(arg) : t(tt);
       break;
     }
   } catch (err) {
@@ -69,14 +71,14 @@ async function render() {
     if (token !== navToken) return;
     document.body.classList.remove('is-feed');
     view.replaceChildren(root);
-    root.innerHTML = `<div class="page narrow">${emptyState(t('error.title'), t('error.body'), `<a class="btn" href="#/">${t('error.home')}</a>`)}</div>`;
+    root.innerHTML = `<div class="page narrow">${emptyState(t('error.title'), t('error.body'), `<a class="btn" href="${link(``)}">${t('error.home')}</a>`)}</div>`;
     ok = true;
     title = t('error.title');
   }
   if (!ok) {
     document.body.classList.remove('is-feed');
     view.replaceChildren(root);
-    root.innerHTML = `<div class="page narrow">${emptyState(t('notFound.title'), t('notFound.body'), `<a class="btn" href="#/">${t('notFound.home')}</a>`)}</div>`;
+    root.innerHTML = `<div class="page narrow">${emptyState(t('notFound.title'), t('notFound.body'), `<a class="btn" href="${link(``)}">${t('notFound.home')}</a>`)}</div>`;
     title = t('notFound.short');
   }
   document.title = title ? `${title} · Graviti Stars` : 'Graviti Stars';
@@ -90,7 +92,7 @@ async function render() {
     on ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current');
   });
 
-  if (anchor) document.getElementById(anchor)?.scrollIntoView();
+  if (anchor && !anchor.startsWith('/')) document.getElementById(anchor)?.scrollIntoView();
   else window.scrollTo(0, 0);
   if (!document.body.classList.contains('is-feed')) view.focus({ preventScroll: true });
   renderTodayWidget();
@@ -107,6 +109,8 @@ function renderTodayWidget() {
 
 /** Dịch phần khung tĩnh trong index.html (thuộc tính data-i18n, data-i18n-aria). */
 function translateShell() {
+  // Link cố định trong khung trang: đổi sang địa chỉ đầy đủ (đúng ở mọi độ sâu, vd. /stars/tarot/major-17/)
+  $$('a[data-link]').forEach((el) => el.setAttribute('href', link(el.dataset.link)));
   $$('[data-i18n]').forEach((el) => (el.textContent = t(el.dataset.i18n)));
   $$('[data-i18n-aria]').forEach((el) => el.setAttribute('aria-label', t(el.dataset.i18nAria)));
   const cur = langMeta(getLang());
@@ -190,7 +194,7 @@ document.addEventListener('click', async (e) => {
   }
 
   if (action === 'share') {
-    const url = `${location.origin}${location.pathname}#/bai/${id}`;
+    const url = location.origin + postLink(id);
     const text = post.title || post.body.slice(0, 80);
     try {
       if (navigator.share) await navigator.share({ title: 'Graviti Stars', text, url });
@@ -224,7 +228,21 @@ window.addEventListener('unhandledrejection', (e) => {
   toast(t('error.toast'));
 });
 
-window.addEventListener('hashchange', render);
+// Chuyển trang không tải lại: bấm link nội bộ → đổi địa chỉ (history API) → vẽ trang mới. Nút Back/Forward cũng vậy.
+window.addEventListener('popstate', render);
+window.addEventListener('ansao:navigate', render);
+document.addEventListener('click', (e) => {
+  if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+  const a = e.target.closest('a[href]');
+  if (!a || (a.target && a.target !== '_self') || a.hasAttribute('download')) return;
+  const url = new URL(a.href, location.href);
+  if (url.origin !== location.origin || !url.pathname.startsWith(ROOT)) return; // trang chính, /privacy/, web ngoài: mở bình thường
+  if (/\.[a-z0-9]+$/i.test(url.pathname)) return; // tệp (ảnh, json…)
+  if (url.pathname === location.pathname && url.search === location.search && url.hash) return; // neo trong cùng trang
+  e.preventDefault();
+  if (url.href !== location.href) history.pushState(null, '', url.pathname + url.search + url.hash);
+  render();
+});
 window.addEventListener('ansao:draw', renderTodayWidget);
 
 /** Chấm trạng thái tài khoản trên nút Tài khoản (xanh: đã đồng bộ, vàng: đang chờ/offline). */
@@ -242,7 +260,7 @@ function renderAccountBadge() {
 window.addEventListener('ansao:auth', () => {
   renderAccountBadge();
   renderTodayWidget();
-  if (location.hash.startsWith('#/tai-khoan') && location.hash !== '#/tai-khoan') location.hash = '#/tai-khoan';
+  if (currentRoute().path === '/tai-khoan' && location.search) navigate('tai-khoan', { replace: true });
   else render();
 });
 // Có mạng trở lại → đồng bộ những gì đã sửa lúc offline
@@ -252,12 +270,22 @@ window.addEventListener('online', () => {
 });
 window.addEventListener('offline', () => auth.user() && store.syncNow().catch(() => {}));
 
+/** Link kiểu cũ và link từ trang 404 → đổi về địa chỉ mới trước khi vẽ (không tải lại trang). */
+function normalizeUrl() {
+  const legacy = fromLegacyHash(location.hash);
+  if (legacy) return history.replaceState(null, '', legacy);
+  // 404.html chuyển đường dẫn lạ về /stars/?p=<đường-dẫn>: thử mở nó như một trang trong ứng dụng
+  const p = location.pathname === ROOT ? new URLSearchParams(location.search).get('p') : null;
+  if (p) history.replaceState(null, '', link(p.replace(/^\/+/, '')));
+}
+
 async function boot() {
+  normalizeUrl();
   const redirectType = await auth.consumeRedirect().catch(() => null);
   await Promise.all([setLang().catch(() => setLang('vi')), store.init()]); // gói ngôn ngữ lỗi mạng → về tiếng Việt
   const failed = redirectType === 'error' || redirectType === 'oauth-error';
   if (redirectType && !failed) await store.afterSignIn();
-  if (redirectType === 'recovery') history.replaceState(null, '', `${location.pathname}#/tai-khoan?dat-lai=1`);
+  if (redirectType === 'recovery') history.replaceState(null, '', link('tai-khoan?dat-lai=1'));
   store.onSync(renderAccountBadge);
   translateShell();
   renderAccountBadge();
@@ -273,7 +301,7 @@ async function boot() {
     if (isLocal) {
       navigator.serviceWorker.getRegistrations().then((rs) => rs.forEach((r) => r.unregister())).catch(() => {});
       if ('caches' in window) caches.keys().then((ks) => ks.forEach((k) => caches.delete(k))).catch(() => {});
-    } else navigator.serviceWorker.register('./sw.js').catch(() => {});
+    } else navigator.serviceWorker.register(ROOT + 'sw.js', { scope: ROOT }).catch(() => {});
   }
 }
 boot();

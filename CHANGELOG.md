@@ -9,6 +9,9 @@ Theo [Semantic Versioning](https://semver.org/lang/vi/). Phát hành bằng th�
 - **Không gian của bạn** trên trang chính Graviti: khi đã đăng nhập, đầu trang hiện lá bài hôm nay, bản mệnh, tủ đã cất, trạng thái đồng bộ. Một tài khoản dùng chung cho mọi dịch vụ. Nút *Đăng nhập* trên thanh trên cùng (9 ngôn ngữ).
 - Chính sách quyền riêng tư: thêm dòng dữ liệu khi đăng nhập bằng Google.
 
+### Đổi
+- **Bỏ dấu `#` khỏi địa chỉ**: `/stars/#/tarot` thành `/stars/tarot/`. Chuyển trang bằng History API, không tải lại. Khi đóng gói, mỗi trang (138 trang: trang cố định, 78 lá bài, 12 cung, 12 con giáp, bài có sẵn) có một tệp riêng, nên mở thẳng link, tải lại trang, chia sẻ link đều chạy, và Google thấy từng trang. Link cũ có `#` tự chuyển sang link mới. Mất mạng vẫn mở được trang chưa xem (service worker). Đăng nhập Google và email xác nhận quay về `/stars/`.
+
 ## 2.3.0 — 12/11/2026
 
 ### Đổi tên và cấu trúc

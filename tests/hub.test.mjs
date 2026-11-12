@@ -130,7 +130,7 @@ test('Quản trị: không lập chỉ mục, chỉ gọi GitHub API, không gi�
 test('Bản dựng công khai không có trang quản trị; bản --admin có, kèm số liệu', async () => {
   const pub = mkdtempSync(join(tmpdir(), 'graviti-pub-'));
   const adm = mkdtempSync(join(tmpdir(), 'graviti-adm-'));
-  for (const d of [pub, adm]) mkdirSync(join(d, 'stars')); // tools/build.mjs dựng Graviti Stars vào đây trước
+  for (const d of [pub, adm]) mkdirSync(join(d, 'stars', 'tai-khoan'), { recursive: true }); // tools/build.mjs dựng Graviti Stars (cả trang dựng sẵn) vào đây trước
   const log = console.log;
   console.log = () => {};
   try {

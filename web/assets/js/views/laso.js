@@ -1,5 +1,6 @@
 // Lá số Tử Vi Đẩu Số: biểu mẫu → lá số 12 cung → luận giải → lộ trình đại hạn
 import { $, $$, esc, icon, toast } from '../util.js';
+import { link } from '../route.js';
 import { t, tr, getLang } from '../i18n.js';
 import { store } from '../store.js';
 import { CAN, CHI_NAMES } from '../lib/lunar.js';
@@ -294,7 +295,7 @@ export function renderLaso(view) {
   const p = store.getProfile();
   const ready = p && p.timeKnown && p.gender;
   view.innerHTML = `<div class="page">
-    ${backLink('#/tu-vi', t('nav.tuvi'))}
+    ${backLink(link('tu-vi'), t('nav.tuvi'))}
     <header class="page-head">
       <p class="eyebrow">${t('laso.eyebrow')}</p>
       <h1>${t('laso.title')}</h1>

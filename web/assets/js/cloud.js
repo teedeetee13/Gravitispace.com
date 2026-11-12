@@ -1,6 +1,7 @@
 // Gọi Supabase qua REST bằng fetch (không dùng SDK): Auth (GoTrue) tại /auth/v1, dữ liệu (PostgREST) tại /rest/v1.
 // Mọi lỗi được chuẩn hoá thành CloudError với `code` để giao diện hiện lời nhắn thân thiện.
 import { CONFIG } from './config.js';
+import { ROOT } from './route.js';
 
 export class CloudError extends Error {
   constructor(code, message, status) {
@@ -47,7 +48,8 @@ async function request(path, { method = 'GET', body, token, headers = {}, query 
   return data;
 }
 
-const redirect = () => (typeof location !== 'undefined' ? `?redirect_to=${encodeURIComponent(location.origin + location.pathname)}` : '');
+// Email xác nhận / đặt lại mật khẩu quay về gốc Graviti Stars (main.js đưa tiếp tới trang Tài khoản)
+const redirect = () => (typeof location !== 'undefined' ? `?redirect_to=${encodeURIComponent(location.origin + ROOT)}` : '');
 
 export const cloud = {
   // ---------- Tài khoản ----------

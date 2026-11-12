@@ -1,5 +1,6 @@
 // Tìm kiếm hợp nhất: bài viết, lá bài, cung hoàng đạo, con giáp — một ô tìm cho tất cả (theo ngôn ngữ đang chọn)
 import { $, $$, debounce, esc, icon, norm } from '../util.js';
+import { link } from '../route.js';
 import { t } from '../i18n.js';
 import { store } from '../store.js';
 import { TOPICS, topicById, CRISIS_PHRASES } from '../data/taxonomy.js';
@@ -42,15 +43,15 @@ function renderResults(q, topic) {
   if (r.cards.length)
     parts.push(`<h2 class="section-title">${t('search.cards')}</h2><div class="lib-grid">${r.cards
       .slice(0, 12)
-      .map((c) => `<a class="lib-item" href="#/tarot/${c.id}">${tarotFace(c, { size: 'sm' })}<span>${esc(C.card(c).name)}</span></a>`)
+      .map((c) => `<a class="lib-item" href="${link(`tarot/${c.id}`)}">${tarotFace(c, { size: 'sm' })}<span>${esc(C.card(c).name)}</span></a>`)
       .join('')}</div>`);
   if (r.signs.length)
     parts.push(`<h2 class="section-title">${t('search.signs')}</h2><div class="sign-grid">${r.signs
-      .map((s) => `<a class="sign-tile" href="#/chiem-tinh/${s.id}">${signBadge(s)}<span class="sign-name">${esc(C.sign(s).name)}</span><span class="muted small">${dateRange(s)}</span></a>`)
+      .map((s) => `<a class="sign-tile" href="${link(`chiem-tinh/${s.id}`)}">${signBadge(s)}<span class="sign-name">${esc(C.sign(s).name)}</span><span class="muted small">${dateRange(s)}</span></a>`)
       .join('')}</div>`);
   if (r.chis.length)
     parts.push(`<h2 class="section-title">${t('search.chis')}</h2><div class="chi-grid">${r.chis
-      .map((c) => `<a class="chi-tile" href="#/tu-vi/${c.id}"><span class="chi-name">${esc(C.ganzhi(c.name))}</span><span>${esc(C.chi(c).animal)}</span></a>`)
+      .map((c) => `<a class="chi-tile" href="${link(`tu-vi/${c.id}`)}"><span class="chi-name">${esc(C.ganzhi(c.name))}</span><span>${esc(C.chi(c).animal)}</span></a>`)
       .join('')}</div>`);
 
   parts.push(`<h2 class="section-title">${q.trim() ? t('search.posts') : t('search.latest')}</h2>`);
@@ -60,7 +61,7 @@ function renderResults(q, topic) {
           .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))
           .map(postCard)
           .join('')}</div>`
-      : `<p class="muted">${t('search.noPosts')} <a href="#/gieo">${t('search.writeFirst')}</a></p>`
+      : `<p class="muted">${t('search.noPosts')} <a href="${link(`gieo`)}">${t('search.writeFirst')}</a></p>`
   );
   return parts.join('');
 }
@@ -91,7 +92,7 @@ export function renderSearch(view, params) {
     const sp = new URLSearchParams();
     if (q) sp.set('q', q);
     if (topic) sp.set('chu-de', topic);
-    history.replaceState(null, '', `#/tim${sp.toString() ? `?${sp}` : ''}`);
+    history.replaceState(null, '', link(`tim${sp.toString() ? `?${sp}` : ''}`));
   };
   input.addEventListener('input', debounce(update));
   $('[data-search-form]', view).addEventListener('submit', (e) => {

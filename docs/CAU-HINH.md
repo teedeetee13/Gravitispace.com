@@ -74,27 +74,32 @@ Web Graviti là tệp tĩnh: bấm liên tục cũng chỉ tốn sức máy ngư
 
 ## 3. Khoá trang quản trị `/admin/` bằng Cloudflare Access
 
-Trang tĩnh **không tự khoá được**: ai có đường dẫn đều tải được tệp HTML. Vì vậy cổng phải đặt ở Cloudflare, chặn trước khi tệp được gửi đi. Bản đăng GitHub Pages (`npm run build`) không chứa `/admin/`.
+Trang tĩnh **không tự khoá được**: ai có đường dẫn đều tải được tệp HTML. Vì vậy cổng phải đặt ở Cloudflare, chặn trước khi tệp được gửi đi. Bản công khai (`npm run build`, cả GitHub Pages lẫn Worker `gravitispace-com`) không chứa `/admin/`.
 
-**Không cần tên miền riêng.** Access khoá được cả địa chỉ miễn phí `gravitispace-com.<tên-tài-khoản>.workers.dev`. Khi mua tên miền thì thêm một dòng cho tên miền đó.
+**Vì sao chưa khoá riêng được `/admin/`:** quy tắc Access theo đường dẫn chỉ gắn được vào tên miền nằm trong tài khoản của bạn (bạn giữ DNS của nó). `workers.dev` là tên miền chung của Cloudflare, nên với nó Cloudflare chỉ cho bật/tắt Access cho **cả một Worker** (tab *Access* của Worker: *Previews only* hoặc *All traffic*).
 
-1. Cloudflare → *Zero Trust* (gói Free, tối đa 50 người) → chọn tên nhóm, ví dụ `graviti`.
-2. *Settings → Authentication*: bật **One-time PIN**. Mỗi lần đăng nhập, Cloudflare gửi mã 6 số về email.
-3. *Access → Applications → Add an application → Self-hosted*, thêm địa chỉ dưới, rồi tắt địa chỉ xem trước:
+### Trước khi có tên miền: một Worker riêng cho quản trị (cùng repo)
 
-   | Subdomain | Domain | Path | Khoá cái gì |
-   |---|---|---|---|
-   | (để trống) | `gravitispace-com.<tên-tài-khoản>.workers.dev` | `admin/*` | Trang quản trị trên bản chính |
-   | — | — | — | **Tắt địa chỉ xem trước:** Worker → *Settings → Domains & Routes → Preview URLs → Disable*. Mỗi nhánh, mỗi lần dựng Cloudflare tạo thêm một địa chỉ xem trước; để bật là trang quản trị lộ qua đó |
+| Worker | Lệnh dựng | Ai vào được |
+|---|---|---|
+| `gravitispace-com` | `npm run build` | Mọi người. Tab Access: **Previews only** + **Cloudflare account** |
+| `graviti-admin` | `npm run build:admin` | Chỉ bạn. Tab Access: **All traffic** + **Cloudflare account** |
 
-   Session duration: 24 giờ.
-4. *Policies → Add a policy*: Action **Allow**, Include **Emails** = email của bạn (và của người quản trị khác nếu có).
-5. **Kiểm tra trước** (xem dưới), thấy đã khoá rồi mới đổi Build command ở bước 2 thành `npm run build:admin`.
-6. Khi có tên miền: vào lại ứng dụng này, thêm dòng `gravitispace.com` · path `admin/*` (và `www.gravitispace.com` nếu dùng).
+1. *Workers & Pages → Create → Import a repository* → cùng repo `Gravitispace.com`.
+   Project name `graviti-admin`, Build command **`npm run build`** (chưa có quản trị), Deploy command `npx wrangler deploy --name graviti-admin`.
+2. Tab **Access** của `graviti-admin` → **All traffic** + policy **Cloudflare account** → *Apply Access*.
+   **Không chọn "Email domain"**: với Gmail, mọi người có Gmail đều vào được.
+3. Tab *Domains* của `graviti-admin`: tắt dòng **Preview**.
+4. Cửa sổ ẩn danh: `graviti-admin.<tên-tài-khoản>.workers.dev` phải bắt đăng nhập Cloudflare; `gravitispace-com.<tên-tài-khoản>.workers.dev` vẫn mở bình thường.
+5. Đúng cả hai mới đổi Build command của `graviti-admin` thành **`npm run build:admin`** và deploy lại. Trang quản trị ở `graviti-admin…/admin/`.
 
-**Kiểm tra:** mở `https://gravitispace-com.<tên-tài-khoản>.workers.dev/admin/` trong cửa sổ ẩn danh, phải hiện trang đăng nhập của Cloudflare (dù trang quản trị chưa được đăng, Access vẫn chặn trước). Sau khi đổi sang `build:admin`, mở lại lần nữa.
+**Không bao giờ** chọn *All traffic* cho `gravitispace-com`: người dùng thường sẽ không vào được web.
 
-*Không dùng* nút **Access** trên trang của Worker: nút đó khoá **toàn bộ địa chỉ** của Worker chứ không riêng `/admin/`, người dùng thường sẽ không vào được web.
+### Khi có tên miền `gravitispace.com`
+
+1. Worker `gravitispace-com` → *Domains → Add Domain* → `gravitispace.com`. Đổi Build command thành `npm run build:admin`.
+   Trước khi đổi: Cloudflare One → *Access controls → Applications → Add an application → Self-hosted* → hostname `gravitispace.com`, path `admin` → policy Allow, Include Emails = email của bạn. Thử ẩn danh thấy `/admin/` bị chặn rồi mới đổi.
+2. Xoá Worker `graviti-admin`.
 
 Trang quản trị chỉ chứa số liệu công khai (phiên bản, kiểm thử, lộ trình), không có khoá bí mật nào. Khoá lại là để giữ kín kế hoạch, không phải để giữ mật khẩu.
 
@@ -121,7 +126,7 @@ Trang quản trị chỉ chứa số liệu công khai (phiên bản, kiểm th�
    **Không** chép khoá `service_role` hay `sb_secret_...`: khoá đó vượt qua mọi lớp bảo vệ.
 6. Gói Free tự **tạm dừng** dự án nếu 7 ngày không có ai dùng. Khi có người dùng thật, cân nhắc gói Pro (25 USD/tháng). Gói Pro còn có sao lưu hằng ngày.
 
-**Kiểm tra:** `npm run preview` → mở http://localhost:5191/stars/#/tai-khoan → đăng ký bằng email thật. Phải có ô "Tôi đồng ý…" (không đánh sẵn), thư xác nhận phải về.
+**Kiểm tra:** `npm run preview` → mở http://localhost:5191/stars/tai-khoan/ → đăng ký bằng email thật. Phải có ô "Tôi đồng ý…" (không đánh sẵn), thư xác nhận phải về.
 
 ### 4b. Đăng nhập bằng Google
 

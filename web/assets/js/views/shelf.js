@@ -1,5 +1,6 @@
 // Tủ của tôi: bài đã cất, bài đã gieo, nhật ký lá bài, quản lý dữ liệu cá nhân (xuất / nhập / xoá)
 import { $, esc, icon, toast } from '../util.js';
+import { link } from '../route.js';
 import { t, fmtDate } from '../i18n.js';
 import { store } from '../store.js';
 import { cardById } from '../data/tarot.js';
@@ -13,7 +14,7 @@ function tabContent(tab) {
     const list = store.myPosts();
     return list.length
       ? `<div class="post-grid">${list.map(postCard).join('')}</div>`
-      : emptyState(t('shelf.noPosts'), t('shelf.noPostsBody'), `<a class="btn" href="#/gieo">${icon('plus')} ${t('shelf.firstPost')}</a>`);
+      : emptyState(t('shelf.noPosts'), t('shelf.noPostsBody'), `<a class="btn" href="${link(`gieo`)}">${icon('plus')} ${t('shelf.firstPost')}</a>`);
   }
   if (tab === 'nhat-ky') {
     const list = store.allDraws();
@@ -24,12 +25,12 @@ function tabContent(tab) {
             if (!raw) return '';
             const c = C.card(raw);
             const [y, m, day] = date.split('-').map(Number);
-            return `<li><a href="#/tarot/${c.id}" class="journal-card" aria-label="${esc(c.name)}">${tarotFace(raw, { size: 'xs', reversed: d.reversed })}</a>
+            return `<li><a href="${link(`tarot/${c.id}`)}" class="journal-card" aria-label="${esc(c.name)}">${tarotFace(raw, { size: 'xs', reversed: d.reversed })}</a>
               <div><p class="eyebrow">${fmtDate(new Date(y, m - 1, day))}</p><h3>${esc(c.name)}${d.reversed ? ` <span class="tag">${t('tarot.reversed')}</span>` : ''}</h3>
               <p class="muted">${esc(c.q)}</p>${d.note ? `<blockquote>${esc(d.note)}</blockquote>` : ''}</div></li>`;
           })
           .join('')}</ul>`
-      : emptyState(t('shelf.noJournal'), t('shelf.noJournalBody'), `<a class="btn" href="#/tarot">${icon('card')} ${t('feed.drawToday')}</a>`);
+      : emptyState(t('shelf.noJournal'), t('shelf.noJournalBody'), `<a class="btn" href="${link(`tarot`)}">${icon('card')} ${t('feed.drawToday')}</a>`);
   }
   if (tab === 'du-lieu') {
     return `<div class="reading-card">
@@ -48,7 +49,7 @@ function tabContent(tab) {
   const list = store.savedPosts();
   return list.length
     ? `<div class="post-grid">${list.map(postCard).join('')}</div>`
-    : emptyState(t('shelf.empty'), t('shelf.emptyBody'), `<a class="btn" href="#/">${icon('waves')} ${t('shelf.goFeed')}</a>`);
+    : emptyState(t('shelf.empty'), t('shelf.emptyBody'), `<a class="btn" href="${link(``)}">${icon('waves')} ${t('shelf.goFeed')}</a>`);
 }
 
 export function renderShelf(view, params) {
@@ -58,7 +59,7 @@ export function renderShelf(view, params) {
       <p class="eyebrow">${t('nav.shelf')}</p>
       <h1>${t('shelf.title')}</h1>
     </header>
-    <nav class="tabs" aria-label="${esc(t('shelf.tabsAria'))}">${TABS.map((id) => `<a href="#/tu?tab=${id}" class="${id === tab ? 'on' : ''}" ${id === tab ? 'aria-current="page"' : ''}>${t(`shelf.tab.${id}`)}</a>`).join('')}</nav>
+    <nav class="tabs" aria-label="${esc(t('shelf.tabsAria'))}">${TABS.map((id) => `<a href="${link(`tu?tab=${id}`)}" class="${id === tab ? 'on' : ''}" ${id === tab ? 'aria-current="page"' : ''}>${t(`shelf.tab.${id}`)}</a>`).join('')}</nav>
     ${tabContent(tab)}
   </div>`;
 

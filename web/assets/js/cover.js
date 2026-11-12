@@ -8,6 +8,7 @@
 //   - Tử vi: chữ Hán của Địa Chi (子 丑 寅 卯…) trong ấn triện, vòng Bát Quái, mây lành (tường vân).
 // Lớp chung: dải màu chuyển, tia sáng, mây, sao lấp lánh — vị trí và mật độ đổi theo hạt giống.
 import { esc } from './util.js';
+import { ROOT } from './route.js';
 import { cardById } from './data/tarot.js';
 import { signById } from './data/zodiac.js';
 import { chiById } from './data/tuvi.js';
@@ -252,7 +253,7 @@ export function cover(p, shape = 'wide', label = {}) {
   if (shape === 'wide' && rand() < 0.3) art += clouds(right ? 30 : W - 30, H * rand.range(0.05, 0.14), cs * 0.45, soft, c1, rand, right);
 
   const img = cardRef
-    ? `<img class="cover-card${rand() < 0.5 ? ' tilt-l' : ''}" src="assets/tarot/${esc(cardRef)}.jpg" alt="" loading="lazy" decoding="async" width="300" height="520" style="--x:${f((mx / W) * 100)}%;--y:${f((my / H) * 100)}%" />`
+    ? `<img class="cover-card${rand() < 0.5 ? ' tilt-l' : ''}" src="${ROOT}assets/tarot/${esc(cardRef)}.jpg" alt="" loading="lazy" decoding="async" width="300" height="520" style="--x:${f((mx / W) * 100)}%;--y:${f((my / H) * 100)}%" />`
     : '';
   const text =
     shape === 'wide' && (label.title || label.eyebrow)

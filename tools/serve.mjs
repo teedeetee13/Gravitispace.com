@@ -34,15 +34,25 @@ const server = createServer(async (req, res) => {
   let file = normalize(join(ROOT, path));
   if (file !== ROOT && !file.startsWith(ROOT + sep)) return send(403, 'Forbidden');
   try {
-    if ((await stat(file)).isDirectory()) file = join(file, 'index.html');
+    if ((await stat(file)).isDirectory()) {
+      // Giống Cloudflare / GitHub Pages: thư mục thiếu "/" cuối → chuyển hướng (đường dẫn tương đối mới đúng)
+      if (!path.endsWith('/')) {
+        res.writeHead(301, { Location: encodeURI(path) + '/', 'Cache-Control': 'no-store' });
+        return res.end();
+      }
+      file = join(file, 'index.html');
+    }
     const body = await readFile(file);
     send(200, req.method === 'HEAD' ? '' : body, TYPES[extname(file).toLowerCase()] || 'application/octet-stream');
   } catch {
-    try {
-      send(404, await readFile(join(ROOT, '404.html')), TYPES['.html']);
-    } catch {
-      send(404, 'Not Found');
+    // Giống Cloudflare: trả 404.html gần nhất (dist/stars/404.html cho /stars/…, 404.html ở gốc cho phần còn lại)
+    for (let dir = dirname(file); ; dir = dirname(dir)) {
+      try {
+        return send(404, await readFile(join(dir, '404.html')), TYPES['.html']);
+      } catch {}
+      if (dir === ROOT || !dir.startsWith(ROOT)) break;
     }
+    send(404, 'Not Found');
   }
 });
 
