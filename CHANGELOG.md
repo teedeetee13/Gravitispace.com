@@ -2,6 +2,13 @@
 
 Theo [Semantic Versioning](https://semver.org/lang/vi/). Phát hành bằng thẻ `vX.Y.Z` (xem docs/SO-TAY.md mục 5).
 
+## Chưa phát hành
+
+### Thêm
+- **Đăng nhập bằng Google** ở Graviti Stars (luồng PKCE, không thêm thư viện). Phải tích ô đồng ý chính sách trước khi bấm; phiên bản chính sách được ghi vào tài khoản. Link giả mạo hay mã bị lộ không đăng nhập được. Cần bật Google trong Supabase (docs/CAU-HINH.md mục 4b).
+- **Không gian của bạn** trên trang chính Graviti: khi đã đăng nhập, đầu trang hiện lá bài hôm nay, bản mệnh, tủ đã cất, trạng thái đồng bộ. Một tài khoản dùng chung cho mọi dịch vụ. Nút *Đăng nhập* trên thanh trên cùng (9 ngôn ngữ).
+- Chính sách quyền riêng tư: thêm dòng dữ liệu khi đăng nhập bằng Google.
+
 ## 2.3.0 — 12/11/2026
 
 ### Đổi tên và cấu trúc

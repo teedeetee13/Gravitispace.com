@@ -213,3 +213,54 @@ test('Luật BVDLCN: chưa đồng ý chính sách thì không gửi gì lên m�
   assert.ok(!Number.isNaN(Date.parse(u.meta.consent_at)));
   await auth.signOut?.();
 });
+
+test('Đăng nhập Google (PKCE): đổi mã thành phiên, ghi dấu đồng ý; link giả mạo hay mã bị lộ đều không vào được', async () => {
+  current = devices.B;
+  await auth.signOut();
+  const page = { origin: 'https://graviti.test', pathname: '/stars/', search: '', hash: '', opened: null };
+  globalThis.location = { ...page, assign: (u) => (globalThis.location.opened = u) };
+  Object.assign(globalThis.location, page);
+  globalThis.history = { replaceState: (_s, _t, url) => Object.assign(globalThis.location, { search: '', hash: url.slice(url.indexOf('#')) }) };
+
+  // Chưa tích đồng ý thì không rời trang
+  await assert.rejects(auth.startOAuth('google'), (e) => e.code === 'consent_required');
+  assert.equal(location.opened, null);
+
+  await auth.startOAuth('google', CONSENT);
+  const url = new URL(location.opened);
+  assert.equal(url.origin + url.pathname, 'https://fake.supabase.co/auth/v1/authorize');
+  assert.equal(url.searchParams.get('provider'), 'google');
+  assert.equal(url.searchParams.get('redirect_to'), 'https://graviti.test/stars/');
+  assert.equal(url.searchParams.get('code_challenge_method'), 's256');
+  const raw = current.get('ansao:oauth');
+  assert.ok(raw && !location.opened.includes(JSON.parse(raw).verifier), 'verifier chỉ nằm trên máy, không gửi đi');
+
+  // Mã thật quay về, cùng trình duyệt → đăng nhập được, tài khoản mới có dấu đồng ý
+  location.search = '?code=' + fake.oauthCode('google@example.com', url.searchParams.get('code_challenge'));
+  assert.equal(await auth.consumeRedirect(), 'oauth');
+  assert.equal(auth.user()?.email, 'google@example.com');
+  assert.equal(location.search, '', 'mã đã được xoá khỏi thanh địa chỉ');
+  assert.equal(location.hash, '#/tai-khoan');
+  assert.equal(fake.db.users.get('google@example.com').meta.consent_version, CONFIG.CONSENT_VERSION);
+  assert.equal(current.has('ansao:oauth'), false, 'verifier dùng một lần');
+  await auth.signOut();
+
+  // Kẻ xấu gửi link chứa mã tài khoản của họ: trình duyệt nạn nhân không có verifier → không đăng nhập
+  location.search = '?code=' + fake.oauthCode('ke-xau@example.com', 'challenge-cua-ke-xau');
+  assert.equal(await auth.consumeRedirect(), 'oauth-error');
+  assert.equal(auth.user(), null);
+
+  // Có verifier nhưng mã không khớp challenge (mã của người khác) → máy chủ từ chối
+  await auth.startOAuth('google', CONSENT);
+  location.search = '?code=' + fake.oauthCode('ke-xau@example.com', 'challenge-khac');
+  assert.equal(await auth.consumeRedirect(), 'oauth-error');
+  assert.equal(auth.user(), null);
+
+  // Người dùng bấm Huỷ ở Google
+  await auth.startOAuth('google', CONSENT);
+  location.search = '?error=access_denied&error_description=cancelled';
+  assert.equal(await auth.consumeRedirect(), 'oauth-error');
+  assert.equal(auth.user(), null);
+  delete globalThis.location;
+  delete globalThis.history;
+});

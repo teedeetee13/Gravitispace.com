@@ -255,13 +255,15 @@ window.addEventListener('offline', () => auth.user() && store.syncNow().catch(()
 async function boot() {
   const redirectType = await auth.consumeRedirect().catch(() => null);
   await Promise.all([setLang().catch(() => setLang('vi')), store.init()]); // gói ngôn ngữ lỗi mạng → về tiếng Việt
-  if (redirectType && redirectType !== 'error') await store.afterSignIn();
+  const failed = redirectType === 'error' || redirectType === 'oauth-error';
+  if (redirectType && !failed) await store.afterSignIn();
   if (redirectType === 'recovery') history.replaceState(null, '', `${location.pathname}#/tai-khoan?dat-lai=1`);
   store.onSync(renderAccountBadge);
   translateShell();
   renderAccountBadge();
   await render();
   if (redirectType === 'error') toast(t('account.linkExpired'));
+  else if (redirectType === 'oauth-error') toast(t('account.oauthFailed'));
   else if (redirectType && redirectType !== 'recovery') toast(t('account.welcome'));
   // Service worker: cho phép mở lại trang khi mất mạng (chỉ bản đăng thật qua https).
   // Khi chạy thử trên máy thì gỡ service worker cũ + xoá bộ nhớ đệm của nó, để luôn thấy code mới nhất

@@ -123,6 +123,27 @@ Trang quản trị chỉ chứa số liệu công khai (phiên bản, kiểm th�
 
 **Kiểm tra:** `npm run preview` → mở http://localhost:5191/stars/#/tai-khoan → đăng ký bằng email thật. Phải có ô "Tôi đồng ý…" (không đánh sẵn), thư xác nhận phải về.
 
+### 4b. Đăng nhập bằng Google
+
+Web đã có nút **Tiếp tục với Google** (`CONFIG.OAUTH_PROVIDERS` trong `web/assets/js/config.js`). Nút chỉ chạy khi bạn bật Google trong Supabase:
+
+1. https://console.cloud.google.com → tạo dự án `graviti` → **Google Auth Platform**:
+   - *Branding*: tên ứng dụng `Graviti`, email hỗ trợ, đường dẫn trang chính và trang `/privacy/`.
+   - *Audience*: **External**. Lúc đầu để *Testing* và thêm email của bạn vào *Test users*; mở cho mọi người thì bấm *Publish app*.
+   - *Data access*: chỉ cần `openid`, `email`, `profile` (loại không nhạy cảm, Google không bắt thẩm định).
+   - *Clients → Create client → Web application*:
+     - Authorized JavaScript origins: `https://teedeetee13.github.io`, địa chỉ `https://gravitispace-com.<tên-tài-khoản>.workers.dev`, sau này `https://gravitispace.com`.
+     - Authorized redirect URIs: **chỉ một dòng** `https://<mã-dự-án>.supabase.co/auth/v1/callback` (lấy đúng dòng *Callback URL* mà Supabase hiện ở bước 2).
+2. Supabase → *Authentication → Sign In / Providers → Google* → bật, dán **Client ID** và **Client Secret** → *Save*.
+   **Client Secret chỉ dán vào Supabase**, không bao giờ vào mã web.
+3. Kiểm tra *URL Configuration* (bước 4 ở trên) đã có địa chỉ web của bạn trong *Redirect URLs*. Thiếu là Google xong sẽ quay về sai trang.
+
+Cách mã chạy (luồng **PKCE**, không dùng thư viện): trình duyệt tạo một chuỗi bí mật, chỉ gửi bản băm của nó sang Google/Supabase, rồi đổi mã `?code=…` quay về lấy phiên bằng chuỗi bí mật đó. Link giả mạo hay mã bị lộ đều không đăng nhập được (`tests/cloud.test.mjs` kiểm tra). Người dùng phải tích ô đồng ý chính sách trước khi bấm nút, và phiên bản chính sách được ghi vào tài khoản như khi đăng ký bằng email.
+
+Cùng một email thì Supabase tự gộp: ai đã đăng ký bằng email rồi bấm Google (cùng địa chỉ Gmail) vẫn vào đúng tài khoản cũ.
+
+Lưu ý: trước khi có tên miền riêng, màn hình chọn tài khoản của Google ghi "tiếp tục tới `<mã-dự-án>.supabase.co`". Khi có `gravitispace.com`, có thể bật *Custom domain* của Supabase (gói trả phí) để đổi dòng này.
+
 ## 5. Email xác nhận: SMTP riêng (bắt buộc nếu bật Supabase)
 
 Email có sẵn của Supabase chỉ gửi khoảng **2 thư/giờ** và chỉ tới email trong nhóm của bạn. Người dùng thật sẽ không nhận được thư.
