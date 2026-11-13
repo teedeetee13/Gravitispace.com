@@ -22,7 +22,7 @@ CONFIG.SUPABASE_URL = 'https://fake.supabase.co';
 CONFIG.SUPABASE_ANON_KEY = 'anon-key';
 const { store, mergeStates } = await import('../web/assets/js/store.js');
 const { auth } = await import('../web/assets/js/auth.js');
-const { errorText } = await import('../web/assets/js/views/account.js').catch(() => ({}));
+const { errorKey } = await import('../web/assets/js/login.js');
 
 const CONSENT = { version: CONFIG.CONSENT_VERSION };
 const PROFILE = { day: 15, month: 8, year: 1995, timeKnown: true, hour: 9, minute: 30, gender: 'nu', placeId: 'ha-noi', lat: 21, lon: 105.8, tz: 7 };
@@ -140,7 +140,7 @@ test('Đăng xuất: xoá bản sao dữ liệu tài khoản khỏi máy, quay v
 test('Sai mật khẩu và email đã tồn tại báo lỗi thân thiện', async () => {
   await assert.rejects(auth.signIn('lan@example.com', 'sai'), (e) => e.code === 'invalid_credentials');
   await assert.rejects(auth.signUp('lan@example.com', 'matkhau123', CONSENT), (e) => e.code === 'user_already_exists');
-  if (errorText) assert.ok(errorText({ code: 'invalid_credentials' }).length > 5);
+  assert.equal(errorKey({ code: 'invalid_credentials' }), 'account.err.credentials');
 });
 
 const tokenOf = async (email, password) =>

@@ -291,7 +291,7 @@ Bảng tin (sáng, tối), Tìm kiếm, Bài viết, Lá số Tử Vi, Bản đ�
 | Việc | Kết quả |
 |---|---|
 | Chọn nền tảng | **Supabase** (PostgreSQL + Auth). Lý do: dữ liệu quan hệ hợp với cộng đồng bài viết + kiểm duyệt; bảo mật bằng RLS ngay trong cơ sở dữ liệu; mã nguồn mở, tự cài máy chủ riêng được, không bị khoá vào một nhà cung cấp; gọi được bằng REST thuần nên **không cần cài SDK** (Firebase cũng gọi REST được nhưng Firestore REST rườm rà, SDK nặng). |
-| Đăng ký / đăng nhập / quên mật khẩu / đặt mật khẩu mới / đăng xuất / xoá tài khoản | Hộp đăng nhập nổi dùng chung (`web/assets/js/login.js`), mở ngay trên trang đang xem ở cả trang chính lẫn Graviti Stars. Quản lý tài khoản (đồng bộ, đổi mật khẩu, xoá) ở `/stars/tai-khoan/`. Gọi Supabase Auth qua `fetch` (`cloud.js`). |
+| Đăng ký / đăng nhập / quên mật khẩu / đặt mật khẩu mới / đăng xuất / xoá tài khoản | Hộp đăng nhập nổi dùng chung (`web/assets/js/login.js`), mở ngay trên trang đang xem ở cả trang chính lẫn Graviti Stars. Quản lý tài khoản (đồng bộ, đổi mật khẩu, đăng xuất, xoá) ở trang chung `/tai-khoan/` của trang chính (`hub/tai-khoan/`, `hub/assets/js/account.js`, dùng chung `store.js`/`auth.js` của Graviti Stars); `/stars/tai-khoan/` cũ tự chuyển sang. Gọi Supabase Auth qua `fetch` (`cloud.js`). |
 | Mở lại khi mất mạng **nhờ phiên tài khoản** | Phiên (access + refresh token) lưu trên máy (`auth.js`). Mất mạng → mở web vẫn đang đăng nhập, thấy dữ liệu của tài khoản (bản đồng bộ gần nhất), sửa được; có mạng lại → tự làm mới token và đồng bộ. |
 | Đồng bộ nhiều thiết bị | Bảng `user_state`. Chỉ máy sửa → đẩy lên; chỉ máy chủ đổi → kéo về; cả hai cùng sửa → gộp không mất dữ liệu (`mergeStates`). |
 | Khách đăng nhập lần đầu | Dữ liệu đang có trên máy được chuyển vào tài khoản, không mất gì. |

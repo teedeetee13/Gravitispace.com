@@ -110,6 +110,7 @@ test('Bảo mật trang: CSP, không mã nội tuyến, không script ngoài, ch
   // Trang chính chỉ gọi thêm Supabase (đăng nhập); trang quyền riêng tư không gọi máy chủ ngoài nào
   assert.match(read('index.html'), /connect-src 'self' https:\/\/\*\.supabase\.co;/, 'trang chính chỉ gọi Supabase');
   assert.match(read('privacy/index.html'), /connect-src 'self';/, 'trang quyền riêng tư không gọi máy chủ ngoài');
+  assert.match(read('tai-khoan/index.html'), /connect-src 'self' https:\/\/\*\.supabase\.co;/, 'trang Tài khoản chỉ gọi Supabase');
 });
 
 test('Quản trị: không lập chỉ mục, chỉ gọi GitHub API, không giữ token; _headers chặn đúng nhóm trang', () => {
@@ -181,4 +182,21 @@ test('Hộp đăng nhập dùng chung: đủ chữ ở mọi ngôn ngữ của t
   // Trang chính gọi đúng tệp của Graviti Stars (dist/stars/…) và nạp giao diện hộp đăng nhập
   assert.match(read('assets/js/home.js'), /'\.\.\/\.\.\/stars\/assets\/js\/login\.js'/);
   assert.match(read('index.html'), /href="stars\/assets\/css\/login\.css"/);
+});
+
+test('Trang Tài khoản chung ở gốc web (/tai-khoan/), không nằm trong Graviti Stars', async () => {
+  const html = read('tai-khoan/index.html');
+  assert.match(html, /name="robots" content="noindex"/);
+  assert.match(html, /href="\.\.\/stars\/assets\/css\/login\.css"/);
+  const js = read('assets/js/account.js');
+  for (const f of ['auth', 'store', 'login', 'config']) assert.ok(js.includes(`'../../stars/assets/js/${f}.js'`), 'account.js phải dùng chung ' + f + '.js');
+  const keys = [...js.matchAll(/t\('((?:acct|account)\.[\w.-]+)'/g)].map((m) => m[1]);
+  for (const s of ['local', 'syncing', 'synced', 'offline', 'error']) keys.push('account.sync.' + s);
+  for (const l of LANGS) for (const k of keys) assert.ok(packs[l.code].strings[k], `trang chính ${l.code} thiếu ${k}`);
+  // Mọi lối vào "Tài khoản" trỏ về /tai-khoan/ ở gốc, không còn /stars/tai-khoan/
+  assert.equal(CONFIG.ACCOUNT_URL, '../tai-khoan/');
+  assert.match(read('index.html'), /class="acct-btn" href="tai-khoan\/"/);
+  assert.doesNotMatch(read('assets/js/home.js'), /stars\/tai-khoan/);
+  const headers = read('_headers').replace(/\r\n/g, '\n');
+  assert.match(headers, /\n\/tai-khoan\/\*\n  Content-Security-Policy: [^\n]*connect-src 'self' https:\/\/\*\.supabase\.co;/);
 });

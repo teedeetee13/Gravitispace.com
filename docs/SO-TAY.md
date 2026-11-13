@@ -37,7 +37,8 @@ Tên gọi: "an" là bình an, nhẹ lòng. "An sao" cũng là bước xếp sao
 | Chiêm tinh / Bản đồ sao | `/stars/chiem-tinh/`, `…/ban-do-sao` | 12 cung, hành tinh, nhà, góc chiếu, luận giải |
 | Tử vi / Lá số | `/stars/tu-vi/`, `…/la-so` | Can Chi, nạp âm; lá số 12 cung, 14 chính tinh, khoảng 40 phụ tinh, Tứ Hóa, Tuần Triệt, độ sáng sao, đại hạn |
 | Bản mệnh | `/stars/ban-menh/` | Nhập ngày giờ sinh một lần để xem tổng hợp Đông và Tây |
-| Gieo duyên, Tủ, Tài khoản, Về | `/stars/gieo/`, `/stars/tu/`, `/stars/tai-khoan/`, `/stars/ve/` | Viết bài, xem bài đã lưu, xuất/nhập/xoá dữ liệu, quản lý tài khoản (đăng nhập là hộp nổi, mở được ở mọi trang), xem phương pháp và đường dây hỗ trợ |
+| Gieo duyên, Tủ, Về | `/stars/gieo/`, `/stars/tu/`, `/stars/ve/` | Viết bài, xem bài đã lưu, xuất/nhập/xoá dữ liệu, xem phương pháp và đường dây hỗ trợ |
+| Tài khoản (chung cả hệ) | `/tai-khoan/` (địa chỉ cũ `/stars/tai-khoan/` tự chuyển sang) | Đồng bộ, đặt mật khẩu mới, đăng xuất, xoá tài khoản. Đăng nhập là hộp nổi, mở được ở mọi trang |
 
 ### Kiến trúc
 

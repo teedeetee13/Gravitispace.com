@@ -302,3 +302,30 @@ td a { color: var(--accent); }
 
 /* Tiếng Hàn: không ngắt dòng giữa một từ (mặc định trình duyệt ngắt giữa các âm tiết) */
 :lang(ko) { word-break: keep-all; overflow-wrap: anywhere; }
+
+/* ---------- Trang Tài khoản chung (/tai-khoan/) ---------- */
+.acct-page { max-width: 760px; padding-top: 32px; padding-bottom: 64px; display: flex; flex-direction: column; gap: 16px; }
+.acct-head h1 { font-size: clamp(1.7rem, 4.5vw, 2.3rem); }
+.acct-head .section-lead { margin-bottom: 4px; }
+.acct-card { margin: 0; padding: 20px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); min-width: 0; }
+.acct-card h2 { font-size: 1.2rem; }
+.acct-card .kicker { margin-bottom: 6px; }
+.acct-email { overflow-wrap: anywhere; }
+.acct-sync { display: flex; align-items: center; gap: 8px; margin: 0; color: var(--muted); }
+.acct-dot { flex: none; width: 9px; height: 9px; border-radius: 50%; background: var(--muted); }
+.acct-dot.is-synced { background: var(--good); }
+.acct-dot.is-syncing, .acct-dot.is-offline { background: var(--warn); }
+.acct-dot.is-error { background: var(--bad); }
+.acct-actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 16px 0 12px; }
+.acct-actions:first-child { margin: 0; }
+.acct-actions .ic { width: 18px; height: 18px; }
+.acct-small { margin: 0; font-size: 0.88rem; }
+.acct-why { margin: 0; padding-left: 1.2em; }
+.acct-why li { margin: 0.3em 0; }
+.acct-svcs { display: grid; gap: 12px; }
+.acct-danger summary { cursor: pointer; font-weight: 600; width: fit-content; }
+.acct-danger[open] summary { margin-bottom: 8px; }
+.btn-danger { border-color: var(--bad); background: transparent; color: var(--bad); }
+.btn-danger:hover { background: var(--bad-soft); }
+.btn:disabled { opacity: 0.6; cursor: progress; }
+@media (max-width: 520px) { .acct-actions .btn { flex: 1 1 100%; } }
