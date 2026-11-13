@@ -4,6 +4,8 @@ export const CONFIG = {
   STORAGE_PREFIX: 'ansao:', // giữ nguyên dù đã đổi tên: đổi là người dùng cũ mất dữ liệu
   // Chính sách quyền riêng tư (trang chính Graviti). Đổi nội dung chính sách → tăng phiên bản ở cả hai nơi.
   PRIVACY_URL: '../privacy/',
+  // Trang Tài khoản chung của cả hệ Graviti (gốc web, không nằm trong Graviti Stars)
+  ACCOUNT_URL: '../tai-khoan/',
   CONSENT_VERSION: '1.0',
   DEFAULT_LANG: 'vi',
   // Danh mục ngôn ngữ: xem i18n/langs.js

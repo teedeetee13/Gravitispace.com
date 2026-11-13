@@ -1,4 +1,4 @@
-# Tiêu đề bảo mật HTTP cho cả web gravitispace.com (trang chính, /stars/, /privacy/, /admin/).
+# Tiêu đề bảo mật HTTP cho cả web gravitispace.com (trang chính, /tai-khoan/, /stars/, /privacy/, /admin/).
 # Cloudflare Pages (và Netlify) chỉ đọc tệp _headers ở GỐC web, nên mọi quy tắc nằm ở đây.
 # Lưu ý: nhiều quy tắc cùng khớp một đường dẫn thì tiêu đề bị CỘNG dồn. Vì vậy CSP chỉ đặt theo từng nhóm trang,
 # không đặt ở /* (nếu không, CSP của trang chính sẽ chặn Graviti Stars gọi Supabase).
@@ -13,6 +13,11 @@
 # Trang chính: gọi Supabase để đăng nhập (hộp đăng nhập dùng chung). Trang quyền riêng tư: không gọi máy chủ ngoài nào
 /
   Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://*.supabase.co; manifest-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; frame-ancestors 'none'; upgrade-insecure-requests
+  Cache-Control: no-cache
+# Trang Tài khoản chung: gọi Supabase (tài khoản, đồng bộ); không lập chỉ mục
+/tai-khoan/*
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://*.supabase.co; manifest-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; frame-ancestors 'none'; upgrade-insecure-requests
+  X-Robots-Tag: noindex
   Cache-Control: no-cache
 /privacy/*
   Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; frame-ancestors 'none'; upgrade-insecure-requests

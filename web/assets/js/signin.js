@@ -4,10 +4,12 @@ import { t } from './i18n.js';
 import { toast } from './util.js';
 import { store } from './store.js';
 import { CONFIG } from './config.js';
-import { ROOT, link } from './route.js';
+import { ROOT } from './route.js';
 
 /** Trang chính sách nằm ở gốc web (…/privacy/), tính từ gốc Graviti Stars để đúng ở mọi độ sâu trang. */
 export const privacyUrl = () => new URL(CONFIG.PRIVACY_URL, location.origin + ROOT).pathname;
+/** Trang Tài khoản chung ở gốc web (…/tai-khoan/): quản lý tài khoản cho mọi dịch vụ Graviti. */
+export const accountUrl = () => new URL(CONFIG.ACCOUNT_URL, location.origin + ROOT).pathname;
 
 // Vừa đăng xuất → trang Tài khoản vẽ lại ở chế độ khách mà không tự bật hộp đăng nhập lên nữa
 let signedOutJustNow = false;
@@ -25,7 +27,7 @@ export function showLogin(mode = 'signin') {
     mode,
     toast,
     privacyUrl: privacyUrl(),
-    manageUrl: link('tai-khoan'),
+    manageUrl: accountUrl(),
     // Đăng xuất: đồng bộ nốt thay đổi rồi mới xoá bản sao dữ liệu của tài khoản khỏi máy này
     signOut: () => store.signOut(),
     async onDone(what) {

@@ -1,7 +1,7 @@
 // Điểm khởi động: khởi tạo ngôn ngữ + kho dữ liệu, điều hướng theo đường dẫn thật /stars/… (tải lười từng trang),
 // xử lý các nút dùng chung, bắt lỗi toàn cục, đăng ký service worker để chạy offline.
 import { $, $$, esc, toast, todayKey } from './util.js';
-import { ROOT, link, navigate, postLink, currentRoute, fromLegacyHash } from './route.js';
+import { ROOT, link, postLink, currentRoute, fromLegacyHash } from './route.js';
 import { t, getLang, setLang, LANGS } from './i18n.js';
 import { langMeta } from './i18n/langs.js';
 import { store } from './store.js';
@@ -10,7 +10,7 @@ import { cardById } from './data/tarot.js';
 import * as C from './content.js';
 import { emptyState } from './ui.js';
 import { redirectMessageKey } from './login.js';
-import { showLogin } from './signin.js';
+import { showLogin, accountUrl } from './signin.js';
 import { cloudEnabled } from './config.js';
 
 // [mẫu đường dẫn, tải module, tên hàm vẽ, tiêu đề]
@@ -33,6 +33,7 @@ const ROUTES = [
   // Bài người dùng gửi: /bai/?id=<mã> (mã ngẫu nhiên nên không dựng sẵn trang riêng được)
   [/^\/bai$/, () => import('./views/post.js'), 'renderPost', (id) => postTitle(id), (params) => params.get('id')],
   [/^\/ve$/, () => import('./views/about.js'), 'renderAbout', 'nav.about'],
+  // Địa chỉ cũ /stars/tai-khoan/ → trang Tài khoản chung ở gốc web
   [/^\/tai-khoan$/, () => import('./views/account.js'), 'renderAccount', 'nav.account'],
 ];
 
@@ -113,7 +114,7 @@ function renderTodayWidget() {
 /** Dịch phần khung tĩnh trong index.html (thuộc tính data-i18n, data-i18n-aria). */
 function translateShell() {
   // Link cố định trong khung trang: đổi sang địa chỉ đầy đủ (đúng ở mọi độ sâu, vd. /stars/tarot/major-17/)
-  $$('a[data-link]').forEach((el) => el.setAttribute('href', link(el.dataset.link)));
+  $$('a[data-link]').forEach((el) => el.setAttribute('href', el.hasAttribute('data-account-link') ? accountUrl() : link(el.dataset.link)));
   $$('[data-i18n]').forEach((el) => (el.textContent = t(el.dataset.i18n)));
   $$('[data-i18n-aria]').forEach((el) => el.setAttribute('aria-label', t(el.dataset.i18nAria)));
   const cur = langMeta(getLang());
@@ -239,13 +240,14 @@ document.addEventListener('click', (e) => {
   const a = e.target.closest('a[href]');
   if (!a || (a.target && a.target !== '_self') || a.hasAttribute('download')) return;
   const url = new URL(a.href, location.href);
-  if (url.origin !== location.origin || !url.pathname.startsWith(ROOT)) return; // trang chính, /privacy/, web ngoài: mở bình thường
-  if (/\.[a-z0-9]+$/i.test(url.pathname)) return; // tệp (ảnh, json…)
-  // Nút Tài khoản: chưa đăng nhập → hộp đăng nhập hiện ngay trên trang đang xem, không chuyển trang
-  if (url.pathname === link('tai-khoan') && !auth.user() && cloudEnabled()) {
+  if (url.origin !== location.origin) return;
+  // Nút Tài khoản: hộp nổi ngay trên trang đang xem (chưa đăng nhập: đăng nhập; đã đăng nhập: email, Quản lý tài khoản, Đăng xuất)
+  if (cloudEnabled() && (url.pathname === accountUrl() || url.pathname === link('tai-khoan'))) {
     e.preventDefault();
-    return showLogin(new URLSearchParams(url.search).get('che-do') === 'dang-ky' ? 'signup' : 'signin');
+    return showLogin(auth.user() ? 'me' : new URLSearchParams(url.search).get('che-do') === 'dang-ky' ? 'signup' : 'signin');
   }
+  if (!url.pathname.startsWith(ROOT)) return; // trang chính, /privacy/, /tai-khoan/: mở bình thường
+  if (/\.[a-z0-9]+$/i.test(url.pathname)) return; // tệp (ảnh, json…)
   if (url.pathname === location.pathname && url.search === location.search && url.hash) return; // neo trong cùng trang
   e.preventDefault();
   if (url.href !== location.href) history.pushState(null, '', url.pathname + url.search + url.hash);
@@ -268,8 +270,7 @@ function renderAccountBadge() {
 window.addEventListener('ansao:auth', () => {
   renderAccountBadge();
   renderTodayWidget();
-  if (currentRoute().path === '/tai-khoan' && location.search) navigate('tai-khoan', { replace: true });
-  else render();
+  render();
 });
 // Có mạng trở lại → đồng bộ những gì đã sửa lúc offline
 window.addEventListener('online', () => {
